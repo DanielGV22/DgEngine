@@ -2,14 +2,14 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Inc">
-      <UniqueIdentifier>{188c5d2c-0818-4be9-a611-158e39bffb64}</UniqueIdentifier>
+      <UniqueIdentifier>{42b74188-2f2d-4b1f-9c40-c0747b38e533}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src">
-      <UniqueIdentifier>{ab55a6e6-f7cc-4933-91c4-ef3423b36981}</UniqueIdentifier>
+      <UniqueIdentifier>{92ef2729-377d-47db-a7d3-64715d424562}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Inc\DgEngine.h">
+    <ClInclude Include="Inc\Core.h">
       <Filter>Inc</Filter>
     </ClInclude>
     <ClInclude Include="Inc\Common.h">
