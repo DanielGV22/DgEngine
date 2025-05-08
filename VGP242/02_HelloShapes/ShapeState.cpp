@@ -6,9 +6,8 @@ using namespace DgEngine::Math;
 
 void ShapeState::Initialize()
 {
-	mVertices.push_back({ { -0.5F,0.0F,0.0F } });
-	mVertices.push_back({ {  0.0F,0.75F,0.0F } });
-	mVertices.push_back({ {  0.5F,0.0F,0.0F } });
+	// Create a shape
+	CreateShape();
 
 	auto device = GraphicsSystem::Get()->GetDevice();
 
@@ -28,7 +27,7 @@ void ShapeState::Initialize()
 	//===============================================================================
 
 	// bind to function in specified shader file 
-	std::filesystem::path shaderFilePath = L"../../Assets/Shaders/DoSomething.fx";
+	std::filesystem::path shaderFilePath = L"../../Assets/Shaders/DoColor.fx";
 
 	DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS | 		D3DCOMPILE_DEBUG;
 	ID3DBlob* shaderBlob = nullptr;
@@ -58,6 +57,7 @@ void ShapeState::Initialize()
 	// STATE WHAT VERTEX VARIABLES ARE
 	std::vector<D3D11_INPUT_ELEMENT_DESC> vertexLayout;
 	vertexLayout.push_back({ "POSITION",0, DXGI_FORMAT_R32G32B32_FLOAT,0,D3D11_APPEND_ALIGNED_ELEMENT });
+	vertexLayout.push_back({ "COLOR",0, DXGI_FORMAT_R32G32B32A32_FLOAT,0,D3D11_APPEND_ALIGNED_ELEMENT });
 
 	hr=device->CreateInputLayout(
 		vertexLayout.data(),
@@ -106,7 +106,22 @@ void ShapeState::Terminate()
 
 void ShapeState::Update(float deltaTime)
 {
-
+	if (Input::InputSystem::Get()->IsKeyPressed(Input::KeyCode::UP))
+	{
+		DgEngine::MainApp().ChangeState("TriangleShapeState");
+	}
+	if (Input::InputSystem::Get()->IsKeyPressed(Input::KeyCode::RIGHT))
+	{
+		DgEngine::MainApp().ChangeState("SquareShapeState");
+	}
+	if (Input::InputSystem::Get()->IsKeyPressed(Input::KeyCode::LEFT))
+	{
+		DgEngine::MainApp().ChangeState("HouseShapeState");
+	}
+	if (Input::InputSystem::Get()->IsKeyPressed(Input::KeyCode::DOWN))
+	{
+		DgEngine::MainApp().ChangeState("RombusShapeState");
+	}
 }
 
 void ShapeState::Render()
@@ -124,4 +139,97 @@ void ShapeState::Render()
 	UINT offset = 0;
 	context->IASetVertexBuffers(0, 1, &mVertexBuffer, &stride, &offset);
 	context->Draw(static_cast<UINT>(mVertices.size()), 0);
+}
+
+void ShapeState::CreateShape()
+{
+	 mVertices.push_back({ { -0.5F,0.0F,0.0F }, Colors::AliceBlue });
+	 mVertices.push_back({ {  0.0F,0.75F,0.0F }, Colors::Crimson });
+	 mVertices.push_back({ {  0.5F,0.0F,0.0F }, Colors::Goldenrod });
+}
+
+void TriangleShapeState::Update(float deltaTime)
+{
+	if (Input::InputSystem::Get()->IsKeyPressed(Input::KeyCode::UP))
+	{
+		DgEngine::MainApp().ChangeState("ShapeState");
+	}
+}
+
+void TriangleShapeState::CreateShape()
+{
+	 mVertices.push_back({ { -0.75F,-0.75F,0.0F }, Colors::AliceBlue });
+	 mVertices.push_back({ {  -0.5F,0.0F,0.0F }, Colors::Crimson });
+	 mVertices.push_back({ {  -0.25F,-0.75F,0.0F }, Colors::Goldenrod });
+
+	 mVertices.push_back({ { -0.5F,0.0F,0.0F }, Colors::AliceBlue });
+	 mVertices.push_back({ { 0.0F,0.75F,0.0F }, Colors::Crimson });
+	 mVertices.push_back({ {  0.5F,0.0F,0.0F }, Colors::Goldenrod });
+
+	 mVertices.push_back({ { 0.25F,-0.75F,0.0F }, Colors::AliceBlue });
+	 mVertices.push_back({ {  0.5F,0.0F,0.0F }, Colors::Crimson });
+	 mVertices.push_back({ {  0.75F,-0.75F,0.0F }, Colors::Goldenrod });
+
+}
+
+void SquareShapeState::Update(float deltaTime)
+{
+	if (Input::InputSystem::Get()->IsKeyPressed(Input::KeyCode::RIGHT))
+	{
+		DgEngine::MainApp().ChangeState("ShapeState");
+	}
+}
+
+void SquareShapeState::CreateShape()
+{
+		 mVertices.push_back({ { -0.5F,-0.5F,0.0F }, Colors::AliceBlue });
+	 mVertices.push_back({ {  -0.5F,0.5F,0.0F }, Colors::Crimson });
+	 mVertices.push_back({ {  0.5F,0.5F,0.0F }, Colors::Goldenrod });
+
+	 mVertices.push_back({ { -0.5F,-0.5F,0.0F }, Colors::AliceBlue });
+	 mVertices.push_back({ {  0.5F,0.5F,0.0F }, Colors::Crimson });
+	 mVertices.push_back({ {  0.5F,-0.5F,0.0F }, Colors::Goldenrod });
+}
+
+void HouseShapeState::Update(float deltaTime)
+{
+	if (Input::InputSystem::Get()->IsKeyPressed(Input::KeyCode::LEFT))
+	{
+		DgEngine::MainApp().ChangeState("ShapeState");
+	}
+}
+
+void HouseShapeState::CreateShape()
+{
+	
+	mVertices.push_back({ { -0.5f,  0.5f, 0.0f }, Colors::Brown });  
+	mVertices.push_back({ {  0.5f,  0.5f, 0.0f }, Colors::Brown });  
+	mVertices.push_back({ { -0.5f, -0.5f, 0.0f }, Colors::Brown });  
+
+	mVertices.push_back({ { -0.5f, -0.5f, 0.0f }, Colors::Brown });  
+	mVertices.push_back({ {  0.5f,  0.5f, 0.0f }, Colors::Brown });  
+	mVertices.push_back({ {  0.5f, -0.5f, 0.0f }, Colors::Brown });  
+	
+	mVertices.push_back({ { -0.5f,  0.5f, 0.0f }, Colors::Green});   
+	mVertices.push_back({ {  0.0f,  1.0f, 0.0f }, Colors::Green});   
+	mVertices.push_back({ {  0.5f,  0.5f, 0.0f }, Colors::Green});   
+}
+
+void RombusShapeState::Update(float deltaTime)
+{
+	if (Input::InputSystem::Get()->IsKeyPressed(Input::KeyCode::DOWN))
+	{
+		DgEngine::MainApp().ChangeState("ShapeState");
+	}
+}
+
+void RombusShapeState::CreateShape()
+{
+	
+	mVertices.push_back({ { -0.5f, 0.0f, 0.0f }, Colors::AliceBlue });  
+	mVertices.push_back({ { 0.0f, 0.5f, 0.0f }, Colors::Crimson });   
+	mVertices.push_back({ { 0.5f, 0.0f, 0.0f }, Colors::Goldenrod }); 
+	mVertices.push_back({ { 0.0f, -0.5f, 0.0f }, Colors::AliceBlue }); 
+	mVertices.push_back({ { -0.5f, 0.0f, 0.0f }, Colors::Crimson }); 
+	mVertices.push_back({ { 0.5f, 0.0f, 0.0f }, Colors::Goldenrod }); 
 }

@@ -87,7 +87,7 @@ void GraphicsSystem::Initialize(HWND window, bool fullscreen)
 		0,
 		&featureLevel,
 		1,
-		D3D10_SDK_VERSION,
+		D3D11_SDK_VERSION,
 		&swapChainDesc,
 		&mSwapChain,
 		&mD3DDevice,

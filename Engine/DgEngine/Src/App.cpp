@@ -5,6 +5,7 @@
 using namespace DgEngine;
 using namespace DgEngine::Core;
 using namespace DgEngine::Graphics;
+using namespace DgEngine::Input;
 
 void App::Run(const AppConfig& config)
 {
@@ -19,6 +20,7 @@ void App::Run(const AppConfig& config)
 	);
 	auto handle = myWindow.GetWindowHandle();
 	GraphicsSystem::StaticInitialize(handle, false);
+	InputSystem::StaticInitialize(handle);
 
 
 	// last step before running
@@ -26,11 +28,15 @@ void App::Run(const AppConfig& config)
 	mCurrentState->Initialize();
 
 	// Process updates
+
+	InputSystem* input= InputSystem::Get();
 	mRunning = true;
 	while (mRunning) 
 	{
 		myWindow.ProcessMessage();
-		if (!myWindow.IsActive()) 
+		input->Update();
+
+		if (!myWindow.IsActive() || input->IsKeyPressed(KeyCode::ESCAPE)) 
 		{
 			Quit();
 			continue;
@@ -61,6 +67,7 @@ void App::Run(const AppConfig& config)
 	LOG("App Quit");
 	mCurrentState->Terminate();
 
+	InputSystem::StaticTerminate();
 	GraphicsSystem::StaticTerminate();
 	myWindow.Terminate();
 }
