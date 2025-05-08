@@ -4,6 +4,7 @@
 
 using namespace DgEngine;
 using namespace DgEngine::Core;
+using namespace DgEngine::Graphics;
 
 void App::Run(const AppConfig& config)
 {
@@ -16,6 +17,8 @@ void App::Run(const AppConfig& config)
 		config.winWidth,
 	    config.winHeight
 	);
+	auto handle = myWindow.GetWindowHandle();
+	GraphicsSystem::StaticInitialize(handle, false);
 
 
 	// last step before running
@@ -47,12 +50,18 @@ void App::Run(const AppConfig& config)
 		{
 			mCurrentState->Update(deltaTime);
 		}
+
+		GraphicsSystem* gs= GraphicsSystem::Get();
+		gs->BeginRender();
+		    mCurrentState->Render();
+		gs->EndRender();
 	}
 
 	// Terminate everything
 	LOG("App Quit");
 	mCurrentState->Terminate();
 
+	GraphicsSystem::StaticTerminate();
 	myWindow.Terminate();
 }
 
