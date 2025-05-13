@@ -29,6 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{AEC007
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shaders", "Shaders", "{BDE86A11-A40D-4C2F-B896-979569360F9D}"
 	ProjectSection(SolutionItems) = preProject
+		Assets\Shaders\Do TransformColor.fx = Assets\Shaders\Do TransformColor.fx
 		Assets\Shaders\DoColor.fx = Assets\Shaders\DoColor.fx
 		Assets\Shaders\DoSomething.fx = Assets\Shaders\DoSomething.fx
 	EndProjectSection

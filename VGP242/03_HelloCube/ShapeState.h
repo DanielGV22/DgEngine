@@ -15,6 +15,8 @@ protected:
 	using Vertices = std::vector<DgEngine::Graphics::VertexPC>;
 	Vertices mVertices;
 
+	DgEngine::Graphics::Camera mCamera;
+	DgEngine::Graphics::ConstantBuffer mTransformBuffer;
 	DgEngine::Graphics::MeshBuffer mMeshBuffer;
 	DgEngine::Graphics::VertexShader mVertexShader;
 	DgEngine::Graphics::PixelShader mPixelShader;

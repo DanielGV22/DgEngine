@@ -9,3 +9,5 @@
 #include"VertexShader.h"
 #include"VertexTypes.h"
 #include"PixelShader.h"
+#include"Camera.h"
+#include"ConstantBuffer.h"
