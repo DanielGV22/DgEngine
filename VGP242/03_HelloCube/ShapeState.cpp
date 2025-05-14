@@ -14,7 +14,7 @@ void ShapeState::Initialize()
 
 	// Create a shape
 	CreateShape();
-	mMeshBuffer.Initialize(mVertices.data(), sizeof(VertexPC), mVertices.size());
+	mMeshBuffer.Initialize(mMesh);
 
 	std::filesystem::path shaderFilePath = L"../../Assets/Shaders/Do TransformColor.fx";
 	mVertexShader.Initialize<VertexPC>(shaderFilePath);
@@ -23,7 +23,7 @@ void ShapeState::Initialize()
 
 void ShapeState::Terminate()
 {
-	mVertices.clear();
+
 	mTransformBuffer.Terminate();
 	mPixelShader.Terminate();
 	mVertexShader.Terminate();
@@ -92,8 +92,8 @@ void ShapeState::Render()
 
 void ShapeState::CreateShape()
 {
-	 mVertices.push_back({ { -0.5F,0.0F,0.0F }, Colors::AliceBlue });
-	 mVertices.push_back({ {  0.0F,0.75F,0.0F }, Colors::Crimson });
-	 mVertices.push_back({ {  0.5F,0.0F,0.0F }, Colors::Goldenrod });
+	mMesh = MeshBuilder::CreateCubePC(1.0f);
+	mMesh=MeshBuilder::CreatePyramidPC(1.0f);
+	mMesh=MeshBuilder::CreateRectanglePC(1.0f, 1.0f,1.0f);
 }
 

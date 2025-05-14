@@ -12,8 +12,7 @@ public:
 protected:
 	virtual void CreateShape();
 
-	using Vertices = std::vector<DgEngine::Graphics::VertexPC>;
-	Vertices mVertices;
+	DgEngine::Graphics::MeshPC mMesh;
 
 	DgEngine::Graphics::Camera mCamera;
 	DgEngine::Graphics::ConstantBuffer mTransformBuffer;
