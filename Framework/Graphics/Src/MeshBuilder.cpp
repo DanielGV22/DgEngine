@@ -120,31 +120,31 @@ MeshPC DgEngine::Graphics::MeshBuilder::CreatePyramidPC(float size)
 
 	// vertices for pyramid
 
-	 // Base vertices (bottom square)
+	 // base vertices (bottom square)
 	mesh.vertices.push_back({ { -hs, -hs, -hs }, GetNextColor(index) }); // 0: bottom left back
 	mesh.vertices.push_back({ { -hs, -hs, hs }, GetNextColor(index) });  // 1: bottom left front
 	mesh.vertices.push_back({ { hs, -hs, hs }, GetNextColor(index) });   // 2: bottom right front
 	mesh.vertices.push_back({ { hs, -hs, -hs }, GetNextColor(index) });  // 3: bottom right back
 
-	// Apex (top point)
+	// top vertex
 	mesh.vertices.push_back({ { 0.0f, hs, 0.0f }, GetNextColor(index) }); // 4: top center
 
-	// Indices for the pyramid
+	// indices for the pyramid
 	mesh.indices = {
-		// Base (bottom square)
+		// base (bottom square)
 		0, 1, 2,
 		0, 2, 3,
 
-		// Front face
+		// front face
 		1, 4, 2,
 
-		// Right face
+		// right face
 		2, 4, 3,
 
-		// Back face
+		// back face
 		3, 4, 0,
 
-		// Left face
+		// left face
 		0, 4, 1
 	};
 	
@@ -163,19 +163,19 @@ MeshPC DgEngine::Graphics::MeshBuilder::CreateRectanglePC(float width, float hei
 
 	// vertices for rectangle
 
-	 // Front face
+	 // front face
 	mesh.vertices.push_back({ { -hw, -hh, -hd }, GetNextColor(index) }); // 0: bottom left front
 	mesh.vertices.push_back({ { -hw, hh, -hd }, GetNextColor(index) });  // 1: top left front
 	mesh.vertices.push_back({ { hw, hh, -hd }, GetNextColor(index) });   // 2: top right front
 	mesh.vertices.push_back({ { hw, -hh, -hd }, GetNextColor(index) });  // 3: bottom right front
 
-	// Back face
+	// back face
 	mesh.vertices.push_back({ { -hw, -hh, hd }, GetNextColor(index) });  // 4: bottom left back
 	mesh.vertices.push_back({ { -hw, hh, hd }, GetNextColor(index) });   // 5: top left back
 	mesh.vertices.push_back({ { hw, hh, hd }, GetNextColor(index) });    // 6: top right back
 	mesh.vertices.push_back({ { hw, -hh, hd }, GetNextColor(index) });   // 7: bottom right back
 
-	// Indices for the rectangular prism (same as cube)
+	// indices for the rectangle
 	mesh.indices = {
 		// front
 		0, 1, 2,

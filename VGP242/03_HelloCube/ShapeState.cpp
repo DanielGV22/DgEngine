@@ -1,5 +1,4 @@
 #include"ShapeState.h"
-
 using namespace DgEngine;
 using namespace DgEngine::Graphics;
 using namespace DgEngine::Math;
@@ -7,93 +6,123 @@ using namespace DgEngine::Input;
 
 void ShapeState::Initialize()
 {
-	mCamera.SetPosition({ 0.0f,1.0f,-3.0f });
-	mCamera.SetLookAt({ 0.0f,0.0f,0.0f });
+    mCamera.SetPosition({ 0.0f,1.0f,-3.0f });
+    mCamera.SetLookAt({ 0.0f,0.0f,0.0f });
+    mTransformBuffer.Initialize(sizeof(Math::Matrix4));
 
-	mTransformBuffer.Initialize(sizeof(Math::Matrix4));
+    // Create initial shape
+    CreateShape();
+    mMeshBuffer.Initialize(mMesh);
 
-	// Create a shape
-	CreateShape();
-	mMeshBuffer.Initialize(mMesh);
-
-	std::filesystem::path shaderFilePath = L"../../Assets/Shaders/Do TransformColor.fx";
-	mVertexShader.Initialize<VertexPC>(shaderFilePath);
-	mPixelShader.Initialize(shaderFilePath);
+    std::filesystem::path shaderFilePath = L"../../Assets/Shaders/Do TransformColor.fx";
+    mVertexShader.Initialize<VertexPC>(shaderFilePath);
+    mPixelShader.Initialize(shaderFilePath);
 }
 
 void ShapeState::Terminate()
 {
-
-	mTransformBuffer.Terminate();
-	mPixelShader.Terminate();
-	mVertexShader.Terminate();
-	mMeshBuffer.Terminate();
+    mTransformBuffer.Terminate();
+    mPixelShader.Terminate();
+    mVertexShader.Terminate();
+    mMeshBuffer.Terminate();
 }
 
 void ShapeState::Update(float deltaTime)
 {
-    InputSystem* input= InputSystem::Get();
-	const float moveSpeed= input->IsKeyDown(KeyCode::LSHIFT) ? 10.0f : 1.0f;
-	const float turnSpeed= 1.0f;
+    InputSystem* input = InputSystem::Get();
+    const float moveSpeed = input->IsKeyDown(KeyCode::LSHIFT) ? 10.0f : 1.0f;
+    const float turnSpeed = 1.0f;
 
-	if (input->IsKeyDown(KeyCode::W))
-	{
-		mCamera.Walk(moveSpeed * deltaTime);
-	}
-	else if (input->IsKeyDown(KeyCode::S))
-	{
-		mCamera.Walk(-moveSpeed * deltaTime);
-	}
-	if (input->IsKeyDown(KeyCode::A))
-	{
-		mCamera.Strafe(-moveSpeed * deltaTime);
-	}
-	else if (input->IsKeyDown(KeyCode::D))
-	{
-		mCamera.Strafe(moveSpeed * deltaTime);
-	}
-	if (input->IsKeyDown(KeyCode::Q))
-	{
-		mCamera.Rise(-moveSpeed * deltaTime);
-	}
-	else if (input->IsKeyDown(KeyCode::E))
-	{
-		mCamera.Rise(moveSpeed * deltaTime);
-	}
+    // Camera movement
+    if (input->IsKeyDown(KeyCode::W))
+    {
+        mCamera.Walk(moveSpeed * deltaTime);
+    }
+    else if (input->IsKeyDown(KeyCode::S))
+    {
+        mCamera.Walk(-moveSpeed * deltaTime);
+    }
+    if (input->IsKeyDown(KeyCode::A))
+    {
+        mCamera.Strafe(-moveSpeed * deltaTime);
+    }
+    else if (input->IsKeyDown(KeyCode::D))
+    {
+        mCamera.Strafe(moveSpeed * deltaTime);
+    }
+    if (input->IsKeyDown(KeyCode::Q))
+    {
+        mCamera.Rise(-moveSpeed * deltaTime);
+    }
+    else if (input->IsKeyDown(KeyCode::E))
+    {
+        mCamera.Rise(moveSpeed * deltaTime);
+    }
+    if (input->IsMouseDown(MouseButton::RBUTTON))
+    {
+        mCamera.Yaw(input->GetMouseMoveX() * turnSpeed * deltaTime);
+        mCamera.Pitch(input->GetMouseMoveY() * turnSpeed * deltaTime);
+    }
 
-	if (input->IsMouseDown(MouseButton::RBUTTON))
-	{
-		mCamera.Yaw(input->GetMouseMoveX() * turnSpeed * deltaTime);
-		mCamera.Pitch(input->GetMouseMoveY() * turnSpeed * deltaTime);
-	}
-
+    // Shape switching with number keys
+    if (input->IsKeyPressed(KeyCode::ONE))
+    {
+        SwitchShape(ShapeType::Cube);
+    }
+    else if (input->IsKeyPressed(KeyCode::TWO))
+    {
+        SwitchShape(ShapeType::Pyramid);
+    }
+    else if (input->IsKeyPressed(KeyCode::THREE))
+    {
+        SwitchShape(ShapeType::Rectangle);
+    }
 }
 
 void ShapeState::Render()
 {
-	// prepare gpu
-	mVertexShader.Bind();
-	mPixelShader.Bind();
+    // prepare gpu
+    mVertexShader.Bind();
+    mPixelShader.Bind();
 
-	// sync transform buffer
-	mTransformBuffer.BindVS(0);
+    // sync transform buffer
+    mTransformBuffer.BindVS(0);
 
-	//update the buffer data
-	Math::Matrix4 matWorld = Math::Matrix4::Identity;
-	Math::Matrix4 matView = mCamera.GetViewMatrix();
-	Math::Matrix4 matProjection = mCamera.GetProjectionMatrix();
-	Math::Matrix4 matFinal = matWorld * matView * matProjection;
-	Math::Matrix4 wvp = Math::Transpose(matFinal);
-	mTransformBuffer.Update(&wvp);
+    //update the buffer data
+    Math::Matrix4 matWorld = Math::Matrix4::Identity;
+    Math::Matrix4 matView = mCamera.GetViewMatrix();
+    Math::Matrix4 matProjection = mCamera.GetProjectionMatrix();
+    Math::Matrix4 matFinal = matWorld * matView * matProjection;
+    Math::Matrix4 wvp = Math::Transpose(matFinal);
+    mTransformBuffer.Update(&wvp);
 
-	// draw
-	mMeshBuffer.Render();
+    // draw
+    mMeshBuffer.Render();
 }
 
 void ShapeState::CreateShape()
 {
-	mMesh = MeshBuilder::CreateCubePC(1.0f);
-	mMesh=MeshBuilder::CreatePyramidPC(1.0f);
-	mMesh=MeshBuilder::CreateRectanglePC(1.0f, 1.0f,1.0f);
+    switch (mCurrentShape)
+    {
+    case ShapeType::Cube:
+        mMesh = MeshBuilder::CreateCubePC(1.0f);
+        break;
+    case ShapeType::Pyramid:
+        mMesh = MeshBuilder::CreatePyramidPC(1.0f);
+        break;
+    case ShapeType::Rectangle:
+        mMesh = MeshBuilder::CreateRectanglePC(1.0f, 0.5f, 1.5f);
+        break;
+    }
 }
 
+void ShapeState::SwitchShape(ShapeType type)
+{
+    if (mCurrentShape != type)
+    {
+        mCurrentShape = type;
+        CreateShape();
+        mMeshBuffer.Terminate();
+        mMeshBuffer.Initialize(mMesh);
+    }
+}
