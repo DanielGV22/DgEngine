@@ -92,8 +92,11 @@ void ShapeState::Render()
 
 void ShapeState::CreateShape()
 {
-	mMesh = MeshBuilder::CreateCubePC(1.0f);
-	mMesh=MeshBuilder::CreatePyramidPC(1.0f);
-	mMesh=MeshBuilder::CreateRectanglePC(1.0f, 1.0f,1.0f);
+	//mMesh = MeshBuilder::CreateCubePC(1.0f);
+	//mMesh=MeshBuilder::CreatePyramidPC(1.0f);
+	//mMesh=MeshBuilder::CreateRectanglePC(1.0f, 1.0f,1.0f);
+	//mMesh = MeshBuilder::CreatePlanePC(10, 10, 1.0f, true);
+	//mMesh = MeshBuilder::CreateCylinderPC(30, 3);
+	mMesh = MeshBuilder::CreateSpherePC(30, 30, 1.0f);
 }
 
