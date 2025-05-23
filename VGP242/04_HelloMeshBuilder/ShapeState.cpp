@@ -20,7 +20,7 @@ void ShapeState::Initialize()
 	mVertexShader.Initialize<VertexPX>(shaderFilePath);
 	mPixelShader.Initialize(shaderFilePath);
 
-	mTexture.Initialize(L"../../Assets/Textures/earth.jpg");
+	mTexture.Initialize(L"../../Assets/Textures/skysphere/space.jpg");
 	mSampler.Initialize(Sampler::Filter::Linear, Sampler::AddressMode::Wrap);
 }
 
