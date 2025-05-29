@@ -29,15 +29,14 @@ namespace
 		case WM_MBUTTONDOWN:
 		case WM_MBUTTONDBLCLK:
 		case WM_MBUTTONUP:
-		case WM_MOUSEHWHEEL:
 		case WM_MOUSEWHEEL:
+		case WM_MOUSEHWHEEL:
 			return true;
 		default:
 			break;
 		}
 		return false;
 	}
-
 	bool IsKeyboardMessage(UINT msg)
 	{
 		switch (msg)
@@ -45,8 +44,8 @@ namespace
 		case WM_CHAR:
 		case WM_KEYUP:
 		case WM_KEYDOWN:
-		case WM_SYSKEYDOWN:
 		case WM_SYSKEYUP:
+		case WM_SYSKEYDOWN:
 			return true;
 		default:
 			break;
@@ -62,10 +61,8 @@ namespace
 		{
 			return ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
 		}
-		return sWindowMessageHandler.ForwardMessage(hWnd, msg, wParam, lParam);
 
-
-		// does imgui want to capture the keyboard and is it a keyboard message
+		// does imgui want to capture key input and is it a key message
 		if (io.WantCaptureKeyboard && IsKeyboardMessage(msg))
 		{
 			return ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
@@ -76,6 +73,8 @@ namespace
 		{
 			return result;
 		}
+
+		return sWindowMessageHandler.ForwardMessage(hWnd, msg, wParam, lParam);
 	}
 }
 
@@ -96,6 +95,7 @@ void DebugUI::StaticInitialize(HWND window, bool docking, bool multiViewport)
 
 	auto device = GraphicsSystem::Get()->GetDevice();
 	auto context = GraphicsSystem::Get()->GetContext();
+
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX11_Init(device, context);
 
@@ -103,7 +103,7 @@ void DebugUI::StaticInitialize(HWND window, bool docking, bool multiViewport)
 }
 
 void DebugUI::StaticTerminate()
-{ 
+{
 	sWindowMessageHandler.Unhook();
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
@@ -111,21 +111,27 @@ void DebugUI::StaticTerminate()
 }
 
 void DebugUI::SetTheme(Theme theme)
-{ 
-	switch(theme)
+{
+	switch (theme)
 	{
-		case Theme::Classic:
-			ImGui::StyleColorsClassic();
-			break;
-		case Theme::light:
-			ImGui::StyleColorsLight();
-			break;
-		case Theme::Dark:
-			ImGui::StyleColorsDark();
-			break;
-		default:
-			ASSERT(false, "DebugUI: Invalid theme");
-			break;
+	case Theme::Classic:
+	{
+		ImGui::StyleColorsClassic();
+		break;
+	}
+	case Theme::Dark:
+	{
+		ImGui::StyleColorsDark();
+		break;
+	}
+	case Theme::Light:
+	{
+		ImGui::StyleColorsLight();
+		break;
+	}
+	default:
+		ASSERT(false, "DebugUI: invalid theme.");
+		break;
 	}
 }
 

@@ -5,7 +5,7 @@ namespace DgEngine::Graphics::DebugUI
 	enum class Theme
 	{
 		Classic,
-		light,
+		Light,
 		Dark,
 	};
 
