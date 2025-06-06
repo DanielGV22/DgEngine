@@ -32,5 +32,8 @@ namespace DgEngine::Graphics
 
 		// skyphere
 		static MeshPX CreateSkySpherePX(int slices, int rings, float radius);
+
+		// load obj
+		static MeshPX CreateObjPX(const std::filesystem::path& filePath, float scale);
 	};
 }
