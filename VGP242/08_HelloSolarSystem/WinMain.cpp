@@ -10,7 +10,7 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int )
 
 
 	App& myApp = MainApp();
-	myApp.AddState<SolarSystemState>("GameState");
+	myApp.AddState<GameState>("GameState");
 	myApp.Run(config);
 
 	return 0;
