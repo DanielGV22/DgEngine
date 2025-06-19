@@ -289,3 +289,5 @@ void GameState::UpdateCamera(float deltaTime)
         mCamera.Pitch(input->GetMouseMoveY() * turnSpeed * deltaTime);
     }
 }
+
+

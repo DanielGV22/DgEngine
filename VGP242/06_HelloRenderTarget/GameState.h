@@ -39,3 +39,6 @@ private:
 	DgEngine::Graphics::RenderTarget mRenderTarget;
 
 };
+ 
+
+

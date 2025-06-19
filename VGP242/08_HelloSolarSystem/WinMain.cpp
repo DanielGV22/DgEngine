@@ -6,7 +6,7 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int )
 {
 	
 	AppConfig config;
-	config.appName = L"Hello Simple Texture Effect";
+	config.appName = L"Hello Render Target";
 
 
 	App& myApp = MainApp();

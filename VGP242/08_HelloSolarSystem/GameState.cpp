@@ -1,228 +1,204 @@
-#include"GameState.h"
+
+#include "GameState.h"
+#include <ImGui/Inc/imgui.h>
+#include <array>
+#include <filesystem>
+#include <cmath>
 
 using namespace DgEngine;
 using namespace DgEngine::Graphics;
+using namespace DgEngine::Math;
 using namespace DgEngine::Input;
+
+static const std::array<const wchar_t*, GameState::PlanetCount> PlanetTextures = {
+    L"mercury.jpg", L"venus.jpg", L"earth.jpg", L"mars.jpg",
+    L"jupiter.jpg", L"saturn.jpg", L"uranus.jpg", L"neptune.jpg", L"pluto.jpg"
+};
+static const std::array<const char*, GameState::PlanetCount> PlanetNames = {
+    "Mercury","Venus","Earth","Mars",
+    "Jupiter","Saturn","Uranus","Neptune","Pluto"
+};
+static const std::array<float, GameState::PlanetCount> PlanetScales = {
+    0.383f, 0.949f, 1.0f, 0.532f,
+    11.21f, 9.45f, 4.01f, 3.88f, 0.186f
+};
+static constexpr float MaxPlanetScale = 10.50f; // largest planet scale (Jupiter)
 
 void GameState::Initialize()
 {
-    mCamera.SetPosition({ 0.0f, 1.0f, -3.0f });
-    mCamera.SetLookAt({ 0.0f, 0.0f, 0.0f });
-
-    mRenderTargetCamera.SetPosition({ 0.0f, 1.0f, -3.0f });
-    mRenderTargetCamera.SetLookAt({ 0.0f, 0.0f, 0.0f });
+    // camera
+    mCamera.SetPosition({ 0, 10, -20 });
+    mCamera.SetLookAt(Vector3::Zero);
+    mRenderTargetCamera = mCamera;
     mRenderTargetCamera.SetAspectRatio(1.0f);
 
-    // initialize gpu communication
-	mSimpleTextureEffect.Initialize();
+    // shaders
+    auto fx = std::filesystem::path{ L"../../Assets/Shaders/DoTexture.fx" };
+    mVertexShader.Initialize<VertexPX>(fx);
+    mPixelShader.Initialize(fx);
+    mSampler.Initialize(Sampler::Filter::Linear, Sampler::AddressMode::Wrap);
+    mTransformBuffer.Initialize(sizeof(Matrix4));
 
-    // initialize render object
-    MeshPX sphere = MeshBuilder::CreateSpherePX(60, 60, 1.0f);
-    mObject0.mesh.Initialize(sphere);
-    mObject0.textureId = TextureManager::Get()->LoadTexture(L"sun.jpg");
+    // meshes
+    MeshPX skyMesh = MeshBuilder::CreateSpherePX(60, 60, 100.0f);
+    mSkySphere.meshBuffer.Initialize(skyMesh);
+    mSkySphere.textureId = TextureManager::Get()->LoadTexture(L"space.jpg");
 
-   // mObject1.mesh.Initialize(sphere);
+    // Sun mesh
+    MeshPX sunMesh = MeshBuilder::CreateSpherePX(60, 60, 6.0f);
+    mSun.meshBuffer.Initialize(sunMesh);
+    mSun.textureId = TextureManager::Get()->LoadTexture(L"sun.jpg");
 
-    MeshPX thunderbird = MeshBuilder::CreateObjPX(L"../../Assets/Models/Thunderbird/Thunderbird.obj", 0.01f);
-    mObject1.mesh.Initialize(thunderbird);
-    mObject1.textureId = TextureManager::Get()->LoadTexture(L"../../Assets/Models/Thunderbird/space.jpg",false);
-    //mObject1.textureId = TextureManager::Get()->LoadTexture(L"earth.jpg");
-    mObject1.matWorld = Math::Matrix4::Translation({ 0.0f, 1.0f, 0.0f });
+    for (int i = 0; i < PlanetCount; ++i)
+    {
+        auto& p = mPlanets[i];
+        // Largest planet scale
+        constexpr float sunRadius = 6.0f; 
+        float maxPlanetRadius = sunRadius * 0.5f;
+        // relative size 
+        float frac = PlanetScales[i] / MaxPlanetScale;
+        float scaled = frac * maxPlanetRadius;
+        // smaller planets at least half the big ones
+        float minScale = maxPlanetRadius * 0.25f;
+        p.scale = std::max(scaled, minScale);
+        MeshPX planetMesh = MeshBuilder::CreateSpherePX(60, 60, p.scale);
+        p.meshBuffer.Initialize(planetMesh);
+        p.textureId = TextureManager::Get()->LoadTexture(PlanetTextures[i]);
+        p.orbitRadius = 5.0f + i * 3.0f;
+        p.orbitSpeed = 0.2f + 0.05f * i;
+        p.rotationSpeed = 1.0f + 0.2f * i;
+    }
 
+    // Moon scale relative to Earth's
+    {
+        constexpr float sunRadius = 6.0f;
+        float maxPlanetRadius = sunRadius * 0.5f;
+        mMoon.scale = maxPlanetRadius * 0.4f;
+    }
+    MeshPX moonMesh = MeshBuilder::CreateSpherePX(60, 60, mMoon.scale);
+    mMoon.meshBuffer.Initialize(moonMesh);
+    mMoon.textureId = TextureManager::Get()->LoadTexture(L"pluto.jpg");
 
-    constexpr uint32_t size = 512;
-    mRenderTarget.Initialize(size, size, RenderTarget::Format::RGBA_U32);
+    mRenderTarget.Initialize(512, 512, RenderTarget::Format::RGBA_U32);
 }
+
 void GameState::Terminate()
 {
     mRenderTarget.Terminate();
-    TextureManager::Get()->ReleaseTexture(mObject0.textureId);
-    TextureManager::Get()->ReleaseTexture(mObject1.textureId);
-    mObject0.mesh.Terminate();
-    mObject1.mesh.Terminate();
-	mSimpleTextureEffect.Terminate();
+    auto release = [&](Object& obj)
+        {
+            TextureManager::Get()->ReleaseTexture(obj.textureId);
+            obj.meshBuffer.Terminate();
+        };
+    release(mSkySphere);
+    release(mSun);
+    for (auto& p : mPlanets) release(p);
+    release(mMoon);
+    mTransformBuffer.Terminate();
+    mSampler.Terminate();
+    mPixelShader.Terminate();
+    mVertexShader.Terminate();
 }
-void GameState::Update(float deltaTime)
+
+void GameState::Update(float dt)
 {
-    UpdateCamera(deltaTime);
+    UpdateCamera(dt);
+    for (int i = 0; i < PlanetCount; ++i)
+    {
+        auto& p = mPlanets[i];
+        p.orbitAngle += p.orbitSpeed * dt * mGlobalSpeed;
+        p.rotationAngle += p.rotationSpeed * dt * mGlobalSpeed;
+        float x = std::cos(p.orbitAngle) * p.orbitRadius;
+        float z = std::sin(p.orbitAngle) * p.orbitRadius;
+        p.matWorld = Matrix4::RotationY(p.rotationAngle) * Matrix4::Translation({ x, 0, z });
+    }
+    {
+        const auto& earth = mPlanets[2];
+        Vector3 pos = GetTranslation(earth.matWorld);
+        float mx = std::cos(earth.orbitAngle * 4.0f) * (earth.scale + 0.5f);
+        float mz = std::sin(earth.orbitAngle * 4.0f) * (earth.scale + 0.5f);
+        mMoon.matWorld = Matrix4::Translation({ pos.x + mx, 0, pos.z + mz });
+    }
+    if (mSelectedPlanet >= 0 && mSelectedPlanet < PlanetCount)
+    {
+        Vector3 f = GetTranslation(mPlanets[mSelectedPlanet].matWorld);
+        mRenderTargetCamera.SetLookAt(f);
+    }
 }
 
 void GameState::Render()
 {
-    SimpleDraw::AddGroundPlane(10.0f, Colors::DarkGray);
+    RenderObject(mSkySphere, mCamera);
+    if (mShowRings)
+    {
+        for (int i = 0; i < PlanetCount; ++i)
+            SimpleDraw::AddGroundCircle(120, mPlanets[i].orbitRadius, Colors::Gray, Vector3::Zero);
+    }
     SimpleDraw::Render(mCamera);
 
-    // render to the render target
-	mSimpleTextureEffect.SetCamera(mRenderTargetCamera);
     mRenderTarget.BeginRender();
-	    mSimpleTextureEffect.Begin();
-	              mSimpleTextureEffect.Render(mObject0);
-	              mSimpleTextureEffect.Render(mObject1);
-        mSimpleTextureEffect.End();
+    if (mSelectedPlanet >= 0 && mSelectedPlanet < PlanetCount)
+    {
+        const Celestial& cp = mPlanets[mSelectedPlanet];
+        Object pCopy;
+        pCopy.meshBuffer = cp.meshBuffer;
+        pCopy.textureId = cp.textureId;
+        // Preview scaled up for full visibility
+        float previewScale = cp.scale * 2.0f;
+        pCopy.matWorld = Matrix4::Scaling(previewScale);
+        RenderObject(pCopy, mRenderTargetCamera);
+    }
     mRenderTarget.EndRender();
 
-    // render to the scene
-    mSimpleTextureEffect.SetCamera(mCamera);
-    mSimpleTextureEffect.Begin();
-           mSimpleTextureEffect.Render(mObject0);
-           mSimpleTextureEffect.Render(mObject1);
-    mSimpleTextureEffect.End();
-
+    RenderObject(mSun, mCamera);
+    for (auto& p : mPlanets) RenderObject(p, mCamera);
+    RenderObject(mMoon, mCamera);
 }
 
-bool gInvertValue = false;
-float gFloatVal = 0.0f;
-Math::Vector3 gV0 = Math::Vector3::Zero;
-Math::Vector3 gV1 = Math::Vector3::One;
-Math::Vector3 gV2 = Math::Vector3::XAxis;
-Color gDisplayColor = Colors::White;
-Color gColor = Colors::White;
-
-enum class Shape
+void GameState::RenderObject(const Object& obj, const Graphics::Camera& cam)
 {
-    None,
-    AABB,
-    AABBFilled,
-    Sphere,
-    GroundPlane,
-    GroundCircle,
-    Transform
-};
-const char* gShapeNames[] =
-{
-    "None",
-    "AABB",
-    "AABBFilled",
-    "Sphere",
-    "GroundPlane",
-    "GroundCircle",
-    "Transform"
-};
+    Matrix4 wvp = Transpose(obj.matWorld * cam.GetViewMatrix() * cam.GetProjectionMatrix());
+    mTransformBuffer.Update(&wvp);
+    mVertexShader.Bind();
+    mPixelShader.Bind();
+    mSampler.BindPS(0);
+    mTransformBuffer.BindVS(0);
+    TextureManager::Get()->BindPS(obj.textureId, 0);
+    obj.meshBuffer.Render();
+}
 
-Shape gCurrentShape = Shape::None;
 void GameState::DebugUI()
 {
-    ImGui::Begin("Debug", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-    ImGui::Text("Hello Yall");
-    ImGui::Checkbox("Invert Color", &gInvertValue);
-    ImGui::DragFloat("Float", &gFloatVal);
-    ImGui::DragFloat3("V0", &gV0.x, 0.1f);
-    ImGui::DragFloat3("V1", &gV1.x, 0.1f);
-    ImGui::DragFloat3("V2", &gV2.x, 0.1f);
-    ImGui::ColorEdit4("Color", &gColor.r);
-
-    if (gInvertValue)
+    ImGui::Begin("Solar System Controls");
+    ImGui::Checkbox("Show Orbit Rings", &mShowRings);
+    ImGui::SliderFloat("Global Speed", &mGlobalSpeed, 0.1f, 5.0f);
+    ImGui::Combo("Focus Planet", &mSelectedPlanet, PlanetNames.data(), PlanetCount);
+    if (mSelectedPlanet >= 0 && mSelectedPlanet < PlanetCount)
     {
-        gDisplayColor = Color(1.0f - gColor.r, 1.0f - gColor.g, 1.0f - gColor.b, gColor.a);
+        auto& p = mPlanets[mSelectedPlanet];
+        ImGui::Text(PlanetNames[mSelectedPlanet]);
+        ImGui::SliderFloat("Orbit Speed", &p.orbitSpeed, 0.0f, 2.0f);
+        ImGui::SliderFloat("Rotation Speed", &p.rotationSpeed, 0.0f, 5.0f);
     }
-    else
-    {
-        gDisplayColor = gColor;
-    }
-
-    int currentShape = (int)gCurrentShape;
-    if (ImGui::Combo("Shape", &currentShape, gShapeNames, std::size(gShapeNames)))
-    {
-        gCurrentShape = (Shape)currentShape;
-    }
-
-
-    switch (gCurrentShape)
-    {
-    case Shape::None: break;
-    case Shape::AABB:
-    {
-        // ImGui::DragFloat("Min");
-        // ImGui::DragFloat("Max");
-        SimpleDraw::AddAABB(gV0 + gV2, gV1 + gV2, gDisplayColor);
-        break;
-    }
-    case Shape::AABBFilled:
-    {
-        // ImGui::DragFloat("Min");
-        // ImGui::DragFloat("Max");
-        SimpleDraw::AddFilledAABB(gV0 + gV2, gV1 + gV2, gDisplayColor);
-        break;
-    }
-    case Shape::Sphere:
-    {
-        // ImGui::DragFloat("Min");
-        // ImGui::DragFloat("Max");
-        SimpleDraw::AddSphere(60, 60, gFloatVal, gDisplayColor, gV0 + gV2);
-        break;
-    }
-    case Shape::GroundPlane:
-    {
-        // ImGui::DragFloat("Min");
-        // ImGui::DragFloat("Max");
-        SimpleDraw::AddGroundPlane(gFloatVal, gDisplayColor);
-        break;
-    }
-    case Shape::GroundCircle:
-    {
-        // ImGui::DragFloat("Min");
-        // ImGui::DragFloat("Max");
-        SimpleDraw::AddGroundCircle(60, gFloatVal, gDisplayColor, gV0 + gV2);
-        break;
-    }
-    case Shape::Transform:
-    {
-        // ImGui::DragFloat("Min");
-        // ImGui::DragFloat("Max");
-        SimpleDraw::AddTransform(Math::Matrix4::Translation(gV2));
-        break;
-    }
-    }
-
-    ImGui::Separator();
-    ImGui::Text("RenderTarget");
-    ImGui::Image(
-        mRenderTarget.GetRawData(),
-        { 128, 128 },
-        { 0, 0 },
-        { 1, 1 },
-        { 1, 1, 1, 1 },
-        { 1, 1, 1, 1 }
-    );
-
+    ImGui::Text("Preview:"); ImGui::Image(mRenderTarget.GetRawData(), { 256,256 });
     ImGui::End();
 }
 
-
-void GameState::UpdateCamera(float deltaTime)
+void GameState::UpdateCamera(float dt)
 {
-    Input::InputSystem* input = Input::InputSystem::Get();
-    const float moveSpeed = input->IsKeyDown(KeyCode::LSHIFT) ? 10.0f : 1.0f;
-    const float turnSpeed = 0.1f;
-
-    if (input->IsKeyDown(KeyCode::W))
+    auto in = InputSystem::Get();
+    float speed = in->IsKeyDown(KeyCode::LSHIFT) ? 10.0f : 1.0f;
+    float turn = 0.1f;
+    if (in->IsKeyDown(KeyCode::W)) mCamera.Walk(speed * dt);
+    if (in->IsKeyDown(KeyCode::S)) mCamera.Walk(-speed * dt);
+    if (in->IsKeyDown(KeyCode::D)) mCamera.Strafe(speed * dt);
+    if (in->IsKeyDown(KeyCode::A)) mCamera.Strafe(-speed * dt);
+    if (in->IsKeyDown(KeyCode::E)) mCamera.Rise(speed * dt);
+    if (in->IsKeyDown(KeyCode::Q)) mCamera.Rise(-speed * dt);
+    if (in->IsMouseDown(MouseButton::RBUTTON))
     {
-        mCamera.Walk(moveSpeed * deltaTime);
-    }
-    if (input->IsKeyDown(KeyCode::S))
-    {
-        mCamera.Walk(-moveSpeed * deltaTime);
-    }
-    if (input->IsKeyDown(KeyCode::D))
-    {
-        mCamera.Strafe(moveSpeed * deltaTime);
-    }
-    if (input->IsKeyDown(KeyCode::A))
-    {
-        mCamera.Strafe(-moveSpeed * deltaTime);
-    }
-    if (input->IsKeyDown(KeyCode::E))
-    {
-        mCamera.Rise(moveSpeed * deltaTime);
-    }
-    if (input->IsKeyDown(KeyCode::Q))
-    {
-        mCamera.Rise(-moveSpeed * deltaTime);
-    }
-
-    if (input->IsMouseDown(MouseButton::RBUTTON))
-    {
-        mCamera.Yaw(input->GetMouseMoveX() * turnSpeed * deltaTime); // INVERT IF U WANT
-        mCamera.Pitch(input->GetMouseMoveY() * turnSpeed * deltaTime);
+        mCamera.Yaw(in->GetMouseMoveX() * turn * dt);
+        mCamera.Pitch(in->GetMouseMoveY() * turn * dt);
     }
 }
+
