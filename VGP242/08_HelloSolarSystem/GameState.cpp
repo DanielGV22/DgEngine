@@ -20,14 +20,14 @@ static const std::array<const char*, GameState::PlanetCount> PlanetNames = {
 };
 static const std::array<float, GameState::PlanetCount> PlanetScales = {
     0.383f, 0.949f, 1.0f, 0.532f,
-    11.21f, 9.45f, 4.01f, 3.88f, 0.186f
+    10.5f, 9.45f, 4.01f, 3.88f, 0.186f
 };
 static constexpr float MaxPlanetScale = 10.50f; // largest planet scale (Jupiter)
 
 void GameState::Initialize()
 {
     // camera
-    mCamera.SetPosition({ 0, 10, -20 });
+    mCamera.SetPosition({ 0, 0, -20 });
     mCamera.SetLookAt(Vector3::Zero);
     mRenderTargetCamera = mCamera;
     mRenderTargetCamera.SetAspectRatio(1.0f);
@@ -40,7 +40,7 @@ void GameState::Initialize()
     mTransformBuffer.Initialize(sizeof(Matrix4));
 
     // meshes
-    MeshPX skyMesh = MeshBuilder::CreateSpherePX(60, 60, 100.0f);
+    MeshPX skyMesh = MeshBuilder::CreateSkySpherePX(60, 60, 100.0f);
     mSkySphere.meshBuffer.Initialize(skyMesh);
     mSkySphere.textureId = TextureManager::Get()->LoadTexture(L"space.jpg");
 
@@ -143,10 +143,17 @@ void GameState::Render()
         Object pCopy;
         pCopy.meshBuffer = cp.meshBuffer;
         pCopy.textureId = cp.textureId;
-        // Preview scaled up for full visibility
-        float previewScale = cp.scale * 2.0f;
-        pCopy.matWorld = Matrix4::Scaling(previewScale);
-        RenderObject(pCopy, mRenderTargetCamera);
+        if (PlanetScales[mSelectedPlanet] < 6)
+        {
+            float previewScale = cp.scale * 2.0f;
+            pCopy.matWorld = Matrix4::Scaling(previewScale);
+            RenderObject(pCopy, mRenderTargetCamera);
+        }
+        else {
+            float previewScale = cp.scale * .5f;
+            pCopy.matWorld = Matrix4::Scaling(previewScale);
+            RenderObject(pCopy, mRenderTargetCamera);
+        }
     }
     mRenderTarget.EndRender();
 
