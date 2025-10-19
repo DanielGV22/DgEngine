@@ -18,7 +18,11 @@ private:
 
 
 	DgEngine::Graphics::Camera mCamera;
+	DgEngine::Graphics::DirectionalLight mDirectionalLight;
+
 	DgEngine::Graphics::RenderObject mRenderObject;
+	DgEngine::Graphics::StandardEffect mStandardEffect;
+
 
 
 };

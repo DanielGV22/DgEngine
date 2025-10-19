@@ -11,6 +11,7 @@ using namespace DgEngine::Graphics;
 void StandardEffect::Initialize(const std::filesystem::path& path)
 {
 	mTransformBuffer.Initialize();
+	mLightBuffer.Initialize();
 
 	mVertexShader.Initialize<Vertex>(path);
 	mPixelShader.Initialize(path);
@@ -20,6 +21,7 @@ void StandardEffect::Terminate()
 {
 	mPixelShader.Terminate();
 	mVertexShader.Terminate();
+	mLightBuffer.Terminate();
 	mTransformBuffer.Terminate();
 }
 	
@@ -29,6 +31,8 @@ void StandardEffect::Begin()
 	mPixelShader.Bind();
 
 	mTransformBuffer.BindVS(0);
+	mLightBuffer.BindVS(1);
+	mLightBuffer.BindPS(1);
 }
 void StandardEffect::End()
 {
@@ -44,8 +48,11 @@ void StandardEffect::Render(const RenderObject& renderObject)
 
 	TransformData data;
 	data.wvp = Math::Transpose(matFinal);
+	data.world = Math::Transpose(matWorld);
+	data.viewPosition = mCamera->GetPosition();
 	mTransformBuffer.Update(data);
 
+	mLightBuffer.Update(*mDirectionalLight);
 
 	renderObject.meshBuffer.Render();
 }
@@ -55,6 +62,11 @@ void StandardEffect::SetCamera(const Camera& camera)
 	mCamera = &camera;
 }
 	
+void StandardEffect::SetDirectionalLight(const DirectionalLight& directionalLight)
+{
+	mDirectionalLight = &directionalLight;
+}
+
 void StandardEffect::DebugUI() 
 {
 

@@ -24,13 +24,13 @@ namespace DgEngine::Graphics
 	template<class DataType> 
 	class TypedConstantBuffer final : public ConstantBuffer
 	{
-	public:
+	 public:
 		void Initialize()
 		{
-			static_assert(sizeof(DataTYpe) % 16 == 0, "Data must be 16 byte alligned");
+			static_assert(sizeof(DataType) % 16 == 0, "Data must be 16 byte alligned");
 			ConstantBuffer::Initialize(sizeof(DataType));
 		}
-		void Update(const DaataType& data) const
+		void Update(const DataType& data) const
 		{
 			ConstantBuffer::Update(&data);
 		}

@@ -9,6 +9,7 @@
 #include "Camera.h"
 #include "ConstantBuffer.h"
 #include "DebugUI.h"
+#include "DirectionalLight.h"
 #include "MeshBuffer.h"
 #include "MeshBuilder.h"
 #include "MeshTypes.h"
