@@ -4,6 +4,8 @@
 #include "PixelShader.h"
 #include "VertexShader.h"
 #include "DirectionalLight.h"
+#include "Material.h"
+#include "Sampler.h"
 
 namespace DgEngine::Graphics
 {
@@ -35,17 +37,35 @@ namespace DgEngine::Graphics
 			float padding = 0.0f; // padding to maintain 16 byte alignment
 		};
 
+		struct SettingsData
+		{
+			int useDiffuseMap = 1;
+			int useSpecMap = 1;
+			int useNormalMap = 1;
+			int useBumpMap = 1;
+			float bumpWeight = 0.1f;
+			float padding[3] = { 0.0f }; // padding to maintain 16 byte alignment
+		};
+
 		using TransformBuffer = TypedConstantBuffer<TransformData>;
 		TransformBuffer mTransformBuffer;
 
 		using LightBuffer = TypedConstantBuffer<DirectionalLight>;
 		LightBuffer mLightBuffer;
 
+		using MaterialBuffer = TypedConstantBuffer<Material>;
+		MaterialBuffer mMaterialBuffer;
+
+		using SettingsBuffer = TypedConstantBuffer<SettingsData>;
+		SettingsBuffer mSettingsBuffer;
+
 		VertexShader mVertexShader;
 		PixelShader  mPixelShader;
+		Sampler      mSampler;
 
 		const Camera* mCamera = nullptr;
 		const DirectionalLight* mDirectionalLight = nullptr;
+		SettingsData mSettingsData;
 		
 
 
