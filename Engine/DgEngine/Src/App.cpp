@@ -9,80 +9,93 @@ using namespace DgEngine::Input;
 
 void App::Run(const AppConfig& config)
 {
-	LOG("App Started");
+    LOG("App Started");
 
-	Window myWindow;
-	myWindow.Initialize(
-		GetModuleHandle(nullptr),
-		config.appName,
-		config.winWidth,
-	    config.winHeight
-	);
-	auto handle = myWindow.GetWindowHandle();
-	GraphicsSystem::StaticInitialize(handle, false);
-	InputSystem::StaticInitialize(handle);
+    // Initialize everything
+    Window myWindow;
+    myWindow.Initialize(
+        GetModuleHandle(nullptr),
+        config.appName,
+        config.winWidth,
+        config.winHeight
+    );
+    auto handle = myWindow.GetWindowHandle();
+    GraphicsSystem::StaticInitialize(handle, false);
+    InputSystem::StaticInitialize(handle);
+    DebugUI::StaticInitialize(handle, false, true);
+    SimpleDraw::StaticInitialize(config.maxVertexCount);
+    TextureManager::StaticInitialize(L"../../Assets/Textures");
 
+    // last step before running
+    ASSERT(mCurrentState != nullptr, "App: need an app state to run.");
+    mCurrentState->Initialize();
 
-	// last step before running
-	ASSERT(mCurrentState != nullptr, "App: need an app state to run");
-	mCurrentState->Initialize();
+    // Process updates
 
-	// Process updates
+    InputSystem* input = InputSystem::Get();
+    mRunning = true;
+    while (mRunning)
+    {
+        myWindow.ProcessMessage();
+        input->Update();
 
-	InputSystem* input= InputSystem::Get();
-	mRunning = true;
-	while (mRunning) 
-	{
-		myWindow.ProcessMessage();
-		input->Update();
+        if (!myWindow.IsActive() || input->IsKeyPressed(KeyCode::ESCAPE))
+        {
+            Quit();
+            continue;
+        }
 
-		if (!myWindow.IsActive() || input->IsKeyPressed(KeyCode::ESCAPE)) 
-		{
-			Quit();
-			continue;
-		}
+        if (mNextState != nullptr)
+        {
+            mCurrentState->Terminate();
+            mCurrentState = std::exchange(mNextState, nullptr);
+            mCurrentState->Initialize();
+            mNextState = nullptr;
+        }
 
-		if(mNextState != nullptr)
-		{
-			mCurrentState->Terminate();
-			mCurrentState = std::exchange(mNextState, nullptr);
-			mCurrentState->Initialize();
-		}
-
-		float deltaTime = TimeUtil::GetDeltaTime();
- #if defined(_DEBUG)
-		if (deltaTime < 0.5f)// primarily for handling breakpoints 
+        float deltaTime = TimeUtil::GetDeltaTime();
+#if defined(_DEBUG)
+        if (deltaTime < 0.5f) // primarily for handling breakpoints
 #endif
-		{
-			mCurrentState->Update(deltaTime);
-		}
+        {
+            mCurrentState->Update(deltaTime);
+        }
 
-		GraphicsSystem* gs= GraphicsSystem::Get();
-		gs->BeginRender();
-		    mCurrentState->Render();
-		gs->EndRender();
-	}
+        GraphicsSystem* gs = GraphicsSystem::Get();
+        gs->BeginRender();
+        mCurrentState->Render();
+        DebugUI::BeginRender();
+        mCurrentState->DebugUI();
+        DebugUI::EndRender();
+        gs->EndRender();
+    }
 
-	// Terminate everything
-	LOG("App Quit");
-	mCurrentState->Terminate();
+    // Terminate everything
+    LOG("App Quit");
+    mCurrentState->Terminate();
 
-	InputSystem::StaticTerminate();
-	GraphicsSystem::StaticTerminate();
-	myWindow.Terminate();
+    TextureManager::StaticTerminate();
+    SimpleDraw::StaticTerminate();
+    DebugUI::StaticTerminate();
+    InputSystem::StaticTerminate();
+    GraphicsSystem::StaticTerminate();
+    myWindow.Terminate();
 }
 
-void App::Quit()
+void DgEngine::App::Quit()
 {
-	mRunning = false;
-
+    mRunning = false;
 }
 
-void App::ChangeState(const std::string& stateName)
+void DgEngine::App::ChangeState(const std::string& stateName)
 {
-	auto iter = mAppStates.find(stateName);
-	if(iter != mAppStates.end())
-	{
-		mNextState = iter->second.get();
-	}
+    auto iter = mAppStates.find(stateName);
+    if (iter != mAppStates.end())
+    {
+        mNextState = iter->second.get();
+    }
+    else
+    {
+        LOG("App: State %s not found", stateName.c_str());
+    }
 }

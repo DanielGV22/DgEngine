@@ -8,7 +8,7 @@ namespace DgEngine::Graphics
 		static void UnbindPS(uint32_t slot);
 
 		Texture() = default;
-		~Texture();
+		virtual ~Texture();
 
 		// delete copy
 		Texture(const Texture&) = delete;
@@ -18,14 +18,14 @@ namespace DgEngine::Graphics
 		Texture(Texture&& rhs) noexcept;
 		Texture& operator=(Texture&& rhs) noexcept;
 
-		void Initialize(const std::filesystem::path& fileName);
-		void Terminate();
+		virtual void Initialize(const std::filesystem::path& fileName);
+		virtual void Terminate();
 
-		void BindPS(uint32_t slot) const;
 		void BindVS(uint32_t slot) const;
+		void BindPS(uint32_t slot) const;
 
 		void* GetRawData() const;
-	private:
+	protected:
 		ID3D11ShaderResourceView* mShaderResourceView = nullptr;
 	};
 }

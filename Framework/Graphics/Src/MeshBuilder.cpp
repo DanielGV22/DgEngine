@@ -280,6 +280,43 @@ MeshPX MeshBuilder::CreatePlanePX(int numRows, int numColums, float spacing, boo
 	return mesh;
 }
 
+Mesh MeshBuilder::CreatePlane(int numRows, int numColums, float spacing, bool horizontal)
+{
+	Mesh mesh;
+
+	const float hpw = static_cast<float>(numColums) * spacing * 0.5f;
+	const float hph = static_cast<float>(numRows) * spacing * 0.5f;
+	const float uInc = 1.0f / static_cast<float>(numColums);
+	const float vInc = 1.0f / static_cast<float>(numRows);
+
+	float w = -hpw;
+	float h = -hph;
+	float u = 0.0f;
+	float v = 1.0f;
+
+	Math::Vector3 norm = (horizontal) ? Math::Vector3::YAxis : -Math::Vector3::ZAxis;
+	Math::Vector3 tan = Math::Vector3::XAxis; 
+
+	for (int r = 0; r <= numRows; ++r)
+	{
+		for (int c = 0; c <= numColums; ++c)
+		{
+			Math::Vector3 pos = (horizontal) ? Math::Vector3{ w, 0.0f, h } : Math::Vector3{ w, h, 0.0f };
+			mesh.vertices.push_back({ pos , norm, tan, { u , v} });
+			w += spacing;
+			u += uInc;
+		}
+		w = -hpw;
+		h += spacing;
+		u = 0.0f;
+		v -= vInc;
+	}
+
+	CreatePlaneIndices(mesh.indices, numRows, numColums);
+
+	return mesh;
+}
+
 MeshPC MeshBuilder::CreateCylinderPC(int slices, int rings)
 {
 	 MeshPC mesh;
@@ -379,6 +416,47 @@ MeshPX MeshBuilder::CreateSpherePX(int slices, int rings, float radius)
 	 return mesh;
 }
 
+Mesh MeshBuilder::CreateSphere(int slices, int rings, float radius)
+{
+	Mesh mesh;
+
+
+	float vertRotation = Math::Constants::Pi / static_cast<float>(rings);
+	float horzRotation = Math::Constants::TwoPi / static_cast<float>(slices);
+
+	float uStep = 1.0f / static_cast<float>(slices);
+	float vStep = 1.0f / static_cast<float>(rings);
+
+	for (int r = 0; r <= rings; ++r)
+	{
+		float ring = static_cast<float>(r);
+		float phi = vertRotation * ring;
+		for (int s = 0; s <= slices; ++s)
+		{
+			float slice = static_cast<float>(s);
+			float rotation = horzRotation * slice;
+
+			float u = (uStep * slice);
+			float v = (vStep * ring);
+
+			Math::Vector3 pos = { 
+				radius * sin(rotation) * sin(phi),
+				radius * cos(phi),
+				radius * cos(rotation) * sin(phi) };
+			Math::Vector3 norm = Math::Normalize(pos);
+			Math::Vector3 tan = abs(Math::Dot(norm, Math::Vector3::YAxis)) < 0.999f ?
+				Math::Normalize({ -pos.z, 0.0f, pos.x }) : Math::Vector3::XAxis;
+
+			mesh.vertices.push_back({ pos, norm, tan, {u,v} });
+		}
+	}
+
+	CreatePlaneIndices(mesh.indices, rings, slices);
+
+	return mesh;
+}
+
+
 MeshPX MeshBuilder::CreateSkySpherePX(int slices, int rings, float radius)
 {
 	MeshPX mesh;
@@ -412,6 +490,92 @@ MeshPX MeshBuilder::CreateSkySpherePX(int slices, int rings, float radius)
 	}
 
 	CreatePlaneIndices(mesh.indices, rings, slices);
+
+	return mesh;
+}
+
+MeshPX MeshBuilder::CreateObjPX(const std::filesystem::path& filePath, float scale)
+{
+	MeshPX mesh;
+	FILE* file = nullptr;
+	fopen_s(&file, filePath.u8string().c_str(), "r");
+	ASSERT(file != nullptr, "MeshBuilder: can't open file %s", filePath.u8string().c_str());
+
+	// read in file
+	std::vector<Math::Vector3> positions;
+	std::vector<Math::Vector2> uvCoords;
+	std::vector<uint32_t> positionIndices;
+	std::vector<uint32_t> uvIndices;
+
+	while (true)
+	{
+		char buffer[128];
+		int result = fscanf_s (file, "%s", buffer,(uint32_t)std::size(buffer));
+		if (result == EOF)
+		{
+			break;
+		}
+		if (strcmp (buffer, "v") == 0)
+		{
+			float x, y, z = 0.0f;
+			fscanf_s(file, "%f %f %f", &x, &y, &z);
+			positions.push_back({ x, y, z });
+		}
+		else if (strcmp(buffer, "vt") == 0)
+		{
+			float u, v = 0.0f;
+			fscanf_s(file, "%f %f", &u, &v);
+			uvCoords.push_back({ u,1.0f - v });
+		}
+		else if (strcmp(buffer, "f") == 0)
+		{
+			uint32_t p[4];
+			uint32_t uv[4];
+			int count = fscanf_s(file, "%d/%d/%*d %d/%d/%*d %d/%d/%*d  %d/%d/%*d\n", &p[0], &uv[0], & p[1], &uv[1], & p[2], &uv[2],&p[3], &uv[3]);
+			if (count % 3 == 0)
+			{
+				for (uint32_t i = 0; i < 3; i++)
+				{
+					positionIndices.push_back(p[i] - 1);
+					uvIndices.push_back(uv[i] - 1);
+
+				}
+			}
+			else
+			{
+				// triangle 1
+				positionIndices.push_back(p[0] - 1);
+				positionIndices.push_back(p[1] - 1);
+				positionIndices.push_back(p[2] - 1);
+				// triangle 2
+				positionIndices.push_back(p[0] - 1);
+				positionIndices.push_back(p[2] - 1);
+				positionIndices.push_back(p[3] - 1);
+				// triangle 1
+				uvIndices.push_back(uv[0] - 1);
+				uvIndices.push_back(uv[1] - 1);
+				uvIndices.push_back(uv[2] - 1);
+				//triangle 2
+				uvIndices.push_back(uv[0] - 1);
+				uvIndices.push_back(uv[2] - 1);
+				uvIndices.push_back(uv[3] - 1);
+			}
+		}
+	}
+	fclose(file);
+	mesh.vertices.resize(positions.size());
+	for (uint32_t i = 0; i < positions.size(); ++i)
+	{
+		mesh.vertices[i].position = positions[i]* scale;
+	}
+	if (uvCoords.size() > 0)
+	{
+		for (uint32_t i = 0; i < uvIndices.size(); ++i)
+		{
+			mesh.vertices[positionIndices[i]].uvCoord = uvCoords[uvIndices[i]];
+		}
+	}
+	mesh.indices = std::move(positionIndices);
 
 	return mesh;
 }
