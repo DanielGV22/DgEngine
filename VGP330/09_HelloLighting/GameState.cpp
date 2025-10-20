@@ -4,52 +4,69 @@ using namespace DgEngine;
 using namespace DgEngine::Graphics;
 using namespace DgEngine::Input;
 
-
 void GameState::Initialize()
 {
-    mCamera.SetPosition({ 0.0f, 1.0f, -3.0f });
+    mCamera.SetPosition({ 0.0f, 1.0f, -6.0f });
     mCamera.SetLookAt({ 0.0f, 0.0f, 0.0f });
 
-	mDirectionalLight.direction = Math::Normalize({ 1.0f, -1.0f, 1.0f });
+    // Light setup
+    mDirectionalLight.direction = Math::Normalize({ 1.0f, -1.0f, 1.0f });
     mDirectionalLight.ambient = { 0.4f, 0.4f, 0.4f, 1.0f };
-	mDirectionalLight.diffuse = { 0.8f, 0.8f, 0.8f, 1.0f };
-	mDirectionalLight.specular = { 1.0f, 1.0f, 1.0f, 1.0f };
+    mDirectionalLight.diffuse = { 0.8f, 0.8f, 0.8f, 1.0f };
+    mDirectionalLight.specular = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-    Mesh mesh = MeshBuilder::CreateSphere(30, 30, 1.0f);
-    mRenderObject.meshBuffer.Initialize(mesh);
-	TextureManager* tm = TextureManager::Get();
-	mRenderObject.diffuseMapId = tm->LoadTexture("earth.jpg");
-	mRenderObject.specMapId = tm->LoadTexture("earth_spec.jpg");
-	mRenderObject.normalMapId = tm->LoadTexture("earth_normal.jpg");
-	mRenderObject.bumpMapId = tm->LoadTexture("earth_bump.jpg");
+    auto tm = TextureManager::Get();
 
+    //  Earth
+    {
+        Mesh mesh = MeshBuilder::CreateSphere(30, 30, 1.0f);
+        mEarth.meshBuffer.Initialize(mesh);
+        mEarth.diffuseMapId = tm->LoadTexture("earth.jpg");
+        mEarth.specMapId = tm->LoadTexture("earth_spec.jpg");
+        mEarth.normalMapId = tm->LoadTexture("earth_normal.jpg");
+        mEarth.bumpMapId = tm->LoadTexture("earth_bump.jpg");
+        mEarth.transform.position = { -1.5f, 0.0f, 0.0f }; // move slightly left
+    }
+
+    //  Mars
+    {
+        Mesh mesh = MeshBuilder::CreateSphere(30, 30, 0.6f);
+        mMars.meshBuffer.Initialize(mesh);
+        mMars.diffuseMapId = tm->LoadTexture("Mars.png");
+        mMars.normalMapId = tm->LoadTexture("Mars-normal.png");
+        mMars.bumpMapId = tm->LoadTexture("Mars-bump.png");
+        mMars.transform.position = { 2.5f, 0.0f, 0.0f }; 
+    }
 
     std::filesystem::path shaderFile = L"../../Assets/Shaders/Standard.fx";
-	mStandardEffect.Initialize(shaderFile);
-	mStandardEffect.SetCamera(mCamera);
-	mStandardEffect.SetDirectionalLight(mDirectionalLight);
+    mStandardEffect.Initialize(shaderFile);
+    mStandardEffect.SetCamera(mCamera);
+    mStandardEffect.SetDirectionalLight(mDirectionalLight);
 }
+
 void GameState::Terminate()
 {
-  
-	mStandardEffect.Terminate();
-    mRenderObject.Terminate();
- 
+    mEarth.Terminate();
+    mMars.Terminate();
+    mStandardEffect.Terminate();
 }
+
 void GameState::Update(float deltaTime)
 {
     UpdateCamera(deltaTime);
 }
+
 void GameState::Render()
 {
     SimpleDraw::AddGroundPlane(10.0f, Colors::DarkGray);
     SimpleDraw::Render(mCamera);
 
-	mStandardEffect.Begin();
-	mStandardEffect.Render(mRenderObject);
-	mStandardEffect.End();
-
+    mStandardEffect.Begin();
+    mStandardEffect.Render(mEarth);
+    mStandardEffect.Render(mMars);
+    mStandardEffect.End();
 }
+
 
 
 void GameState::DebugUI()
@@ -69,11 +86,11 @@ void GameState::DebugUI()
     if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen))
     {
       
-        ImGui::ColorEdit4("Emmisive#Material", &mRenderObject.material.emissive.r);
-        ImGui::ColorEdit4("Ambient#Material", &mRenderObject.material.ambient.r);
-        ImGui::ColorEdit4("Diffuse#Material", &mRenderObject.material.diffuse.r);
-        ImGui::ColorEdit4("Specular#Material", &mRenderObject.material.specular.r);
-        ImGui::DragFloat("Shininess#Material", &mRenderObject.material.shininess, 0.01f, 0.0f, 10000.0f);
+        ImGui::ColorEdit4("Emmisive#Material", &mEarth.material.emissive.r);
+        ImGui::ColorEdit4("Ambient#Material", &mEarth.material.ambient.r);
+        ImGui::ColorEdit4("Diffuse#Material", &mEarth.material.diffuse.r);
+        ImGui::ColorEdit4("Specular#Material", &mEarth.material.specular.r);
+        ImGui::DragFloat("Shininess#Material", &mEarth.material.shininess, 0.01f, 0.0f, 10000.0f);
     }
 
 	mStandardEffect.DebugUI();
@@ -116,7 +133,7 @@ void GameState::UpdateCamera(float deltaTime)
 
     if (input->IsMouseDown(MouseButton::RBUTTON))
     {
-        mCamera.Yaw(input->GetMouseMoveX() * turnSpeed * deltaTime); // INVERT IF U WANT
+        mCamera.Yaw(input->GetMouseMoveX() * turnSpeed * deltaTime); 
         mCamera.Pitch(input->GetMouseMoveY() * turnSpeed * deltaTime);
     }
 }
