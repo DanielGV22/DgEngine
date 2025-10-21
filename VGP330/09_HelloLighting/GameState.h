@@ -20,7 +20,8 @@ private:
 	DgEngine::Graphics::Camera mCamera;
 	DgEngine::Graphics::DirectionalLight mDirectionalLight;
 
-	DgEngine::Graphics::RenderObject mRenderObject;
+	DgEngine::Graphics::RenderObject mEarth;
+	DgEngine::Graphics::RenderObject mMars;
 	DgEngine::Graphics::StandardEffect mStandardEffect;
 
 
