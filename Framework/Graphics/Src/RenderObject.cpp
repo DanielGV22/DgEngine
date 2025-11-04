@@ -26,13 +26,28 @@ void RenderGroup::Initialize(const std::filesystem::path& modelFilePath)
 	const Model* model = ModelManager::Get()->GetModel(modelId);
 	ASSERT(model != nullptr, "RenderGroup: Model %s could not be loaded.", modelFilePath.u8string().c_str());
 
+	auto TryLoadTexture = [](const std::string& textureName) -> TextureId
+	{
+			if (textureName.empty())
+			{
+			return 0;
+		    }
+		return TextureManager::Get()->LoadTexture(textureName, false);
+	};
+
 	for (const Model::MeshData& meshData : model->meshData)
 	{
 		RenderObject& RenderObject = renderObjects.emplace_back();
 		RenderObject.meshBuffer.Initialize(meshData.mesh);
 		if (meshData.materialIndex < model->materialData.size())
 		{
-			
+			const Model::MaterialData& materialData = model->materialData[meshData.materialIndex];
+			RenderObject.material = materialData.material;
+
+			RenderObject.diffuseMapId = TryLoadTexture(materialData.diffuseMapName);
+			RenderObject.specMapId = TryLoadTexture(materialData.specMapName);
+			RenderObject.normalMapId = TryLoadTexture(materialData.normalMapName);
+			RenderObject.bumpMapId = TryLoadTexture(materialData.bumpMapName);
 		}
 	}
 }
