@@ -8,8 +8,7 @@ void GameState::Initialize()
 {
     mCamera.SetPosition({ 0.0f, 1.0f, -6.0f });
     mCamera.SetLookAt({ 0.0f, 0.0f, 0.0f });
-
-    // Light setup...
+  
     mDirectionalLight.direction = Math::Normalize({ 1.0f, -1.0f, 1.0f });
     mDirectionalLight.ambient = { 0.4f, 0.4f, 0.4f, 1.0f };
     mDirectionalLight.diffuse = { 0.8f, 0.8f, 0.8f, 1.0f };
