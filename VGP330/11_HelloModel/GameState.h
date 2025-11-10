@@ -21,6 +21,8 @@ private:
 	DgEngine::Graphics::DirectionalLight mDirectionalLight;
 
 	DgEngine::Graphics::RenderGroup mCharacter;
+	DgEngine::Graphics::RenderGroup mCharacter02;
+	DgEngine::Graphics::RenderGroup mCharacter03;
 	DgEngine::Graphics::StandardEffect mStandardEffect;
 
 
