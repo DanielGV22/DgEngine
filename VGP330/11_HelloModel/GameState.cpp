@@ -18,6 +18,9 @@ void GameState::Initialize()
     mCharacter02.Initialize("Character02/Character02.model");
     mCharacter03.Initialize("Character03/Character03.model");
 
+    mCharacter02.transform.position.x = -2;
+    mCharacter03.transform.position.x = 2;
+
     auto tm = TextureManager::Get();
 
     std::filesystem::path shaderFile = L"../../Assets/Shaders/Standard.fx";
