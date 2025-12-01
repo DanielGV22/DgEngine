@@ -18,6 +18,7 @@
 #include "ModelManager.h"
 #include "ModelIO.h"
 #include "PixelShader.h"
+#include "PostProcessingEffect.h"
 #include "RenderTarget.h"
 #include "RenderObject.h"
 #include "Sampler.h"

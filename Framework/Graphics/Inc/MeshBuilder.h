@@ -37,5 +37,8 @@ namespace DgEngine::Graphics
 
 		// load obj
 		static MeshPX CreateObjPX(const std::filesystem::path& filePath, float scale);
+
+		// Screen quad
+		static MeshPX CreateScreenQuadPX();
 	};
 }
