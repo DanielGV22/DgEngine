@@ -26,6 +26,7 @@ private:
 	DgEngine::Graphics::RenderGroup mCharacter03;
 	DgEngine::Graphics::RenderTarget mRenderTarget;
 	DgEngine::Graphics::RenderObject mScreenQuad;
+	DgEngine::Graphics::Texture mCombineTexture;
 
 	DgEngine::Graphics::StandardEffect mStandardEffect;
 	DgEngine::Graphics::PostProcessingEffect mPostProcessingEffect;

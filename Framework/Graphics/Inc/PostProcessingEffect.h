@@ -56,5 +56,13 @@ namespace DgEngine::Graphics
 		  std::array<const Texture*, 4> mTextures;
 
 		  Mode mMode = Mode::None;
+		  float mMirrorScaleX = -1.0f;
+		  float mMirrorScaleY = -1.0f;
+		  float mBlurStrength = 5.0f;
+		  float mCombine2Alpha = 0.0f;
+
+		  float mAberrationValue = 0.005f;
+		  float mWaveLength = 0.05f;
+		  float mNumWaves = 20.0f;
 	};
 }

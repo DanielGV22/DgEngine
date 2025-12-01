@@ -42,6 +42,84 @@ float4 PS(VS_OUTPUT input) : SV_Target
     {
         finalColor = textureMap0.Sample(textureSampler, input.texCoord);
     }
-    
-    return finalColor;
+    else if (mode == 1) // monochrome
+    {
+        float4 color = textureMap0.Sample(textureSampler, input.texCoord);
+        finalColor = (color.r + color.g + color.b) / 3.0f;
+    }
+    else if (mode ==2) // invert
+    {
+        float4 color = textureMap0.Sample(textureSampler, input.texCoord);
+        finalColor = 1.0f - color;
+    }
+    else if(mode == 3) // mirror
+    {
+        float2 texCoord = input.texCoord;
+        texCoord.x *= param0;
+        texCoord.y *= param1;
+        finalColor = textureMap0.Sample(textureSampler, texCoord);
+    }
+    else if (mode == 4) // blur
+    {
+        float u = input.texCoord.x;
+        float v = input.texCoord.y;
+        finalColor =
+        textureMap0.Sample(textureSampler, float2(u , v )) 
+        + textureMap0.Sample(textureSampler, float2(u + param0, v))
+        + textureMap0.Sample(textureSampler, float2(u - param0, v))
+        + textureMap0.Sample(textureSampler, float2(u, v + param1))
+        + textureMap0.Sample(textureSampler, float2(u, v - param1))
+        + textureMap0.Sample(textureSampler, float2(u + param0, v + param1))
+        + textureMap0.Sample(textureSampler, float2(u + param0, v - param1))
+        + textureMap0.Sample(textureSampler, float2(u - param0, v + param1))
+        + textureMap0.Sample(textureSampler, float2(u - param0, v - param1));
+        finalColor *= 0.12f;
+        
+
+    }
+    else if(mode == 5) // combine2
+    {
+        float4 color0 = textureMap0.Sample(textureSampler, input.texCoord);
+        float4 color1 = textureMap1.Sample(textureSampler, input.texCoord);
+        // finalColor = (color0 + color1) * 0.5f;
+        color1.a *= param0; 
+        finalColor = (color0 * (1.0f - color1.a)) + (color1 * color1.a);
+    }
+    else if (mode == 6) // motion blur
+    {
+        float u = input.texCoord.x;
+        float v = input.texCoord.y;
+        float dist = distance(input.texCoord, float2(0.5f, 0.5f));
+        float weight = saturate(lerp(0.0f, 1.0f, (dist - 0.25f) / 0.25f));
+        float p0 = param0 * weight;
+        float p1 = param1 * weight;
+        finalColor =
+        textureMap0.Sample(textureSampler, float2(u, v))
+        + textureMap0.Sample(textureSampler, float2(u + p0, v))
+        + textureMap0.Sample(textureSampler, float2(u - p0, v))
+        + textureMap0.Sample(textureSampler, float2(u, v + p1))
+        + textureMap0.Sample(textureSampler, float2(u, v - p1))
+        + textureMap0.Sample(textureSampler, float2(u + p0, v + p1))
+        + textureMap0.Sample(textureSampler, float2(u + p0, v - p1))
+        + textureMap0.Sample(textureSampler, float2(u - p0, v + p1))
+        + textureMap0.Sample(textureSampler, float2(u - p0, v - p1));
+        finalColor *= 0.12f;
+        
+    }
+    else if (mode == 7) // chromatic aberration
+    {
+        float2 distortion = float2(param0, -param1);
+        float4 redChannel = textureMap0.Sample(textureSampler, input.texCoord + distortion.x * input.texCoord);
+        float4 greenChannel = textureMap0.Sample(textureSampler, input.texCoord);
+        float4 blueChannel = textureMap0.Sample(textureSampler, input.texCoord + distortion.y * input.texCoord);
+        finalColor = float4(redChannel.r, greenChannel.g, blueChannel.b, 1.0f);
+    }
+    else if (mode == 8) // wave
+    {
+        float waveValue = input.texCoord.x * (3.141592 * param1);
+        float2 texCoord = input.texCoord;
+        texCoord.y += sin(waveValue) * param0;
+        finalColor = textureMap0.Sample(textureSampler, texCoord);
+    }
+        return finalColor;
 }

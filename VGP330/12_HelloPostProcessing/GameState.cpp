@@ -38,16 +38,20 @@ void GameState::Initialize()
 	shaderFile = L"../../Assets/Shaders/PostProcessing.fx";
 	mPostProcessingEffect.Initialize(shaderFile);
 	mPostProcessingEffect.SetTexture(&mRenderTarget);
+	mPostProcessingEffect.SetTexture(&mCombineTexture, 1);
 
 	GraphicsSystem* gs = GraphicsSystem::Get();
 	const uint32_t screenWidth = gs->GetBackBufferWidth();
 	const uint32_t screenHeight = gs->GetBackBufferHeight();
 	mRenderTarget.Initialize(screenWidth, screenHeight, RenderTarget::Format::RGBA_U8);
+
+	mCombineTexture.Initialize(L"../../Assets/Textures/BloodyScreenEffects/Effect_8.png");
 }
 
 
 void GameState::Terminate()
 {
+	mCombineTexture.Terminate();
 	mRenderTarget.Terminate();
 	mScreenQuad.Terminate();
 	mGround.Terminate();
