@@ -7,8 +7,8 @@ using namespace DgEngine::Input;
 void GameState::Initialize()
 {
     mCamera.SetPosition({ 0.0f, 1.0f, -6.0f });
-    mCamera.SetLookAt({ 0.0f, 0.0f, 0.0f });
-  
+    mCamera.SetLookAt({ 0.0f, 1.0f, 0.0f });
+
     mDirectionalLight.direction = Math::Normalize({ 1.0f, -1.0f, 1.0f });
     mDirectionalLight.ambient = { 0.4f, 0.4f, 0.4f, 1.0f };
     mDirectionalLight.diffuse = { 0.8f, 0.8f, 0.8f, 1.0f };
@@ -18,48 +18,34 @@ void GameState::Initialize()
     mCharacter02.Initialize("Character02/Character02.model");
     mCharacter03.Initialize("Character03/Character03.model");
 
-	Mesh groundMesh = MeshBuilder::CreatePlane(20, 20, 1.0f);
-	mGround.meshBuffer.Initialize(groundMesh);
-	mGround.diffuseMapId = TextureManager::Get()->LoadTexture("misc/concrete.jpg");
-
-	MeshPX screenQuad = MeshBuilder::CreateScreenQuadPX();
-	mScreenQuad.meshBuffer.Initialize(screenQuad);
-
     mCharacter02.transform.position.x = -2;
     mCharacter03.transform.position.x = 2;
 
-    auto tm = TextureManager::Get();
+    Mesh groundMesh = MeshBuilder::CreatePlane(20, 20, 1.0f);
+    mGround.meshBuffer.Initialize(groundMesh);
+    mGround.diffuseMapId = TextureManager::Get()->LoadTexture("misc/concrete.jpg");
 
     std::filesystem::path shaderFile = L"../../Assets/Shaders/Standard.fx";
     mStandardEffect.Initialize(shaderFile);
     mStandardEffect.SetCamera(mCamera);
     mStandardEffect.SetDirectionalLight(mDirectionalLight);
+    mStandardEffect.SetLightCamera(mShadowEffect.GetLightCamera());
+	mStandardEffect.SetShadowMap(mShadowEffect.GetDepthMap());
 
-	shaderFile = L"../../Assets/Shaders/PostProcessing.fx";
-	mPostProcessingEffect.Initialize(shaderFile);
-	mPostProcessingEffect.SetTexture(&mRenderTarget);
-	mPostProcessingEffect.SetTexture(&mCombineTexture, 1);
+	mShadowEffect.Initialize();
+	mShadowEffect.SetDirectionalLight(mDirectionalLight);
 
-	GraphicsSystem* gs = GraphicsSystem::Get();
-	const uint32_t screenWidth = gs->GetBackBufferWidth();
-	const uint32_t screenHeight = gs->GetBackBufferHeight();
-	mRenderTarget.Initialize(screenWidth, screenHeight, RenderTarget::Format::RGBA_U8);
-
-	mCombineTexture.Initialize(L"../../Assets/Textures/BloodyScreenEffects/Effect_8.png");
 }
 
 
 void GameState::Terminate()
 {
-	mCombineTexture.Terminate();
-	mRenderTarget.Terminate();
-	mScreenQuad.Terminate();
-	mGround.Terminate();
+	mShadowEffect.Terminate();
+    mStandardEffect.Terminate();
     mCharacter03.Terminate();
     mCharacter02.Terminate();
     mCharacter.Terminate();
-	mPostProcessingEffect.Terminate();
-    mStandardEffect.Terminate();
+    mGround.Terminate();
 }
 
 
@@ -70,18 +56,20 @@ void GameState::Update(float deltaTime)
 
 void GameState::Render()
 {
-	mRenderTarget.BeginRender();
-       mStandardEffect.Begin();
+    mShadowEffect.Begin();
+            mShadowEffect.Render(mCharacter);
+            mShadowEffect.Render(mCharacter02);
+			mShadowEffect.Render(mCharacter03);
+	mShadowEffect.End();
+    
+    mStandardEffect.Begin();
             mStandardEffect.Render(mCharacter);
             mStandardEffect.Render(mCharacter02);
             mStandardEffect.Render(mCharacter03);
 			mStandardEffect.Render(mGround);
        mStandardEffect.End();
-	mRenderTarget.EndRender();
+	
 
-    mPostProcessingEffect.Begin();
-	     mPostProcessingEffect.Render(mScreenQuad);
-	mPostProcessingEffect.End();
 }
 
 void GameState::UpdateCamera(float deltaTime)
@@ -176,19 +164,9 @@ void GameState::DebugUI()
             ImGui::PopID();
         }
     }
-	ImGui::Separator();
-	ImGui::Text("Render Target");
-    ImGui::Image(
-        mRenderTarget.GetRawData(),
-        { 128, 128 },
-        { 0,0 },
-        { 1, 1 },
-        { 1, 1, 1, 1 },
-        { 1, 1, 1, 1 }
-    );
 
     mStandardEffect.DebugUI();
-	mPostProcessingEffect.DebuUI();
+	mShadowEffect.DebugUI();
     ImGui::End();
 }
 

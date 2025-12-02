@@ -12,6 +12,7 @@ namespace DgEngine::Graphics
 	class Camera;
 	class RenderObject;
 	class RenderGroup;
+	class Texture;
 
 	class StandardEffect final
 	{
@@ -27,6 +28,8 @@ namespace DgEngine::Graphics
 
 		void SetCamera(const Camera& camera);
 		void SetDirectionalLight(const DirectionalLight& directionalLight);
+		void SetLightCamera(const Camera& camera);
+		void SetShadowMap(const Texture& shadowMap);
 
 		void DebugUI();
 
@@ -35,6 +38,7 @@ namespace DgEngine::Graphics
 		{
 			Math::Matrix4 wvp;   // world view projection 
 			Math::Matrix4 world; // world matrix
+			Math::Matrix4 lwvp;  // light world view projection for shadows
 			Math::Vector3 viewPosition; // position of the view item (camera)
 			float padding = 0.0f; // padding to maintain 16 byte alignment
 		};
@@ -45,8 +49,10 @@ namespace DgEngine::Graphics
 			int useSpecMap = 1;
 			int useNormalMap = 1;
 			int useBumpMap = 1;
+			int useShadowMap = 1;
 			float bumpWeight = 0.1f;
-			float padding[3] = { 0.0f }; // padding to maintain 16 byte alignment
+			float depthBias = 0.000003f;
+			float padding = 0.0f; // padding to maintain 16 byte alignment
 		};
 
 		using TransformBuffer = TypedConstantBuffer<TransformData>;
@@ -65,9 +71,11 @@ namespace DgEngine::Graphics
 		PixelShader  mPixelShader;
 		Sampler      mSampler;
 
+		SettingsData mSettingsData;
 		const Camera* mCamera = nullptr;
 		const DirectionalLight* mDirectionalLight = nullptr;
-		SettingsData mSettingsData;
+		const Camera* mLightCamera = nullptr;
+		const Texture* mShadowMap = nullptr;
 		
 
 

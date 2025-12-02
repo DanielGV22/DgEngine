@@ -21,15 +21,12 @@ private:
 	DgEngine::Graphics::DirectionalLight mDirectionalLight;
 
 	DgEngine::Graphics::RenderGroup mCharacter;
-	DgEngine::Graphics::RenderObject mGround;
 	DgEngine::Graphics::RenderGroup mCharacter02;
 	DgEngine::Graphics::RenderGroup mCharacter03;
-	DgEngine::Graphics::RenderTarget mRenderTarget;
-	DgEngine::Graphics::RenderObject mScreenQuad;
-	DgEngine::Graphics::Texture mCombineTexture;
+	DgEngine::Graphics::RenderObject mGround;
 
 	DgEngine::Graphics::StandardEffect mStandardEffect;
-	DgEngine::Graphics::PostProcessingEffect mPostProcessingEffect;
+	DgEngine::Graphics::ShadowEffect mShadowEffect;
 
 };
  
