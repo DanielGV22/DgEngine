@@ -12,44 +12,45 @@ namespace DgEngine::Graphics
 	class RenderObject;
 	class RenderGroup;
 
-	class ShadowEffect
-	{
-	public:
-		void Initialize();
-		void Terminate();
+    class ShadowEffect
+    {
+    public:
+        void Initialize();
+        void Terminate();
 
-		void Begin();
-		void End();
+        void Begin();
+        void End();
 
-		void Render(const RenderObject& renderObject);
-		void Render(const RenderGroup& renderGroup);
+        void Render(const RenderObject& renderObject);
+        void Render(const RenderGroup& renderGroup);
 
-		void DebugUI();
+        void DebugUI();
 
-		void SetDirectionalLight(const DirectionalLight& directionalLight);
-		void SetFocus(const Math::Vector3& focusPoint);
-		void SetSize(float size);
-		const Camera& GetLightCamera() const;
-		const Texture& GetDepthMap() const;
-	private:
-		void UpdateLightCamera();
+        void SetDirectionalLight(const DirectionalLight& directionalLight);
+        void SetFocus(const Math::Vector3& focusPoint);
+        void SetSize(float size);
+        const Camera& GetLightCamera() const;
+        const Texture& GetDepthMap() const;
 
-		struct TransformData
-		{
-			Math::Matrix4 wvp;
-		};
+    private:
+        void UpdateLightCamera();
 
-		using TransformBuffer = TypedConstantBuffer<TransformData>;
-		TransformBuffer mTransformBuffer;
+        struct TransformData
+        {
+            Math::Matrix4 wvp;
+        };
 
-		VertexShader mVertexShader;
-		PixelShader mPixelShader;
+        using TransformBuffer = TypedConstantBuffer<TransformData>;
+        TransformBuffer mTransformBuffer;
 
-		Camera mLightCamera;
-		RenderTarget mDepthMapRenderTarget;
+        VertexShader mVertexShader;
+        PixelShader mPixelShader;
 
-		const DirectionalLight* mDirectionalLight = nullptr;
-		Math::Vector3 mFocusPoint = Math::Vector3::Zero;
-		float mSize = 100.0f;
-	};
+        Camera mLightCamera;
+        RenderTarget mDepthMapRenderTarget;
+
+        const DirectionalLight* mDirectionalLight = nullptr;
+        Math::Vector3 mFocusPoint = Math::Vector3::Zero;
+        float mSize = 100.0f;
+    };
 }

@@ -7,62 +7,66 @@
 
 namespace DgEngine::Graphics
 {
-	class RenderObject;
-	class Texture;
+    class RenderObject;
+    class Texture;
 
-	class PostProcessingEffect
-	{
-	  public:
-		  enum class Mode
-		  {
-			  None,
-			  Monochrome,
-			  Invert,
-			  Mirror,
-			  Blur,
-			  Combine2,
-			  MotionBlur,
-			  ChromaticAberration,
-			  Wave
-		  };
+    class PostProcessingEffect
+    {
+    public:
+        enum class Mode
+        {
+            None,
+            Monochrome,
+            Invert,
+            Mirror,
+            Blur,
+            Combine2,
+            MotionBlur,
+            ChromaticAberration,
+            Wave,
+        };
 
-		void Initialize(const std::filesystem::path& filePath);
-		void Terminate();
+        void Initialize(const std::filesystem::path& filePath);
+        void Terminate();
 
-		void Begin();
-		void End();
+        void Begin();
+        void End();
 
-		void Render(const RenderObject& renderObject);
+        void Render(const RenderObject& renderObject);
 
-		void SetTexture(const Texture* texture, uint32_t slot = 0);
-		void SetMode(Mode mode);
+        void SetTexture(const Texture* texture, uint32_t slot = 0);
 
-		void DebuUI();
-	  private:
-		  struct PostProcessData
-		  {
-			  int mode = 0;
-			  float param0 = 0.0f;
-			  float param1 = 0.0f;
-			  float param2 = 0.0f;
-		  };
+        void SetMode(Mode mode);
 
-		  using PostProcessBuffer = TypedConstantBuffer<PostProcessData>;
-		  PostProcessBuffer mPostProcessBuffer;
+        void DebugUI();
 
-		  VertexShader mVertexShader;
-		  PixelShader mPixelShader;
-		  Sampler mSampler;
-		  std::array<const Texture*, 4> mTextures;
+    private:
 
-		  Mode mMode = Mode::None;
-		  float mMirrorScaleX = -1.0f;
-		  float mMirrorScaleY = -1.0f;
-		  float mBlurStrength = 5.0f;
-		  float mCombine2Alpha = 0.0f;
+        struct PostProcessData
+        {
+            int mode = 0;
+            float param0 = 0.0f;
+            float param1 = 0.0f;
+            float param2 = 0.0f;
+        };
 
-		  float mAberrationValue = 0.005f;
-		  float mWaveLength = 0.05f;
-		  float mNumWaves = 20.0f;
-	};
-}
+        using PostProcessBuffer = TypedConstantBuffer<PostProcessData>;
+        PostProcessBuffer mPostProcessBuffer;
+
+        VertexShader mVertexShader;
+        PixelShader mPixelShader;
+        Sampler mSampler;
+        std::array<const Texture*, 4> mTextures;
+
+        Mode mMode = Mode::None;
+
+        float mMirrorScaleX = -1.0f;
+        float mMirrorScaleY = -1.0f;
+        float mBlurStrength = 5.0f;
+        float mCombine2Alpha = 1.0f;
+
+        float mAberrationValue = 0.02f;
+        float mWaveLenght = 0.05f;
+        float mNumWaves = 20.0f;
+    };
+};

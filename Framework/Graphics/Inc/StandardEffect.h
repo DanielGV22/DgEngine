@@ -14,70 +14,72 @@ namespace DgEngine::Graphics
 	class RenderGroup;
 	class Texture;
 
-	class StandardEffect final
-	{
-	public:
-		void Initialize(const std::filesystem::path& path);
-		void Terminate();
+    class StandardEffect final
+    {
+    public:
+        void Initialize(const std::filesystem::path& path);
+        void Terminate();
 
-		void Begin();
-		void End();
+        void Begin();
+        void End();
 
-		void Render(const RenderObject& renderObject);
-		void Render(const RenderGroup& renderGroup);
+        void Render(const RenderObject& renderObject);
+        void Render(const RenderGroup& renderGroup);
 
-		void SetCamera(const Camera& camera);
-		void SetDirectionalLight(const DirectionalLight& directionalLight);
-		void SetLightCamera(const Camera& camera);
-		void SetShadowMap(const Texture& shadowMap);
+        void SetCamera(const Camera& camera);
 
-		void DebugUI();
+        void SetDirectionalLight(const DirectionalLight& directionalLight);
+        // Shadows
+        void SetLightCamera(const Camera& camera);
+        void SetShadowMap(const Texture& shadowMap);
 
-	private:
-		struct TransformData
-		{
-			Math::Matrix4 wvp;   // world view projection 
-			Math::Matrix4 world; // world matrix
-			Math::Matrix4 lwvp;  // light world view projection for shadows
-			Math::Vector3 viewPosition; // position of the view item (camera)
-			float padding = 0.0f; // padding to maintain 16 byte alignment
-		};
+        void DebugUI();
 
-		struct SettingsData
-		{
-			int useDiffuseMap = 1;
-			int useSpecMap = 1;
-			int useNormalMap = 1;
-			int useBumpMap = 1;
-			int useShadowMap = 1;
-			float bumpWeight = 0.1f;
-			float depthBias = 0.000003f;
-			float padding = 0.0f; // padding to maintain 16 byte alignment
-		};
+    private:
 
-		using TransformBuffer = TypedConstantBuffer<TransformData>;
-		TransformBuffer mTransformBuffer;
+        struct TransformData
+        {
+            Math::Matrix4 wvp; // World-View-Projection matrix
+            Math::Matrix4 world; // World matrix
+            Math::Matrix4 lwvp; // Light World-View-Projection matrix (World Proj of light objects for shadows)
+            Math::Vector3 viewPosition; // Camera position in world space
+            float padding = 0.0f; // Padding to maintain the 16 byte alignment
+        };
 
-		using LightBuffer = TypedConstantBuffer<DirectionalLight>;
-		LightBuffer mLightBuffer;
+        struct SettingsData
+        {
+            int useDiffuseMap = 1;
+            int useSpecMap = 1;
+            int useNormalMap = 1;
+            int useBumpMap = 1;
+            int useShadowMap = 1;
+            float bumpIntensity = -0.02f;
+            float depthBias = 0.000003f;
+            float padding = 0.0f; // Padding to make the structure 16-byte aligned (After ShadowMap only need one)
+        };
 
-		using MaterialBuffer = TypedConstantBuffer<Material>;
-		MaterialBuffer mMaterialBuffer;
+        using TransformBuffer = TypedConstantBuffer<TransformData>;
+        TransformBuffer mTransformBuffer;
 
-		using SettingsBuffer = TypedConstantBuffer<SettingsData>;
-		SettingsBuffer mSettingsBuffer;
+        using LightBuffer = TypedConstantBuffer<DirectionalLight>;
+        LightBuffer mLightBuffer;
 
-		VertexShader mVertexShader;
-		PixelShader  mPixelShader;
-		Sampler      mSampler;
+        using MaterialBuffer = TypedConstantBuffer<Material>;
+        MaterialBuffer mMaterialBuffer;
 
-		SettingsData mSettingsData;
-		const Camera* mCamera = nullptr;
-		const DirectionalLight* mDirectionalLight = nullptr;
-		const Camera* mLightCamera = nullptr;
-		const Texture* mShadowMap = nullptr;
-		
+        using SettingsBuffer = TypedConstantBuffer<SettingsData>;
+        SettingsBuffer mSettingsBuffer;
 
+        VertexShader mVertexShader;
+        PixelShader mPixelShader;
+        Sampler mSampler;
 
-	};
+        SettingsData mSettingsData;
+
+        const Camera* mCamera = nullptr;
+        const DirectionalLight* mDirectionalLight = nullptr;
+
+        const Camera* mLightCamera = nullptr;
+        const Texture* mShadowMap = nullptr;
+    };
 }

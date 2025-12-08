@@ -28,7 +28,7 @@ namespace
 		{
 			vertexLayout.push_back({ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 });
 		}
-		if (format & VE_Texcoord)
+		if (format & VE_TexCoord)
 		{
 			vertexLayout.push_back({ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 });
 		}
@@ -39,7 +39,7 @@ namespace
 
 void VertexShader::Initialize(const std::filesystem::path& shaderPath, uint32_t format)
 {
-    auto device = GraphicsSystem::Get()->GetDevice();
+	auto device = GraphicsSystem::Get()->GetDevice();
 
 	DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_DEBUG;
 	ID3DBlob* shaderBlob = nullptr;
@@ -52,22 +52,23 @@ void VertexShader::Initialize(const std::filesystem::path& shaderPath, uint32_t 
 		shaderFlags, 0,
 		&shaderBlob,
 		&errorBlob);
+
 	if (errorBlob != nullptr && errorBlob->GetBufferPointer() != nullptr)
 	{
 		LOG("%s", static_cast<const char*>(errorBlob->GetBufferPointer()));
 	}
-	ASSERT(SUCCEEDED(hr), "Failed to compile vertex shader");
+	ASSERT(SUCCEEDED(hr), "Failed to create Vertex Shader");
 
 	hr = device->CreateVertexShader(
 		shaderBlob->GetBufferPointer(),
 		shaderBlob->GetBufferSize(),
 		nullptr,
 		&mVertexShader);
-	ASSERT(SUCCEEDED(hr), "Failed to create vertex shader");
-	//==========================================================================
+	ASSERT(SUCCEEDED(hr), "Failed to create Vertex Shader");
+	//======================================================================================================
 
-	// STATE WHAT VERTEX VARIABLES ARE
-	std::vector<D3D11_INPUT_ELEMENT_DESC> vertexLayout= GetVertexLayout(format);
+	// STATE WHAT THE VERTEX VARIABLES ARE
+	std::vector<D3D11_INPUT_ELEMENT_DESC> vertexLayout = GetVertexLayout(format);
 
 	hr = device->CreateInputLayout(
 		vertexLayout.data(),
@@ -75,21 +76,21 @@ void VertexShader::Initialize(const std::filesystem::path& shaderPath, uint32_t 
 		shaderBlob->GetBufferPointer(),
 		shaderBlob->GetBufferSize(),
 		&mInputLayout);
-	ASSERT(SUCCEEDED(hr), "Failed to create input layout");
+	ASSERT(SUCCEEDED(hr), "Failed to create Input Layout");
 	SafeRelease(shaderBlob);
 	SafeRelease(errorBlob);
 }
 
 void VertexShader::Terminate()
 {
-	SafeRelease (mInputLayout);
-	SafeRelease (mVertexShader);
+	SafeRelease(mInputLayout);
+	SafeRelease(mVertexShader);
 }
 
 void VertexShader::Bind()
 {
 	auto context = GraphicsSystem::Get()->GetContext();
-	// bind buffers
+	// Bind buffers
 	context->VSSetShader(mVertexShader, nullptr, 0);
 	context->IASetInputLayout(mInputLayout);
 }

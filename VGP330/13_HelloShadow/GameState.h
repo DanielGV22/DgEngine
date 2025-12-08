@@ -25,6 +25,8 @@ private:
 	DgEngine::Graphics::RenderGroup mCharacter03;
 	DgEngine::Graphics::RenderObject mGround;
 
+	DgEngine::Graphics::RenderObject mScreenQuad;
+
 	DgEngine::Graphics::StandardEffect mStandardEffect;
 	DgEngine::Graphics::ShadowEffect mShadowEffect;
 
