@@ -24,6 +24,8 @@
 #include "Sampler.h"
 #include "Texture.h"
 #include "TextureManager.h"
+#include "Terrain.h"
+#include "TerrainEffect.h"
 #include "Transform.h"
 #include "ShadowEffect.h"
 #include "SimpleDraw.h"

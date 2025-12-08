@@ -40,13 +40,13 @@ void SimpleTextureEffect::End()
 
 void SimpleTextureEffect::Render(const SimpleTextureEffect::RenderData& renderData)
 {
-	ASSERT(mCamera != nullptr, "SimpleTexturedEffect: Camera must be set before rendering.");
+	ASSERT(mCamera != nullptr, "SimpleTextureEffect: Must have a camera!");
 	const Math::Matrix4 matView = mCamera->GetViewMatrix();
 	const Math::Matrix4 matProj = mCamera->GetProjectionMatrix();
 	const Math::Matrix4 matFinal = renderData.matWorld * matView * matProj;
 	const Math::Matrix4 wvp = Math::Transpose(matFinal);
 	mTransformBuffer.Update(&wvp);
-    
+
 	TextureManager::Get()->BindPS(renderData.textureId, 0);
 	renderData.mesh.Render();
 }

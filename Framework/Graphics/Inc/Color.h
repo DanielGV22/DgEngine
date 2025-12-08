@@ -3,6 +3,7 @@
 #ifndef INCLUDED_XENGINE_COLORS_H
 #define INCLUDED_XENGINE_COLORS_H
 
+#include <Math/Inc/DWMath.h>
 
 namespace DgEngine:: Graphics {
 

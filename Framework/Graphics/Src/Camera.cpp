@@ -82,7 +82,6 @@ void Camera::Rise(float distance)
 void Camera::Yaw(float radians)
 {
 	Math::Matrix4 matRotate= Math::Matrix4::RotationY(radians);	
-	mDirection=Math::TransformNormal(mDirection, matRotate);
 	const Math::Vector3 newLook = Math::TransformNormal(mDirection, matRotate);
 	SetDirection(newLook);
 }

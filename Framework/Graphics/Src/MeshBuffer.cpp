@@ -40,7 +40,7 @@ void MeshBuffer::Update(const void* vertices, uint32_t vertexCount)
 
     D3D11_MAPPED_SUBRESOURCE resource;
     context->Map(mVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-    memcpy(resource.pData, vertices, (vertexCount * mVertexSize));
+    memcpy(resource.pData, vertices, (mVertexSize * vertexCount));
     context->Unmap(mVertexBuffer, 0);
 }
 
@@ -61,57 +61,56 @@ void MeshBuffer::Render() const
     {
         context->Draw(static_cast<UINT>(mVertexCount), 0);
     }
-
-    context->Draw(static_cast<UINT>(mVertexCount), 0);
 }
 
 void MeshBuffer::CreateVertexBuffer(const void* vertices, uint32_t vertexSize, uint32_t vertexCount)
 {
-    mVertexSize = vertexSize;
-    mVertexCount = vertexCount;
+	mVertexSize = vertexSize;
+	mVertexCount = vertexCount;
 
-    auto device = GraphicsSystem::Get()->GetDevice();
+	auto device = GraphicsSystem::Get()->GetDevice();
 
-    const bool isDynamic = (vertices == nullptr);
-    // need to create a buffer to store the vertices
-    // STORES DATA FOR THE OBJECT
-    D3D11_BUFFER_DESC bufferDesc{};
-    bufferDesc.ByteWidth = vertexSize * vertexCount;
-    bufferDesc.Usage = (isDynamic) ? D3D11_USAGE_DYNAMIC : D3D11_USAGE_DEFAULT;
-    bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    bufferDesc.MiscFlags = 0;
-    bufferDesc.StructureByteStride = 0;
-    bufferDesc.CPUAccessFlags = (isDynamic) ? D3D11_CPU_ACCESS_WRITE : 0;
+	const bool isDynamic = (vertices == nullptr);
+	// Need to create a buffer to store the vertices
+	// STORES DATA FOR THE OBJECT
+	D3D11_BUFFER_DESC bufferDesc{};
+	bufferDesc.ByteWidth = vertexSize * vertexCount;
+	bufferDesc.Usage = (isDynamic) ? D3D11_USAGE_DYNAMIC : D3D11_USAGE_DEFAULT;
+	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bufferDesc.MiscFlags = 0;
+	bufferDesc.StructureByteStride = 0;
+	bufferDesc.CPUAccessFlags = (isDynamic) ? D3D11_CPU_ACCESS_WRITE : 0;
 
-    D3D11_SUBRESOURCE_DATA initData = {};
-    initData.pSysMem = vertices;
+	D3D11_SUBRESOURCE_DATA initData = {};
+	initData.pSysMem = vertices;
 
-    HRESULT hr = device->CreateBuffer(&bufferDesc, (isDynamic ? nullptr : &initData), &mVertexBuffer);
-    ASSERT(SUCCEEDED(hr), "Failed to create vertex buffer");
+	HRESULT hr = device->CreateBuffer(&bufferDesc, (isDynamic ? nullptr : &initData), &mVertexBuffer);
+	ASSERT(SUCCEEDED(hr), "Failed to create vertex buffer");
 }
 
-void MeshBuffer::CreateIndexBuffer(const void* indices, uint32_t indexCount)
+void Graphics::MeshBuffer::CreateIndexBuffer(const void* indices, uint32_t indexCount)
 {
-    if (indexCount == 0)
-    {
-        return;
-    }
+	if (indexCount == 0)
+	{
+		return;
+	}
 
-    mIndexCount = indexCount;
+	mIndexCount = indexCount;
 
-    auto device = GraphicsSystem::Get()->GetDevice();
+	auto device = GraphicsSystem::Get()->GetDevice();
 
-    // index buffer
-    D3D11_BUFFER_DESC bufferDesc{};
-    bufferDesc.ByteWidth = static_cast<UINT>(indexCount) * sizeof(uint32_t);
-    bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-    bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-    bufferDesc.MiscFlags = 0;
-    bufferDesc.StructureByteStride = 0;
+	// Index Buffer
+	D3D11_BUFFER_DESC bufferDesc{};
+	bufferDesc.ByteWidth = static_cast<UINT>(indexCount) * sizeof(uint32_t);
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	bufferDesc.MiscFlags = 0;
+	bufferDesc.StructureByteStride = 0;
 
-    D3D11_SUBRESOURCE_DATA initData = {};
-    initData.pSysMem = indices;
+	D3D11_SUBRESOURCE_DATA initData = {};
+	initData.pSysMem = indices;
 
-    HRESULT hr = device->CreateBuffer(&bufferDesc, &initData, &mIndexBuffer);
-    ASSERT(SUCCEEDED(hr), "Failed to create index buffer");
+	HRESULT hr = device->CreateBuffer(&bufferDesc, &initData, &mIndexBuffer);
+	ASSERT(SUCCEEDED(hr), "Failed to create Index Buffer");
+
 }

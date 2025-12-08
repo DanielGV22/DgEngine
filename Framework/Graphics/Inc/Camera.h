@@ -2,68 +2,69 @@
 
  namespace DgEngine::Graphics
 {
-     class Camera
-     {
-     public:
-         enum class ProjectionMode
-         {
-             Perspective,
-             Orthographic
-         };
+	 class Camera
+	 {
+	 public:
+		 enum class ProjectionMode
+		 {
+			 Perspective,
+			 Orthographic
+		 };
 
-         void SetMode(ProjectionMode mode);
+		 void SetMode(ProjectionMode mode);
 
-         void SetPosition(const Math::Vector3& position);
-         void SetDirection(const Math::Vector3& direction);
-         void SetLookAt(const Math::Vector3& target);
+		 void SetPosition(const Math::Vector3& position);
 
-         //Prspective params
-         void SetFOV(float fov);
-         void SetAspectRatio(float ratio);
+		 void SetDirection(const Math::Vector3& direction);
 
-         //Orthographic params
-         void SetSize(float width, float height);
-         float GetSize() const;
+		 void SetLookAt(const Math::Vector3& target);
 
-         // shared internal
-         void SetNearPlane(float nearPlane);
-         void SetFarPlane(float farPlane);
+		 // Perspective Params
+		 void SetFOV(float fov);
+		 void SetAspectRatio(float ratio);
 
-         // Controls
-         void Walk(float distance);
-         void Strafe(float distance);
-         void Rise(float distance);
+		 // Orthographic Params
+		 void SetSize(float width, float height);
+		 float GetSize() const;
 
-         // look controls
-         void Yaw(float radians);
-         void Pitch(float radians);
+		 // Shared Internal
+		 void SetNearPlane(float nearPlane);
+		 void SetFarPlane(float farPlane);
 
-         void Zoom(float amount);
+		 // Controls
+		 void Walk(float distance);
+		 void Strafe(float distance);
+		 void Rise(float distance);
 
-         // getters
-         const Math::Vector3& GetPosition() const;
-         const Math::Vector3& GetDirection() const;
+		 // Look Controls
+		 void Yaw(float radians);
+		 void Pitch(float radians);
 
-         Math::Matrix4 GetViewMatrix() const;
-         Math::Matrix4 GetProjectionMatrix() const;
+		 void Zoom(float amount);
 
-         Math::Matrix4 GetPerspectiveMatrix() const;
-         Math::Matrix4 GetOrthographicMatrix() const;
+		 // Getters
+		 const Math::Vector3& GetPosition() const;
+		 const Math::Vector3& GetDirection() const;
 
-     private:
-         ProjectionMode mProjectionMode = ProjectionMode::Perspective;
+		 Math::Matrix4 GetViewMatrix() const;
+		 Math::Matrix4 GetProjectionMatrix() const;
 
-         Math::Vector3 mPosition = Math::Vector3::Zero;
-         Math::Vector3 mDirection = Math::Vector3::ZAxis;
+		 Math::Matrix4 GetPerspectiveMatrix() const;
+		 Math::Matrix4 GetOrthographicMatrix() const;
 
-         float mFov= 60.0f * Math::Constants::DegToRad;
-         float mAspectRatio = 0.0f;
+	 private:
+		 ProjectionMode mProjectionMode = ProjectionMode::Perspective;
 
-         float mWidth = 0.0f;
-         float mHeight = 0.0f;
+		 Math::Vector3 mPosition = Math::Vector3::Zero;
+		 Math::Vector3 mDirection = Math::Vector3::ZAxis;
 
-         float mNearPlane = 0.01f;
-         float mFarPlane = 1000.0f;
+		 float mFov = 60.0f * Math::Constants::DegToRad;
+		 float mAspectRatio = 0.0f;
 
-    };
-}
+		 float mWidth = 0.0f;
+		 float mHeight = 0.0f;
+
+		 float mNearPlane = 0.01f;
+		 float mFarPlane = 1000.0f;
+	 };
+ }

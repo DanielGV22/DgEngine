@@ -10,7 +10,6 @@
 namespace DgEngine::Graphics
 {
 	class Camera;
-	class MeshBuffer;
 
 	class SimpleTextureEffect
 	{

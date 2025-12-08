@@ -7,13 +7,13 @@ using namespace	DgEngine;
 using namespace	DgEngine::Graphics;
 
 void PixelShader::Initialize(const std::filesystem::path& shaderPath)
-{	 
+{
 	auto device = GraphicsSystem::Get()->GetDevice();
 	DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_DEBUG;
 	ID3DBlob* shaderBlob = nullptr;
 	ID3DBlob* errorBlob = nullptr;
-	//==========================================================================
-   // BIND TO PIXEL FUNCTION IN SPECIFIED SHADER FILE
+
+	// BIND TO PIXEL FUNCTION IN SPECIFIED SHADER FILE
 	HRESULT hr = D3DCompileFromFile(
 		shaderPath.c_str(),
 		nullptr,
@@ -22,30 +22,31 @@ void PixelShader::Initialize(const std::filesystem::path& shaderPath)
 		shaderFlags, 0,
 		&shaderBlob,
 		&errorBlob);
+
 	if (errorBlob != nullptr && errorBlob->GetBufferPointer() != nullptr)
 	{
 		LOG("%s", static_cast<const char*>(errorBlob->GetBufferPointer()));
 	}
-	ASSERT(SUCCEEDED(hr), "Failed to compile pixel shader");
+	ASSERT(SUCCEEDED(hr), "Failed to create Pixel Shader");
 
 	hr = device->CreatePixelShader(
 		shaderBlob->GetBufferPointer(),
 		shaderBlob->GetBufferSize(),
 		nullptr,
 		&mPixelShader);
-	ASSERT(SUCCEEDED(hr), "Failed to create pixel shader");
+	ASSERT(SUCCEEDED(hr), "Failed to create Pixel Shader");
 	SafeRelease(shaderBlob);
 	SafeRelease(errorBlob);
-}	 
-	 
+}
+
 void PixelShader::Terminate()
-{	 
+{
 	SafeRelease(mPixelShader);
-}	 
-	 
+}
+
 void PixelShader::Bind()
-{	 
+{
 	auto context = GraphicsSystem::Get()->GetContext();
-	// bind buffers
+	// Bind Buffers
 	context->PSSetShader(mPixelShader, nullptr, 0);
 }

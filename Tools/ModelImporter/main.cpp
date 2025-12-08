@@ -12,274 +12,290 @@ using namespace DgEngine::Math;
 
 struct Arguments
 {
-	std::filesystem::path inputFileName;
-	std::filesystem::path outputFileName;
-	float scale = 1.0f;
+    std::filesystem::path inputFileName;
+    std::filesystem::path outputFileName;
+    float scale = 1.0f;                  // 1 Unit = 1 Millimeter
 };
 
-std::optional<Arguments> ParsArgs(int argc, char* argv[])
+std::optional<Arguments> ParseArgs(int argc, char* argv[])
 {
-	if (argc < 3)
-	{
-		return std::nullopt;
-	}
+    if (argc < 3)
+    {
+        printf("Usage: ModelImporter <input file> <output file> [scale]\n");
+        return std::nullopt;
+    }
 
-	//.. .. .. .. .. .. .. <InputFile> <OutputFile> 
-	Arguments args;
-	args.inputFileName = argv[argc - 2];
-	args.outputFileName = argv[argc - 1];
-	for (int i = 0; i + 2 < argc; i++)
-	{
-		if (strcmp(argv[i], "-scale") == 0)
-		{
-			args.scale = atof(argv[i + 1]);
-			++i;
-		}
-	}
-	return args;
+    // .. .. .. -scale 0.1 <inputFileName> <outputFileName>
+    Arguments args;
+    args.inputFileName = argv[argc - 2];
+    args.outputFileName = argv[argc - 1];
+    for (int i = 0; i + 2 < argc; ++i)
+    {
+        if (strcmp(argv[i], "-scale") == 0)
+        {
+            args.scale = atof(argv[i + 1]);
+            ++i;
+        }
+    }
+    return args;
 }
 
 Vector3 ToVector3(const aiVector3D& v)
 {
-	return
-	{
-		static_cast<float>(v.x),
-		static_cast<float>(v.y),
-		static_cast<float>(v.z)
-
-	};
+    return
+    {
+        static_cast<float>(v.x),
+        static_cast<float>(v.y),
+        static_cast<float>(v.z)
+    };
 }
 
-Vector2 ToVector2(const aiVector3D& v)
+Vector2 ToTexCoord(const aiVector3D& v)
 {
-	return
-	{
-		static_cast<float>(v.x),
-		static_cast<float>(v.y)
-	};
+    return
+    {
+        static_cast<float>(v.x),
+        static_cast<float>(v.y)
+    };
 }
 
 Color ToColor(const aiColor3D& c)
 {
-	return
-	{
-		static_cast<float>(c.r),
-		static_cast<float>(c.g),
-		static_cast<float>(c.b),
-		static_cast<float>(1.0f)
-	};
+    return
+    {
+        static_cast<float>(c.r),
+        static_cast<float>(c.g),
+        static_cast<float>(c.b),
+        static_cast<float>(1.0f)
+    };
 }
 
-void ExportEmbeddedTexture(const aiTexture* texture, const Arguments& args, const std::filesystem::path& fileName)
+void ExportEmbeddedTexture(const aiTexture* texture, const Arguments& args,
+    const std::filesystem::path& fileName)
 {
-	printf("Extracting Embedded Texture: %s\n", fileName.u8string().c_str());
+    printf("Exporting Embedded Texture: %s\n", fileName.u8string().c_str());
 
-	std::string fullFileName = args.inputFileName.u8string();
-	fullFileName = fullFileName.substr(0, fullFileName.rfind('/') + 1);
-	fullFileName += fileName.filename().u8string();
+    std::string fullFileName = args.outputFileName.u8string();
 
-	FILE* file = nullptr;
-	auto err = fopen_s(&file, fullFileName.c_str(), "wb");
-	if (err != 0 || file == nullptr)
-	{
-		printf("ERROR: Failed to open file %s for saving\n", fullFileName.c_str());
-		return;
-	}
+    fullFileName = fullFileName.substr(0, fullFileName.rfind('/') + 1);
+    fullFileName += fileName.filename().u8string();
 
-	size_t written = fwrite(texture->pcData, 1, texture->mWidth, file);
-	ASSERT(written == texture->mWidth, "ERROR: Failed to extract embedded texture", fullFileName.c_str());
-	fclose(file);
+    FILE* file = nullptr;
+    auto err = fopen_s(&file, fullFileName.c_str(), "wb");
+    if (err != 0 || file == nullptr)
+    {
+        printf("Error: Failed to create texture file: %s\n", fullFileName.c_str());
+        return;
+    }
+
+    size_t written = fwrite(texture->pcData, 1, texture->mWidth, file);
+    ASSERT(written == texture->mWidth, "Error: Failed to extract embedded texture data!");
+    fclose(file);
 }
 
-std::string FindTexture(const aiScene* scene, const aiMaterial* aiMaterial, 
-	aiTextureType textureType, const Arguments& args, const std::string& suffix,
-	uint32_t materialIndex)
+std::string FindTexture(const aiScene* scene, const aiMaterial* aiMaterial,
+    aiTextureType textureType, const Arguments& args, const std::string& suffix,
+    uint32_t materealIndex)
 {
-	const uint32_t textureCount = aiMaterial->GetTextureCount(textureType);
-	if (textureCount == 0)
-	{
-		return "";
-	}
-	
-	std::filesystem::path textureName;
-	aiString texturePath;
-	if (aiMaterial->GetTexture(textureType, 0, &texturePath) == aiReturn_SUCCESS)
-	{
-		if (texturePath.C_Str()[0] == '*')
-		{
-			std::string fileName = args.inputFileName.u8string();
-			fileName.erase(fileName.length() - 4); 
-			fileName += suffix;
-			fileName += texturePath.C_Str()[1];
+    const uint32_t textureCount = aiMaterial->GetTextureCount(textureType);
+    if (textureCount == 0)
+    {
+        return "";
+    }
 
-			ASSERT(scene->HasTextures(), "No embedded textures found.");
-			int textureIndex = atoi(&texturePath.C_Str()[1]);
-			ASSERT(textureIndex < scene->mNumTextures, "ERROR: Invalid texture index.");
+    std::filesystem::path textureName;
+    aiString texturePath;
+    if (aiMaterial->GetTexture(textureType, 0, &texturePath) == aiReturn_SUCCESS)
+    {
+        if (texturePath.C_Str()[0] == '*')
+        {
+            std::string fileName = args.inputFileName.u8string();
+            fileName.erase(fileName.length() - 4); // remove .fbx
+            fileName += suffix;
+            fileName += texturePath.C_Str()[1]; // get the index number
 
-			const aiTexture* embeddedTexture = scene->mTextures[textureIndex];
-			ASSERT(embeddedTexture->mHeight == 0, "ERROR: Uncompressed texture found.");
+            ASSERT(scene->HasTextures(), "Error: Model has no embedded textures!");
 
-			if (embeddedTexture->CheckFormat("jpg"))
-			{
-				fileName += ".jpg";
-			}
-			else if (embeddedTexture->CheckFormat("png"))
-			{
-				fileName += ".png";
-			}
-			else
-			{
-				ASSERT(false, "ERROR: Unsupported texture format.");
-			}	
+            int textureIndex = atoi(texturePath.C_Str() + 1);
+            ASSERT(textureIndex < scene->mNumTextures, "Error: Texture index out of bounds!");
 
-			printf("Adding Texture %s\n", fileName.c_str());
-			ExportEmbeddedTexture(embeddedTexture, args, fileName);
-			textureName = fileName;
-		}
+            const aiTexture* embeddedTexture = scene->mTextures[textureIndex];
+            ASSERT(embeddedTexture->mHeight == 0, "Error: Compressed texture expected!");
 
-		else if (auto embeddedTexture = scene->GetEmbeddedTexture(texturePath.C_Str()); embeddedTexture)
-		{
-			std::filesystem::path embeddedFilePath = texturePath.C_Str();
-			std::string fileName = args.inputFileName.u8string();
-			fileName.erase(fileName.length() - 4);
-			fileName += suffix;
-			fileName += "_" + std::to_string(materialIndex);
-			fileName += embeddedFilePath.extension().u8string();
+            if (embeddedTexture->CheckFormat("jpg"))
+            {
+                fileName += ".jpg";
+            }
+            else if (embeddedTexture->CheckFormat("png"))
+            {
+                fileName += ".png";
+            }
+            else
+            {
+                ASSERT(false, "Error: Unsupported texture format!");
+            }
 
-			printf("Adding Texture %s\n", fileName.c_str());
-			ExportEmbeddedTexture(embeddedTexture, args, fileName);
-			textureName = fileName;
-		}
-		else
-		{
-			std::filesystem::path filePath = texturePath.C_Str();
-			std::string fileName = filePath.u8string();
+            printf("Adding Texture: %s\n", fileName.c_str());
+            ExportEmbeddedTexture(embeddedTexture, args, fileName);
+            textureName = fileName;
+        }
+        else if (auto embeddedTexture = scene->GetEmbeddedTexture(texturePath.C_Str()); embeddedTexture)
+        {
+            std::filesystem::path embeddedFilePath = texturePath.C_Str();
+            std::string fileName = args.inputFileName.u8string();
+            fileName.erase(fileName.length() - 4); // remove .fbx
+            fileName += suffix;
+            fileName += "_" + std::to_string(materealIndex);
+            fileName += embeddedFilePath.extension().u8string();
 
-			printf("Adding Texture %s\n", fileName.c_str());
-			textureName = fileName;
-		}
-	}
+            printf("Adding Texture: %s\n", fileName.c_str());
+            ExportEmbeddedTexture(embeddedTexture, args, fileName);
+            textureName = fileName;
+        }
+        else
+        {
+            std::filesystem::path filePath = texturePath.C_Str();
+            std::string fileName = filePath.u8string();
 
-	return textureName.filename().u8string();
+            printf("Adding Texture: %s\n", fileName.c_str());
+            textureName = fileName;
+        }
+    }
+
+    return textureName.filename().u8string();
 }
+
 
 int main(int argc, char* argv[])
 {
-	const auto argOpt = ParsArgs(argc, argv);
-	if (!argOpt.has_value())
-	{
-		printf("Not enough arguments, import fbx failed!\n");
-		return -1;
-	}
+    const auto argsOpt = ParseArgs(argc, argv);
+    if (!argsOpt.has_value())
+    {
+        printf("Not enough arguments, import fbx failed!\n");
+        return -1;
+    }
 
-	printf("Begin Import\n");
-	const Arguments& args = argOpt.value();
+    printf("Begin Import\n");
+    const Arguments args = argsOpt.value();
 
-	// use assimp
-	Assimp::Importer importer;
-	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
+    // Using Assimp to load model:
+    Assimp::Importer importer;
+    importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 
-	const uint32_t flags = aiProcessPreset_TargetRealtime_Quality | aiProcess_ConvertToLeftHanded;
-	const aiScene* scene = importer.ReadFile(args.inputFileName.u8string().c_str(), flags);
+    const uint32_t flags = aiProcessPreset_TargetRealtime_Quality | aiProcess_ConvertToLeftHanded;
+    const aiScene* scene = importer.ReadFile(args.inputFileName.u8string().c_str(), flags);
 
-	if (scene == nullptr)
-	{
-		printf("Error: %s\n", importer.GetErrorString());
-		return -1;
-	}
+    if (scene == nullptr)
+    {
+        printf("Failed to load model file: %s\n", importer.GetErrorString());
+        return -1;
+    }
 
-	printf("Importing: %s...\n",args.inputFileName.u8string().c_str());
+    printf("Importing model located at: %s\n", args.inputFileName.u8string().c_str());
 
-	Model model;
-	if (scene->HasMeshes())
-	{
-		printf("Reading Mesh Data...\n");
-		for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex)
-		{
-			const auto& aiMesh = scene->mMeshes[meshIndex];
-			if (aiMesh->mPrimitiveTypes != aiPrimitiveType_TRIANGLE)
-			{
-				continue;
-			}
 
-			const uint32_t numVertices = aiMesh->mNumVertices;
-			const uint32_t numFaces = aiMesh->mNumFaces;
-			const uint32_t numIndices = numFaces * 3;
+    Model model;
+    if (scene->HasMeshes())
+    {
+        printf("Reading Mesh Data...\n");
 
-			Model::MeshData& meshData = model.meshData.emplace_back();
+        for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex)
+        {
+            const auto& aiMesh = scene->mMeshes[meshIndex];
+            if (aiMesh->mPrimitiveTypes != aiPrimitiveType_TRIANGLE)
+            {
+                printf("Skipping non-triangle mesh: %s\n", aiMesh->mName.C_Str());
+                continue;
+            }
 
-			printf("Reading Material Index...\n");
-			meshData.materialIndex = aiMesh->mMaterialIndex;
+            const uint32_t numVertices = aiMesh->mNumVertices;
+            const uint32_t numFaces = aiMesh->mNumFaces;
+            const uint32_t numIndices = numFaces * 3;
 
-			printf("Reading Vertices...\n");
-			Mesh& mesh = meshData.mesh;
-			mesh.vertices.reserve(numVertices);
+            Model::MeshData& meshData = model.meshData.emplace_back();
 
-			const aiVector3D* positions = aiMesh->mVertices;
-			const aiVector3D* normals = aiMesh->mNormals;
-			const aiVector3D* tangents = (aiMesh->HasTangentsAndBitangents()) ? aiMesh->mTangents : nullptr;
-			const aiVector3D* texCoords = (aiMesh->HasTextureCoords(0)) ? aiMesh->mTextureCoords[0] : nullptr;
-			for (uint32_t v = 0; v < numVertices; ++v)
-			{
-				Vertex& vertex = mesh.vertices.emplace_back();
-				vertex.position = ToVector3(positions[v]) * args.scale;
-				vertex.normal = ToVector3(normals[v]);
-				vertex.tangent = tangents ? ToVector3(tangents[v]) : Vector3::Zero;
-				vertex.uvCoord = texCoords ? ToVector2(texCoords[v]) : Vector2::Zero;
-			}
+            printf("Reading Material Index for Mesh...\n");
+            meshData.materialIndex = aiMesh->mMaterialIndex;
 
-			printf("Reading Indices...\n");
-			mesh.indices.reserve(numIndices);
-			const auto& aiFaces = aiMesh->mFaces;
-			for (uint32_t f = 0; f < numFaces; ++f)
-			{
-				const auto& aiFace = aiFaces[f];
-				for (uint32_t i = 0; i < 3; ++i)
-				{
-					mesh.indices.push_back(aiFace.mIndices[i]);
-				}
-			}
-		}
-	}
+            printf("Reading Vertices for Mesh...\n");
+            Mesh& mesh = meshData.mesh;
+            mesh.vertices.reserve(numVertices);
 
-	if (scene->HasMaterials())
-	{
-		printf("Reading Material Data...\n");
+            const aiVector3D* positions = aiMesh->mVertices;
+            const aiVector3D* normals = aiMesh->mNormals;
+            const aiVector3D* tangents = (aiMesh->HasTangentsAndBitangents()) ? aiMesh->mTangents : nullptr;
+            const aiVector3D* texCoords = (aiMesh->HasTextureCoords(0)) ? aiMesh->mTextureCoords[0] : nullptr;
 
-		const uint32_t numMaterials = scene->mNumMaterials;
-		model.materialData.reserve(numMaterials);
-		for (uint32_t materialIndex = 0; materialIndex < numMaterials; ++materialIndex)
-		{
-			const auto& aiMaterial = scene->mMaterials[materialIndex];
-			aiColor3D emissive, ambient, diffuse, specular;
-			ai_real specularPower = 10.0f;
+            for (uint32_t v = 0; v < numVertices; ++v)
+            {
+                Vertex& vertex = mesh.vertices.emplace_back();
+                vertex.position = ToVector3(positions[v]) * args.scale;
+                vertex.normal = ToVector3(normals[v]);
+                vertex.tangent = (tangents) ? ToVector3(tangents[v]) : Vector3::Zero;
+                vertex.uvCoord = (texCoords) ? ToTexCoord(texCoords[v]) : Vector2::Zero;
+            }
 
-			aiMaterial->Get(AI_MATKEY_COLOR_EMISSIVE, emissive);
-			aiMaterial->Get(AI_MATKEY_COLOR_AMBIENT, ambient);
-			aiMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
-			aiMaterial->Get(AI_MATKEY_COLOR_SPECULAR, specular);
-			aiMaterial->Get(AI_MATKEY_SHININESS, specularPower);
-			Model::MaterialData& materialData = model.materialData.emplace_back();
-			materialData.material.emissive = ToColor(emissive);
-			materialData.material.ambient = ToColor(ambient);
-			materialData.material.diffuse = ToColor(diffuse);
-			materialData.material.specular = ToColor(specular);
-			materialData.material.shininess = static_cast<float>(specularPower);
-			
-			materialData.diffuseMapName = FindTexture(scene, aiMaterial, aiTextureType_DIFFUSE, args, "_diff", materialIndex);
-			materialData.specMapName = FindTexture(scene, aiMaterial, aiTextureType_SPECULAR, args, "_spec", materialIndex);
-			materialData.normalMapName = FindTexture(scene, aiMaterial, aiTextureType_NORMALS, args, "_norm", materialIndex);
-			materialData.bumpMapName = FindTexture(scene, aiMaterial, aiTextureType_DISPLACEMENT, args, "_bump", materialIndex);
-		}
-	}
+            printf("Reading Indices for Mesh...\n");
+            mesh.indices.reserve(numIndices);
+            const auto& aiFaces = aiMesh->mFaces;
+            for (uint32_t f = 0; f < numFaces; ++f)
+            {
+                const auto& aiFace = aiFaces[f];
+                for (uint32_t i = 0; i < 3; ++i)
+                {
+                    mesh.indices.push_back(aiFace.mIndices[i]);
+                }
+            }
+        }
+    }
 
-	printf("Saving Model: ...\n");
-	ModelIO::SaveModel(args.outputFileName, model);
+    if (scene->HasMaterials())
+    {
+        printf("Reading Material Data...\n");
+        for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex)
+        {
+            const uint32_t numMaterials = scene->mNumMaterials;
+            model.materialData.reserve(numMaterials);
 
-	printf("Saving Material ... \n");
-	ModelIO::SaveMaterial(args.outputFileName, model);
+            for (uint32_t materialIndex = 0; materialIndex < numMaterials; ++materialIndex)
+            {
+                const auto& aiMaterial = scene->mMaterials[materialIndex];
+                aiColor3D emissive, ambient, diffuse, specular;
+                ai_real specularPower = 10.0f;
 
-	printf("Import Finished!\n");
+                aiMaterial->Get(AI_MATKEY_COLOR_EMISSIVE, emissive);
+                aiMaterial->Get(AI_MATKEY_COLOR_AMBIENT, ambient);
+                aiMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
+                aiMaterial->Get(AI_MATKEY_COLOR_SPECULAR, specular);
+                aiMaterial->Get(AI_MATKEY_SHININESS, specularPower);
 
-	return 0; 
+                Model::MaterialData& materialData = model.materialData.emplace_back();
+                materialData.material.emissive = ToColor(emissive);
+                materialData.material.ambient = ToColor(ambient);
+                materialData.material.diffuse = ToColor(diffuse);
+                materialData.material.specular = ToColor(specular);
+                materialData.material.shininess = static_cast<float>(specularPower);
+
+                materialData.diffuseMapName = FindTexture(scene, aiMaterial,
+                    aiTextureType_DIFFUSE, args, "_diff", materialIndex);
+                materialData.specMapName = FindTexture(scene, aiMaterial,
+                    aiTextureType_SPECULAR, args, "_spec", materialIndex);
+                materialData.normalMapName = FindTexture(scene, aiMaterial,
+                    aiTextureType_NORMALS, args, "_norm", materialIndex);
+                materialData.bumpMapName = FindTexture(scene, aiMaterial,
+                    aiTextureType_DISPLACEMENT, args, "_bump", materialIndex);
+
+            }
+        }
+    }
+
+    printf("Saving Model...\n");
+    ModelIO::SaveModel(args.outputFileName, model);
+
+    printf("Saving Material...\n");
+    ModelIO::SaveMaterial(args.outputFileName, model);
+
+    printf("Import Complete!\n");
+
+    return 0;
 }

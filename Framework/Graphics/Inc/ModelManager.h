@@ -21,7 +21,7 @@ namespace DgEngine::Graphics
 		ModelManager& operator=(const ModelManager&&) = delete;
 
 		void SetRootDirectory(const std::filesystem::path& rootPath);
-		ModelId GetModelId(const std::filesystem::path& filePath) const;
+		ModelId GetModelId(const std::filesystem::path& filePath);
 		ModelId LoadModel(const std::filesystem::path& filePath);
 		const Model* GetModel(ModelId id);
 

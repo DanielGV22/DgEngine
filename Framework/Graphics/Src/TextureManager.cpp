@@ -11,7 +11,7 @@ namespace
 
 void TextureManager::StaticInitialize(const std::filesystem::path& root)
 {
-	ASSERT(sInstance == nullptr, "TextureManager: is already initialized");
+	ASSERT(sInstance == nullptr, "TextureManager: Is already initialized!");
 	sInstance = std::make_unique<TextureManager>();
 	sInstance->SetRootDirectory(root);
 }
@@ -26,13 +26,13 @@ void TextureManager::StaticTerminate()
 
 TextureManager* TextureManager::Get()
 {
-	ASSERT(sInstance != nullptr, "TextureManager: is not initialized");
+	ASSERT(sInstance != nullptr, "TextureManager: Is not initialized!");
 	return sInstance.get();
 }
 
 TextureManager::~TextureManager()
 {
-	ASSERT(mInventory.empty(), "TextureManager: not all textures are cleared");
+	ASSERT(mInventory.empty(), "TextureManager: Not all textured are cleared!");
 }
 
 void TextureManager::SetRootDirectory(const std::filesystem::path& root)
@@ -40,14 +40,14 @@ void TextureManager::SetRootDirectory(const std::filesystem::path& root)
 	mRootDirectory = root;
 }
 
-TextureId TextureManager::LoadTexture(const std::filesystem::path& fileName, bool useRootDir)
+TextureId TextureManager::LoadTexture(const std::filesystem::path& filename, bool useRootDir)
 {
-	const size_t textureId = std::filesystem::hash_value(fileName);
+	const size_t textureId = std::filesystem::hash_value(filename);
 	auto [iter, success] = mInventory.insert({ textureId, Entry() });
 	if (success)
 	{
 		iter->second.texture = std::make_unique<Texture>();
-		iter->second.texture->Initialize((useRootDir) ? mRootDirectory / fileName : fileName);
+		iter->second.texture->Initialize((useRootDir) ? mRootDirectory / filename : filename);
 		iter->second.refCount = 1;
 	}
 	else
@@ -77,7 +77,7 @@ void TextureManager::ReleaseTexture(TextureId id)
 		{
 			iter->second.texture->Terminate();
 			iter->second.texture.release();
-			mInventory.erase(iter);
+			mInventory.erase(id);
 		}
 	}
 }
@@ -89,6 +89,7 @@ void TextureManager::BindVS(TextureId id, uint32_t slot) const
 	{
 		iter->second.texture->BindVS(slot);
 	}
+
 }
 
 void TextureManager::BindPS(TextureId id, uint32_t slot) const
@@ -99,4 +100,3 @@ void TextureManager::BindPS(TextureId id, uint32_t slot) const
 		iter->second.texture->BindPS(slot);
 	}
 }
-

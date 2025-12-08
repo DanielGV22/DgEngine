@@ -11,10 +11,10 @@ namespace
 	{
 		switch (format)
 		{
-		case RenderTarget::Format::RGBA_U8: return DXGI_FORMAT_R8G8B8A8_UNORM;
-		case RenderTarget::Format::RGBA_U32: return DXGI_FORMAT_R32G32B32A32_UINT;
+		case RenderTarget::Format::RGBA_U8:      return DXGI_FORMAT_R8G8B8A8_UNORM;
+		case RenderTarget::Format::RGBA_U32:     return DXGI_FORMAT_R32G32B32A32_FLOAT;
 		default:
-			ASSERT(false, "RenderTarget: unsupported format");
+			ASSERT(false, "RenderTarget: Unsupported Format!");
 			break;
 		}
 		return DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -23,12 +23,12 @@ namespace
 
 RenderTarget::~RenderTarget()
 {
-	ASSERT(mRenderTargetView == nullptr && mDepthStencilView == nullptr, "RenderTarget: must call terminate");
+	ASSERT(mRenderTargetView == nullptr && mDepthStencilView == nullptr, "RenderTarget: Must call Terminate!");
 }
 
 void RenderTarget::Initialize(const std::filesystem::path& fileName)
 {
-	ASSERT(false, "RenderTarget: does not support this initialize");
+	ASSERT(false, "RenderTarget: Initialize with file name is not supported");
 }
 
 void RenderTarget::Initialize(uint32_t width, uint32_t height, Format format)
@@ -49,23 +49,23 @@ void RenderTarget::Initialize(uint32_t width, uint32_t height, Format format)
 	auto device = GraphicsSystem::Get()->GetDevice();
 	ID3D11Texture2D* texture = nullptr;
 	HRESULT hr = device->CreateTexture2D(&desc, nullptr, &texture);
-	ASSERT(SUCCEEDED(hr), "RenderTarget: failed to create texture");
+	ASSERT(SUCCEEDED(hr), "RenderTarget: Failed to create texture!");
 
 	hr = device->CreateShaderResourceView(texture, nullptr, &mShaderResourceView);
-	ASSERT(SUCCEEDED(hr), "RenderTarget: failed to create shader resource view");
+	ASSERT(SUCCEEDED(hr), "RenderTarget: Failed to create shader resource view!");
 
 	hr = device->CreateRenderTargetView(texture, nullptr, &mRenderTargetView);
-	ASSERT(SUCCEEDED(hr), "RenderTarget: failed to create render target view");
+	ASSERT(SUCCEEDED(hr), "RenderTarget: Failed to create render target view!");
 
 	SafeRelease(texture);
 
 	desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	hr = device->CreateTexture2D(&desc, nullptr, &texture);
-	ASSERT(SUCCEEDED(hr), "RenderTarget: failed to create depth stencil texture");
+	ASSERT(SUCCEEDED(hr), "RenderTarget: Failed to create depth stencil texture!");
 
 	hr = device->CreateDepthStencilView(texture, nullptr, &mDepthStencilView);
-	ASSERT(SUCCEEDED(hr), "RenderTarget: failed to create depth stencil view");
+	ASSERT(SUCCEEDED(hr), "RenderTarget: Failed to create depth stencil view!");
 
 	SafeRelease(texture);
 
@@ -89,12 +89,12 @@ void RenderTarget::BeginRender(Color clearColor)
 {
 	auto context = GraphicsSystem::Get()->GetContext();
 
-	// store the current versions
-	UINT numViewports = 1;
+	// Store the current versions
+	UINT numVieports = 1;
 	context->OMGetRenderTargets(1, &mOldRenderTargetView, &mOldDepthStencilView);
-	context->RSGetViewports(&numViewports, &mOldViewport);
+	context->RSGetViewports(&numVieports, &mOldViewport);
 
-	// apply render target versions
+	// Apply render target versions
 	context->ClearRenderTargetView(mRenderTargetView, &clearColor.r);
 	context->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0.0f);
 	context->OMSetRenderTargets(1, &mRenderTargetView, mDepthStencilView);

@@ -499,9 +499,9 @@ MeshPX MeshBuilder::CreateObjPX(const std::filesystem::path& filePath, float sca
 	MeshPX mesh;
 	FILE* file = nullptr;
 	fopen_s(&file, filePath.u8string().c_str(), "r");
-	ASSERT(file != nullptr, "MeshBuilder: can't open file %s", filePath.u8string().c_str());
+	ASSERT(file != nullptr, "MeshBuilder: Can't open file %s", filePath.u8string().c_str());
 
-	// read in file
+	// Read in file;
 	std::vector<Math::Vector3> positions;
 	std::vector<Math::Vector2> uvCoords;
 	std::vector<uint32_t> positionIndices;
@@ -510,52 +510,55 @@ MeshPX MeshBuilder::CreateObjPX(const std::filesystem::path& filePath, float sca
 	while (true)
 	{
 		char buffer[128];
-		int result = fscanf_s (file, "%s", buffer,(uint32_t)std::size(buffer));
+		int result = fscanf_s(file, "%s", buffer, (uint32_t)std::size(buffer));
 		if (result == EOF)
 		{
 			break;
 		}
-		if (strcmp (buffer, "v") == 0)
+		if (strcmp(buffer, "v") == 0)
 		{
 			float x, y, z = 0.0f;
-			fscanf_s(file, "%f %f %f", &x, &y, &z);
+			fscanf_s(file, "%f %f %f\n", &x, &y, &z);
 			positions.push_back({ x, y, z });
 		}
 		else if (strcmp(buffer, "vt") == 0)
 		{
 			float u, v = 0.0f;
-			fscanf_s(file, "%f %f", &u, &v);
-			uvCoords.push_back({ u,1.0f - v });
+			fscanf_s(file, "%f %f\n", &u, &v);
+			uvCoords.push_back({ u, 1.0f - v });
 		}
 		else if (strcmp(buffer, "f") == 0)
 		{
 			uint32_t p[4];
 			uint32_t uv[4];
-			int count = fscanf_s(file, "%d/%d/%*d %d/%d/%*d %d/%d/%*d  %d/%d/%*d\n", &p[0], &uv[0], & p[1], &uv[1], & p[2], &uv[2],&p[3], &uv[3]);
+			int count = fscanf_s(file, "%d/%d/%*d %d/%d/%*d %d/%d/%*d %d/%d/%*d\n", &p[0], &uv[0], &p[1], &uv[1], &p[2], &uv[2], &p[3], &uv[3]);
 			if (count % 3 == 0)
 			{
-				for (uint32_t i = 0; i < 3; i++)
+				for (uint32_t i = 0; i < 3; ++i)
 				{
 					positionIndices.push_back(p[i] - 1);
 					uvIndices.push_back(uv[i] - 1);
-
 				}
 			}
 			else
 			{
-				// triangle 1
+				// If we have 4 vertices, we need to create two triangles
+				// Most Obj Files use quads, so this makes the Engine understand them
+				// Triangle 1
 				positionIndices.push_back(p[0] - 1);
 				positionIndices.push_back(p[1] - 1);
 				positionIndices.push_back(p[2] - 1);
-				// triangle 2
+				// Triangle 2
 				positionIndices.push_back(p[0] - 1);
 				positionIndices.push_back(p[2] - 1);
 				positionIndices.push_back(p[3] - 1);
-				// triangle 1
+
+				// Same concept for 4 UV's
+				// Triangle 1
 				uvIndices.push_back(uv[0] - 1);
 				uvIndices.push_back(uv[1] - 1);
 				uvIndices.push_back(uv[2] - 1);
-				//triangle 2
+				// Triangle 2
 				uvIndices.push_back(uv[0] - 1);
 				uvIndices.push_back(uv[2] - 1);
 				uvIndices.push_back(uv[3] - 1);
@@ -566,7 +569,7 @@ MeshPX MeshBuilder::CreateObjPX(const std::filesystem::path& filePath, float sca
 	mesh.vertices.resize(positions.size());
 	for (uint32_t i = 0; i < positions.size(); ++i)
 	{
-		mesh.vertices[i].position = positions[i]* scale;
+		mesh.vertices[i].position = positions[i] * scale;
 	}
 	if (uvCoords.size() > 0)
 	{
@@ -583,14 +586,13 @@ MeshPX MeshBuilder::CreateObjPX(const std::filesystem::path& filePath, float sca
 MeshPX MeshBuilder::CreateScreenQuadPX()
 {
 	MeshPX mesh;
-	mesh.vertices.push_back({ { -1.0f, -1.0f, 0.0f }, { 0.0f, 1.0f } }); 
-	mesh.vertices.push_back({ { -1.0f,  1.0f, 0.0f }, { 0.0f, 0.0f } });
-	mesh.vertices.push_back({ {  1.0f,  1.0f, 0.0f }, { 1.0f, 0.0f } });
-	mesh.vertices.push_back({ {  1.0f, -1.0f, 0.0f }, { 1.0f, 1.0f } });
+	mesh.vertices.push_back({ { -1.0f,  -1.0f, 0.0f }, { 0.0f, 1.0f } }); // Normalized Device Coordinates
+	mesh.vertices.push_back({ { -1.0f,   1.0f, 0.0f }, { 0.0f, 0.0f } });
+	mesh.vertices.push_back({ {  1.0f,   1.0f, 0.0f }, { 1.0f, 0.0f } });
+	mesh.vertices.push_back({ {  1.0f,  -1.0f, 0.0f }, { 1.0f, 1.0f } });
 	mesh.indices = {
-		0,1,2,
-		0,2,3
-	};
+	0, 1, 2,
+	0, 2, 3 }; // World Space Coordinates
+
 	return mesh;
 }
-
