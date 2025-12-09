@@ -30,6 +30,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shaders", "Shaders", "{BDE86A11-A40D-4C2F-B896-979569360F9D}"
 	ProjectSection(SolutionItems) = preProject
 		Assets\Shaders\CelShader.fx = Assets\Shaders\CelShader.fx
+		Assets\Shaders\CRT.fx = Assets\Shaders\CRT.fx
 		Assets\Shaders\Do TransformColor.fx = Assets\Shaders\Do TransformColor.fx
 		Assets\Shaders\DoColor.fx = Assets\Shaders\DoColor.fx
 		Assets\Shaders\DoSomething.fx = Assets\Shaders\DoSomething.fx
@@ -74,6 +75,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "13_HelloShadow", "VGP330\13_HelloShadow\13_HelloShadow.vcxproj", "{05C9BC67-E7F5-457F-8010-A09248ED12A9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "14_HelloTerrain", "VGP330\14_HelloTerrain\14_HelloTerrain.vcxproj", "{4DA5678C-B956-4E69-976D-3D8012762009}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "15_HelloFinal", "VGP330\15_HelloFinal\15_HelloFinal.vcxproj", "{EB912ACF-D321-44B4-879D-F6FD346FCDC0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -259,6 +262,14 @@ Global
 		{4DA5678C-B956-4E69-976D-3D8012762009}.Release|x64.Build.0 = Release|x64
 		{4DA5678C-B956-4E69-976D-3D8012762009}.Release|x86.ActiveCfg = Release|Win32
 		{4DA5678C-B956-4E69-976D-3D8012762009}.Release|x86.Build.0 = Release|Win32
+		{EB912ACF-D321-44B4-879D-F6FD346FCDC0}.Debug|x64.ActiveCfg = Debug|x64
+		{EB912ACF-D321-44B4-879D-F6FD346FCDC0}.Debug|x64.Build.0 = Debug|x64
+		{EB912ACF-D321-44B4-879D-F6FD346FCDC0}.Debug|x86.ActiveCfg = Debug|Win32
+		{EB912ACF-D321-44B4-879D-F6FD346FCDC0}.Debug|x86.Build.0 = Debug|Win32
+		{EB912ACF-D321-44B4-879D-F6FD346FCDC0}.Release|x64.ActiveCfg = Release|x64
+		{EB912ACF-D321-44B4-879D-F6FD346FCDC0}.Release|x64.Build.0 = Release|x64
+		{EB912ACF-D321-44B4-879D-F6FD346FCDC0}.Release|x86.ActiveCfg = Release|Win32
+		{EB912ACF-D321-44B4-879D-F6FD346FCDC0}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -287,6 +298,7 @@ Global
 		{CA34B2A4-AAB8-424F-94D4-0D44F92C83C2} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{05C9BC67-E7F5-457F-8010-A09248ED12A9} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{4DA5678C-B956-4E69-976D-3D8012762009} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{EB912ACF-D321-44B4-879D-F6FD346FCDC0} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {65254DFF-05EE-4CC6-84AC-D87D13E6C766}

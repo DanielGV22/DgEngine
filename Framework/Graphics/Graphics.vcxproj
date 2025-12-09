@@ -140,6 +140,7 @@
     <ClInclude Include="Inc\Color.h" />
     <ClInclude Include="Inc\Common.h" />
     <ClInclude Include="Inc\ConstantBuffer.h" />
+    <ClInclude Include="Inc\CRTEffect.h" />
     <ClInclude Include="Inc\DebugUI.h" />
     <ClInclude Include="Inc\DirectionalLight.h" />
     <ClInclude Include="Inc\Graphics.h" />
@@ -174,6 +175,7 @@
     <ClCompile Include="Src\BlendState.cpp" />
     <ClCompile Include="Src\Camera.cpp" />
     <ClCompile Include="Src\ConstantBuffer.cpp" />
+    <ClCompile Include="Src\CRTEffect.cpp" />
     <ClCompile Include="Src\DebugUI.cpp" />
     <ClCompile Include="Src\GraphicsSystem.cpp" />
     <ClCompile Include="Src\MeshBuffer.cpp" />

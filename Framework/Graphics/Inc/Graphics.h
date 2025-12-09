@@ -8,6 +8,7 @@
 #include "BlendState.h"
 #include "Camera.h"
 #include "ConstantBuffer.h"
+#include "CRTEffect.h"
 #include "DebugUI.h"
 #include "DirectionalLight.h"
 #include "Material.h"

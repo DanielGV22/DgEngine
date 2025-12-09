@@ -111,6 +111,9 @@
     <ClInclude Include="Inc\VisionEffect.h">
       <Filter>Inc</Filter>
     </ClInclude>
+    <ClInclude Include="Inc\CRTEffect.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Precompiled.cpp">
@@ -186,6 +189,9 @@
       <Filter>Src</Filter>
     </ClCompile>
     <ClCompile Include="Src\VisionEffect.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\CRTEffect.cpp">
       <Filter>Src</Filter>
     </ClCompile>
   </ItemGroup>
