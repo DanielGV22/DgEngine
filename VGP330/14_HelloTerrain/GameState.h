@@ -16,6 +16,11 @@ private:
 
 	void UpdateCamera(float deltaTime);
 
+	DgEngine::Graphics::RenderTarget mSceneRenderTarget;
+	DgEngine::Graphics::VisionEffect mVisionEffect;
+
+	int   mVisionMode = 0;   // 0 = off, 1 = thermal, 2 = night
+	float mTime = 0.0f;
 
 	DgEngine::Graphics::Camera mCamera;
 	DgEngine::Graphics::DirectionalLight mDirectionalLight;

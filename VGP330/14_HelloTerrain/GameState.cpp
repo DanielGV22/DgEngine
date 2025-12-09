@@ -54,6 +54,17 @@ void GameState::Initialize()
     GraphicsSystem* gs = GraphicsSystem::Get();
     const uint32_t screenWidth = gs->GetBackBufferWidth();
     const uint32_t screenHeight = gs->GetBackBufferHeight();
+
+    mSceneRenderTarget.Initialize(
+        screenWidth,
+        screenHeight,
+        RenderTarget::Format::RGBA_U8);
+
+    // Vision effect
+    std::filesystem::path visionShaderFile = L"../../Assets/Shaders/Vision.fx";
+    mVisionEffect.Initialize(visionShaderFile);
+    mVisionEffect.SetScreenSize(static_cast<float>(screenWidth), static_cast<float>(screenHeight));
+    mVisionEffect.SetSourceTexture(mSceneRenderTarget);
 }
 
 
@@ -72,28 +83,43 @@ void GameState::Terminate()
 
 void GameState::Update(float deltaTime)
 {
+    mTime += deltaTime;
+    mVisionEffect.SetTime(mTime);
+
     UpdateCamera(deltaTime);
 }
 
 void GameState::Render()
 {
+    // 1) Render scene into offscreen texture
+    mSceneRenderTarget.BeginRender();
+
+    // Shadow pass
     mShadowEffect.Begin();
-           mShadowEffect.Render(mCharacter);
-           mShadowEffect.Render(mCharacter02);
-           mShadowEffect.Render(mCharacter03);
+    mShadowEffect.Render(mCharacter);
+    mShadowEffect.Render(mCharacter02);
+    mShadowEffect.Render(mCharacter03);
     mShadowEffect.End();
 
+    // Terrain
     mTerrainEffect.Begin();
-            mTerrainEffect.Render(mGround);
+    mTerrainEffect.Render(mGround);
     mTerrainEffect.End();
- 
 
+    // Standard (lit characters)
     mStandardEffect.Begin();
-             mStandardEffect.Render(mCharacter);
-             mStandardEffect.Render(mCharacter02);
-             mStandardEffect.Render(mCharacter03);
+    mStandardEffect.Render(mCharacter);
+    mStandardEffect.Render(mCharacter02);
+    mStandardEffect.Render(mCharacter03);
     mStandardEffect.End();
 
+    mSceneRenderTarget.EndRender();
+
+    // 2) Post-process pass: fullscreen quad with VisionEffect
+   // mVisionEffect.SetMode(mVisionMode);
+    mVisionEffect.Begin();
+    mVisionEffect.Render(mScreenQuad); // screen quad MeshPX
+    mVisionEffect.End();
 }
 
 
@@ -145,13 +171,20 @@ void GameState::DebugUI()
 	        mCamera.SetPosition(cameraPos);
 	    }
 	}
+
     ImGui::Separator();
+    if (ImGui::CollapsingHeader("Vision", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        const char* modes[] = { "Off", "Thermal", "Night Vision" };
+        ImGui::Combo("Vision Mode", &mVisionMode, modes, IM_ARRAYSIZE(modes));
+        ImGui::Text("Current mode = %d", mVisionMode);
+
+    }
 
     mStandardEffect.DebugUI();
-
     mShadowEffect.DebugUI();
-
     mTerrainEffect.DebugUI();
+    mVisionEffect.DebugUI();
 
     ImGui::End();
 }

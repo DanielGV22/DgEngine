@@ -33,3 +33,4 @@
 #include "StandardEffect.h"
 #include "VertexShader.h"
 #include "VertexTypes.h"
+#include "VisionEffect.h"
