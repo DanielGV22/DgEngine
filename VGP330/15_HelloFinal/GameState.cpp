@@ -60,7 +60,6 @@ void GameState::Initialize()
         screenHeight,
         RenderTarget::Format::RGBA_U8);
 
-    // After mSceneRenderTarget.Initialize(...)
     std::filesystem::path crtShaderFile = L"../../Assets/Shaders/CRT.fx";
     mCRTEffect.Initialize(crtShaderFile);
     mCRTEffect.SetScreenSize((float)screenWidth, (float)screenHeight);
@@ -113,7 +112,7 @@ void GameState::Render()
     mTerrainEffect.Render(mGround);
     mTerrainEffect.End();
 
-    // Standard (lit characters)
+    // Standard 
     mStandardEffect.Begin();
     mStandardEffect.Render(mCharacter);
     mStandardEffect.Render(mCharacter02);

@@ -103,7 +103,7 @@ void VisionEffect::DebugUI()
     {
         // --- Mode selector (0 = Off, 1 = Thermal, 2 = Night Vision) ---
         const char* modes[] = { "Off", "Thermal", "Night Vision" };
-        int modeInt = static_cast<int>(mSettingsData.mode);   // copy from float
+        int modeInt = static_cast<int>(mSettingsData.mode);   // from float
         if (ImGui::Combo("Mode", &modeInt, modes, IM_ARRAYSIZE(modes)))
         {
             mSettingsData.mode = static_cast<float>(modeInt);  // write back
@@ -111,7 +111,6 @@ void VisionEffect::DebugUI()
 
         ImGui::Separator();
         ImGui::Text("General");
-        // IMPORTANT: these must NOT use &mSettingsData.mode
         ImGui::DragFloat("Noise Intensity", &mSettingsData.noiseIntensity, 0.01f, 0.0f, 1.0f);
         ImGui::DragFloat("Vignette Strength", &mSettingsData.vignetteStrength, 0.01f, 0.0f, 3.0f);
 

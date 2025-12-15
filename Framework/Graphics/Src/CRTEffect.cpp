@@ -14,7 +14,6 @@ void CRTEffect::Initialize(const std::filesystem::path& path)
     mSettingsBuffer.Initialize();
 
     // Screen quad should use VertexPX (POSITION + TEXCOORD)
-    // If your screen quad uses a different vertex type, swap VertexPX for that.
     mVertexShader.Initialize<VertexPX>(path);
     mPixelShader.Initialize(path);
 
