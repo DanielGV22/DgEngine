@@ -94,10 +94,10 @@ Quaternion Quaternion::CreateFromYawPitchRoll(float yaw, float pitch, float roll
 
 Quaternion Quaternion::CreateFromRotationMatrix(const Matrix4& m) noexcept
 {
-    const float w = sqrt(m._11 + m._22 + m._33 + 1) * 0.5f;
-    const float x = sqrt(m._11 - m._22 - m._33 + 1) * 0.5f;
-    const float y = sqrt(m._11 + m._22 - m._33 + 1) * 0.5f;
-    const float z = sqrt(m._11 - m._22 + m._33 + 1) * 0.5f;
+    const float w = sqrt(m._11 + m._22 + m._33 + 1.0f) * 0.5f;
+    const float x = sqrt(m._11 - m._22 - m._33 + 1.0f) * 0.5f;
+    const float y = sqrt(m._11 + m._22 - m._33 + 1.0f) * 0.5f;
+    const float z = sqrt(m._11 - m._22 + m._33 + 1.0f) * 0.5f;
     Quaternion q;
     if (w >= x && w >= y && w >= z)
     {
