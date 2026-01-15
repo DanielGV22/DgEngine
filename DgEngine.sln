@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11222.15 d18.0
+VisualStudioVersion = 18.0.11222.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DgEngine", "Engine\DgEngine\DgEngine.vcxproj", "{61C290CE-1D54-4450-92E5-9C19E63B1114}"
 EndProject
@@ -77,6 +77,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "14_HelloTerrain", "VGP330\14_HelloTerrain\14_HelloTerrain.vcxproj", "{4DA5678C-B956-4E69-976D-3D8012762009}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "15_HelloFinal", "VGP330\15_HelloFinal\15_HelloFinal.vcxproj", "{EB912ACF-D321-44B4-879D-F6FD346FCDC0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VGP334", "VGP334", "{41176D7B-F41B-46D1-BD76-3263B58B836C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "16_HelloAnimation", "VGP334\16_HelloAnimation\16_HelloAnimation.vcxproj", "{BA18D17C-9A35-4DF4-862B-FC16F33E44F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -270,6 +274,14 @@ Global
 		{EB912ACF-D321-44B4-879D-F6FD346FCDC0}.Release|x64.Build.0 = Release|x64
 		{EB912ACF-D321-44B4-879D-F6FD346FCDC0}.Release|x86.ActiveCfg = Release|Win32
 		{EB912ACF-D321-44B4-879D-F6FD346FCDC0}.Release|x86.Build.0 = Release|Win32
+		{BA18D17C-9A35-4DF4-862B-FC16F33E44F8}.Debug|x64.ActiveCfg = Debug|x64
+		{BA18D17C-9A35-4DF4-862B-FC16F33E44F8}.Debug|x64.Build.0 = Debug|x64
+		{BA18D17C-9A35-4DF4-862B-FC16F33E44F8}.Debug|x86.ActiveCfg = Debug|Win32
+		{BA18D17C-9A35-4DF4-862B-FC16F33E44F8}.Debug|x86.Build.0 = Debug|Win32
+		{BA18D17C-9A35-4DF4-862B-FC16F33E44F8}.Release|x64.ActiveCfg = Release|x64
+		{BA18D17C-9A35-4DF4-862B-FC16F33E44F8}.Release|x64.Build.0 = Release|x64
+		{BA18D17C-9A35-4DF4-862B-FC16F33E44F8}.Release|x86.ActiveCfg = Release|Win32
+		{BA18D17C-9A35-4DF4-862B-FC16F33E44F8}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -299,6 +311,7 @@ Global
 		{05C9BC67-E7F5-457F-8010-A09248ED12A9} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{4DA5678C-B956-4E69-976D-3D8012762009} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{EB912ACF-D321-44B4-879D-F6FD346FCDC0} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{BA18D17C-9A35-4DF4-862B-FC16F33E44F8} = {41176D7B-F41B-46D1-BD76-3263B58B836C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {65254DFF-05EE-4CC6-84AC-D87D13E6C766}

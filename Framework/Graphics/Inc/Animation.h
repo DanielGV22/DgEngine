@@ -17,6 +17,8 @@ namespace DgEngine::Graphics
 		Math::Quaternion GetRotation(float time) const;
 		Math::Vector3 GetScale(float time) const;
 
+		friend class AnimationBuilder;
+
 		PositionKeys mPositionKeys;
 		RotationKeys mRotationKeys;
 		ScaleKeys    mScaleKeys;
