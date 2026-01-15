@@ -2,6 +2,8 @@
 
 #include "MeshTypes.h"
 #include "Material.h"
+#include "Skeleton.h"
+
 
 namespace DgEngine::Graphics
 {
@@ -25,5 +27,6 @@ namespace DgEngine::Graphics
 
 		std::vector<MeshData> meshData;
 		std::vector<MaterialData> materialData;
+		std::unique_ptr<Skeleton> skeleton;
 	};
 }

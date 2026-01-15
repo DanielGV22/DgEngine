@@ -10,6 +10,8 @@ using namespace DgEngine;
 using namespace DgEngine::Graphics;
 using namespace DgEngine::Math;
 
+using BoneIndexMap = std::map<std::string, uint32_t>;
+
 struct Arguments
 {
     std::filesystem::path inputFileName;
@@ -67,6 +69,16 @@ Color ToColor(const aiColor3D& c)
         static_cast<float>(c.g),
         static_cast<float>(c.b),
         static_cast<float>(1.0f)
+    };
+}
+
+Matrix4 ToMatrix4(const aiMatrix4x4& m)
+{
+    return {
+        static_cast<float>(m.a1), static_cast<float>(m.b1), static_cast<float>(m.c1),static_cast<float>(m.d1),
+        static_cast<float>(m.a2), static_cast<float>(m.b2), static_cast<float>(m.c2),static_cast<float>(m.d2),
+        static_cast<float>(m.a3), static_cast<float>(m.b3), static_cast<float>(m.c3),static_cast<float>(m.d3),
+        static_cast<float>(m.a4), static_cast<float>(m.b4), static_cast<float>(m.c4),static_cast<float>(m.d4)
     };
 }
 
@@ -165,6 +177,66 @@ std::string FindTexture(const aiScene* scene, const aiMaterial* aiMaterial,
     return textureName.filename().u8string();
 }
 
+Bone* BuildSkeleton(const aiNode* sceneNode, Bone* parent, Skeleton& skeleton, BoneIndexMap& boneIndexMap)
+{
+    Bone* bone = nullptr;
+	std::string boneName = sceneNode->mName.C_Str();
+	auto iter = boneIndexMap.find(boneName);
+    if (iter!=boneIndexMap.end())
+    {
+        bone = skeleton.bones[iter->second].get();
+
+    }
+    else
+    {
+		bone = skeleton.bones.emplace_back(std::make_unique<Bone>()).get();
+		bone->index = static_cast<int>(skeleton.bones.size()) - 1;
+		bone->offsetTransform = Matrix4::Identity;
+        if (boneName.empty())
+        {
+            bone->name = "NoName" + std::to_string(bone->index);
+        }
+        else
+        {
+            bone->name = std::move(boneName);
+        }
+        boneIndexMap.emplace(bone->name, bone->index);
+    }
+    if (skeleton.root == nullptr && parent == nullptr)
+    {
+        skeleton.root = bone;
+    }
+
+    bone->parent = parent;
+	bone->parentIndex = parent ? parent->index : -1;
+    bone->toParentTransform = ToMatrix4(sceneNode->mTransformation);
+
+    bone->children.reserve(sceneNode->mNumChildren);
+    for (uint32_t i = 0; i < sceneNode->mNumChildren; ++i)
+    {
+        Bone* child = BuildSkeleton(sceneNode->mChildren[i], bone, skeleton, boneIndexMap);
+        bone->children.push_back(child);
+        bone->childrenIndices.push_back(child->index);
+    }
+    return bone;
+}
+
+uint32_t GetBoneIndex(const aiBone* nodeBone, const BoneIndexMap& boneIndexMap)
+{
+	std::string boneName = nodeBone->mName.C_Str();
+    ASSERT(!boneName.empty(), "ERROR:: aiBone does not have a name");
+
+    auto iter = boneIndexMap.find(boneName);
+    ASSERT(iter!= boneIndexMap.end(), "ERROR: aiBone was not found in the index map ");
+    return iter->second;
+}
+
+void SetBoneOffsetTransform(const aiBone* nodeBone, Skeleton& skeleton, const BoneIndexMap& boneIndexMap)
+{
+    uint32_t boneIndex = GetBoneIndex(nodeBone, boneIndexMap);
+    Bone* bone = skeleton.bones[boneIndex].get();
+	bone->offsetTransform = ToMatrix4(nodeBone->mOffsetMatrix);
+}
 
 int main(int argc, char* argv[])
 {
@@ -195,8 +267,15 @@ int main(int argc, char* argv[])
 
 
     Model model;
+    BoneIndexMap boneIndexMap;
+
     if (scene->HasMeshes())
     {
+		printf("Build Skeleton...\n");
+        model.skeleton = std::make_unique<Skeleton>();
+        BuildSkeleton(scene->mRootNode, nullptr, *model.skeleton.get(), boneIndexMap);
+
+
         printf("Reading Mesh Data...\n");
 
         for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex)
