@@ -11,5 +11,8 @@ namespace DgEngine::Graphics
 
 		void SaveMaterial(std::filesystem::path filePath, const Model& material);
 		void LoadMaterial(std::filesystem::path filePath, Model& material);
+
+		void SaveSkeleton(std::filesystem::path filePath, const Model& model);
+		void LoadSkeleton(std::filesystem::path filePath, Model& model);
     }
 }

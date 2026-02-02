@@ -7,6 +7,7 @@
 
 #include "Animation.h"
 #include "AnimationBuilder.h"
+#include "AnimationUtil.h"
 #include "BlendState.h"
 #include "Camera.h"
 #include "ConstantBuffer.h"

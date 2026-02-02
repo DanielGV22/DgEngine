@@ -8,6 +8,8 @@
 
 namespace DgEngine::Graphics
 {
+	struct Skeleton;
+
 	class RenderObject
 	{
 	public:
@@ -31,5 +33,7 @@ namespace DgEngine::Graphics
 		ModelId modelId;
 		Transform transform;
 		std::vector<RenderObject> renderObjects;
+
+		const Skeleton* skeleton;
 	};
 }
