@@ -53,9 +53,9 @@ namespace DgEngine::Graphics
             int useNormalMap = 1;
             int useBumpMap = 1;
             int useShadowMap = 1;
-            float bumpIntensity = -0.02f;
+			int useSkinning = 1;
+            float bumpWeight = -0.02f;
             float depthBias = 0.000003f;
-            float padding = 0.0f; // Padding to make the structure 16-byte aligned (After ShadowMap only need one)
         };
 
         using TransformBuffer = TypedConstantBuffer<TransformData>;
@@ -69,6 +69,9 @@ namespace DgEngine::Graphics
 
         using SettingsBuffer = TypedConstantBuffer<SettingsData>;
         SettingsBuffer mSettingsBuffer;
+
+		using BoneTransformBuffer = ConstantBuffer;
+		BoneTransformBuffer mBoneTransformBuffer;
 
         VertexShader mVertexShader;
         PixelShader mPixelShader;

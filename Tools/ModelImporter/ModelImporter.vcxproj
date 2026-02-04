@@ -85,7 +85,7 @@
     <OutDir>-scale 0.01 ../../Assets/Models/Character03/Character03.fbx ../../Assets/Models/Character03/Character03.model</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>-scale 0.01 ../../Assets/Models/Character03/Character03.fbx ../../Assets/Models/Character03/Character03.model</OutDir>
+    <OutDir>-scale 0.01 ../../Assets/Models/Character02/Character02.fbx ../../Assets/Models/Character02/Character02.model</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>-scale 0.01 ../../Assets/Models/Character03/Character03.fbx ../../Assets/Models/Character03/Character03.model</OutDir>

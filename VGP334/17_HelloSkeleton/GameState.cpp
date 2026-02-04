@@ -14,7 +14,13 @@ void GameState::Initialize()
     mDirectionalLight.diffuse = { 0.8f, 0.8f, 0.8f, 1.0f };
     mDirectionalLight.specular = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-    mCharacter.Initialize("Character01/Character01.model");
+    mCharacter.Initialize("Character02/Character02.model");
+    
+    // Add this debug check
+    if (mCharacter.skeleton == nullptr)
+    {
+        LOG("WARNING: Character skeleton is null!");
+    }
 
     auto tm = TextureManager::Get();
 
@@ -42,6 +48,9 @@ void GameState::Render()
    
     if (mDrawSkeleton)
     {
+		AnimationUtil::BoneTransforms boneTransforms;
+		AnimationUtil::ComputeBoneTransforms(mCharacter.modelId, boneTransforms);
+		AnimationUtil::DrawSkeleton(mCharacter.modelId, boneTransforms);
         SimpleDraw::AddGroundPlane(10.0f, Colors::DarkGray);
         SimpleDraw::Render(mCamera);
     }

@@ -12,6 +12,8 @@ namespace DgEngine::Graphics
 	constexpr uint32_t VE_Tangent = 0x1 << 2;
 	constexpr uint32_t VE_Color = 0x1 << 3;
 	constexpr uint32_t VE_TexCoord = 0x1 << 4;
+	constexpr uint32_t VE_BlendIndex = 0x1 << 5;
+	constexpr uint32_t VE_BlendWeights = 0x1 << 6;
 
 #define VERTEX_FORMAT(fmt)\
 		static constexpr uint32_t Format = fmt
@@ -38,10 +40,16 @@ namespace DgEngine::Graphics
 
 	struct Vertex
 	{
-		VERTEX_FORMAT(VE_Position | VE_Normal | VE_Tangent | VE_TexCoord);
+		// sets the vertex input data expected to be passed to the shader 
+		// must match the VertexShaderInput structure in the shader code
+		VERTEX_FORMAT(VE_Position | VE_Normal | VE_Tangent | VE_TexCoord | VE_BlendIndex | VE_BlendWeights);
+		static constexpr int MaxBoneWeights = 4;
+
 		Math::Vector3 position;
 		Math::Vector3 normal;
 		Math::Vector3 tangent;
 		Math::Vector2 uvCoord;
+		int boneIndices[MaxBoneWeights]{ 0 };
+		float boneWeights[MaxBoneWeights] = { 0.0f };
 	};
 }

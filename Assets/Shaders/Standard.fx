@@ -32,8 +32,14 @@ cbuffer SettingBuffer : register(b3)
     bool useNormalMap;
     bool useBumpMap;
     bool useShadowMap;
+    bool useSkinning;
     float bumpMapIntensity;
     float depthBias;
+}
+
+cbuffer BoneTransformBuffer : register(b4)
+{
+    matrix boneTransforms[256];
 }
 
 SamplerState textureSampler : register(s0);
@@ -44,6 +50,27 @@ Texture2D normalMap : register(t2);
 Texture2D bumpMap : register(t3);
 Texture2D shadowMap : register(t4);
 
+static matrix Identity =
+{
+    1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1, 0,
+    0, 0, 0, 1
+};
+
+matrix GetBoneTransform(int4 indices, float4 weights)
+{
+    if (length(weights) <= 0.0f)
+    {
+        return Identity;
+    }
+    matrix transform = boneTransforms[indices[0]] * weights[0];
+    transform += boneTransforms[indices[1]] * weights[1];
+    transform += boneTransforms[indices[2]] * weights[2];
+    transform += boneTransforms[indices[3]] * weights[3];
+    
+    return transform;
+}
 
 struct VS_INPUT
 {
@@ -51,6 +78,8 @@ struct VS_INPUT
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
     float2 texCoord : TEXCOORD;
+    int4 blendIndices : BLENDINDICES;
+    float4 blendWeights : BLENDWEIGHTs;
 };
 
 struct VS_OUTPUT
@@ -66,6 +95,18 @@ struct VS_OUTPUT
 
 VS_OUTPUT VS(VS_INPUT input)
 {
+    //matrix to multiply to get the vertex in world  space
+    matrix toWorld = world;
+    //matrix to multiply to get the vertex in NDC space before screen space
+    matrix toNDC = wvp;
+    if(useSkinning)
+    {
+        // apply skinning data to mesh 
+        matrix boneTransform = GetBoneTransform(input.blendIndices, input.blendWeights);
+        toWorld = mul(boneTransform, toWorld);
+        toNDC = mul(boneTransform, toNDC);
+    }
+    
     float3 localPosition = input.position;
     
     if (useBumpMap)
@@ -77,13 +118,13 @@ VS_OUTPUT VS(VS_INPUT input)
     }
     
     VS_OUTPUT output;
-    output.position = mul(float4(localPosition, 1.0f), wvp);
-    output.worldNormal = mul(input.normal, (float3x3) world);
-    output.worldTangent = mul(input.tangent, (float3x3) world);
+    output.position = mul(float4(localPosition, 1.0f), toNDC);
+    output.worldNormal = mul(input.normal, (float3x3) toWorld);
+    output.worldTangent = mul(input.tangent, (float3x3) toWorld);
     output.texCoord = input.texCoord;
     output.dirToLight = -lightDirection;
     
-    float4 worldPosition = mul(float4(localPosition, 1.0f), world);
+    float4 worldPosition = mul(float4(localPosition, 1.0f), toWorld);
     output.dirToView = normalize(viewPosition - worldPosition.xyz);
     
     if (useShadowMap)
