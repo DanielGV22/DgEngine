@@ -10,13 +10,17 @@ using namespace DgEngine::Graphics;
 // empty namespace for global functions isolated in the cpp file
 namespace
 {
-	void ComputeBoneTransformRecursive(const Bone* bone, AnimationUtil::BoneTransforms& boneTransforms)
+	void ComputeBoneTransformRecursive(const Bone* bone, AnimationUtil::BoneTransforms& boneTransforms, const Animator* animator)
 	{
 		if (bone == nullptr)
-			return; // Early exit if bone is null
+		{
 
 			// set the bone transform to the array of matrices 
-			boneTransforms[bone->index] = bone->toParentTransform;
+			// if no animator or the bone does not have any animations use the regular to parent transform otherwise get the transform from the animator
+			if (animator == nullptr || !animator->GetToParentTransform(bone, boneTransforms[bone->index]))
+			{
+				boneTransforms[bone->index] = bone->toParentTransform;
+			}
 			// if there is a parent, apply the parent's transform as well
 			if (bone->parent != nullptr)
 			{
@@ -25,12 +29,13 @@ namespace
 			// go through the children and apply their transforms
 			for (const Bone* child : bone->children)
 			{
-				ComputeBoneTransformRecursive(child, boneTransforms);
+				ComputeBoneTransformRecursive(child, boneTransforms, animator);
 			}
+		}
 	}
 }
 
-void AnimationUtil::ComputeBoneTransforms(ModelId modelId, BoneTransforms& boneTransforms)
+void AnimationUtil::ComputeBoneTransforms(ModelId modelId, BoneTransforms& boneTransforms,const Animator* animator)
 {
 	const Model* model = ModelManager::Get()->GetModel(modelId);
 	if (model != nullptr && model->skeleton != nullptr)
@@ -38,7 +43,7 @@ void AnimationUtil::ComputeBoneTransforms(ModelId modelId, BoneTransforms& boneT
 		// resize to aync the number of bones with the matrices
 		boneTransforms.resize(model->skeleton->bones.size());
 		// generate the matrices
-		ComputeBoneTransformRecursive(model->skeleton->root, boneTransforms);
+		ComputeBoneTransformRecursive(model->skeleton->root, boneTransforms, animator);
 	}
 }
 
