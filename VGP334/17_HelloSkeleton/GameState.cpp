@@ -14,7 +14,7 @@ void GameState::Initialize()
     mDirectionalLight.diffuse = { 0.8f, 0.8f, 0.8f, 1.0f };
     mDirectionalLight.specular = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-    mCharacter.Initialize("Character02/Character02.model");
+    mCharacter.Initialize("Character03/Character03.model");
     
     // Add this debug check
     if (mCharacter.skeleton == nullptr)

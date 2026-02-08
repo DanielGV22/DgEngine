@@ -23,6 +23,7 @@ private:
 	DgEngine::Graphics::RenderGroup mCharacter;
 	DgEngine::Graphics::StandardEffect mStandardEffect;
 
+
 	bool mDrawSkeleton = false;
 
 };

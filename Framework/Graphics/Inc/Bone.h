@@ -16,7 +16,5 @@ namespace DgEngine::Graphics
 		Math::Matrix4 toParentTransform;
 		Math::Matrix4 offsetTransform;
 
-		
-
 	};
 }

@@ -14,75 +14,70 @@ namespace DgEngine::Graphics
 	class RenderGroup;
 	class Texture;
 
-    class StandardEffect final
-    {
-    public:
-        void Initialize(const std::filesystem::path& path);
-        void Terminate();
+	class StandardEffect final
+	{
+	public:
+		void Initialize(const std::filesystem::path& path);
+		void Terminate();
 
-        void Begin();
-        void End();
+		void Begin();
+		void End();
 
-        void Render(const RenderObject& renderObject);
-        void Render(const RenderGroup& renderGroup);
+		void Render(const RenderObject& renderObject);
+		void Render(const RenderGroup& renderGroup);
 
-        void SetCamera(const Camera& camera);
+		void SetCamera(const Camera& camera);
+		void SetDirectionalLight(const DirectionalLight& directionalLight);
+		void SetLightCamera(const Camera& camera);
+		void SetShadowMap(const Texture& shadowMap);
 
-        void SetDirectionalLight(const DirectionalLight& directionalLight);
-        // Shadows
-        void SetLightCamera(const Camera& camera);
-        void SetShadowMap(const Texture& shadowMap);
+		void DebugUI();
 
-        void DebugUI();
+	private:
+		struct TransformData
+		{
+			Math::Matrix4 wvp; // world view projection
+			Math::Matrix4 world; // world matrix
+			Math::Matrix4 lwvp; // world view projection of the light object for shadows
+			Math::Vector3 viewPosition; // camera position
+			float padding = 0.0f; // padding to maintain 16 byte alignment
+		};
 
-    private:
-
-        struct TransformData
-        {
-            Math::Matrix4 wvp; // World-View-Projection matrix
-            Math::Matrix4 world; // World matrix
-            Math::Matrix4 lwvp; // Light World-View-Projection matrix (World Proj of light objects for shadows)
-            Math::Vector3 viewPosition; // Camera position in world space
-            float padding = 0.0f; // Padding to maintain the 16 byte alignment
-        };
-
-        struct SettingsData
-        {
-            int useDiffuseMap = 1;
-            int useSpecMap = 1;
-            int useNormalMap = 1;
-            int useBumpMap = 1;
-            int useShadowMap = 1;
+		struct SettingsData
+		{
+			int useDiffuseMap = 1;
+			int useSpecMap = 1;
+			int useNormalMap = 1;
+			int useBumpMap = 1;
+			int useShadowMap = 1;
 			int useSkinning = 1;
-            float bumpWeight = -0.02f;
-            float depthBias = 0.000003f;
-        };
+			float bumpWeight = 0.1f;
+			float depthBias = 0.000003f;
+		};
 
-        using TransformBuffer = TypedConstantBuffer<TransformData>;
-        TransformBuffer mTransformBuffer;
+		using TransformBuffer = TypedConstantBuffer<TransformData>;
+		TransformBuffer mTransformBuffer;
 
-        using LightBuffer = TypedConstantBuffer<DirectionalLight>;
-        LightBuffer mLightBuffer;
+		using LightBuffer = TypedConstantBuffer<DirectionalLight>;
+		LightBuffer mLightBuffer;
 
-        using MaterialBuffer = TypedConstantBuffer<Material>;
-        MaterialBuffer mMaterialBuffer;
+		using MaterialBurffer = TypedConstantBuffer<Material>;
+		MaterialBurffer mMaterialBuffer;
 
-        using SettingsBuffer = TypedConstantBuffer<SettingsData>;
-        SettingsBuffer mSettingsBuffer;
+		using SettingsBuffer = TypedConstantBuffer<SettingsData>;
+		SettingsBuffer mSettingsBuffer;
 
 		using BoneTransformBuffer = ConstantBuffer;
 		BoneTransformBuffer mBoneTransformBuffer;
 
-        VertexShader mVertexShader;
-        PixelShader mPixelShader;
-        Sampler mSampler;
+		VertexShader mVertexShader;
+		PixelShader mPixelShader;
+		Sampler mSampler;
 
-        SettingsData mSettingsData;
-
-        const Camera* mCamera = nullptr;
-        const DirectionalLight* mDirectionalLight = nullptr;
-
-        const Camera* mLightCamera = nullptr;
-        const Texture* mShadowMap = nullptr;
-    };
+		SettingsData mSettingsData;
+		const Camera* mCamera = nullptr;
+		const DirectionalLight* mDirectionalLight = nullptr;
+		const Camera* mLightCamera = nullptr;
+		const Texture* mShadowMap = nullptr;
+	};
 }
