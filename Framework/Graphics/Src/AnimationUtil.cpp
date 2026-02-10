@@ -12,7 +12,7 @@ namespace
 {
 	void ComputeBoneTransformRecursive(const Bone* bone, AnimationUtil::BoneTransforms& boneTransforms, const Animator* animator)
 	{
-		if (bone == nullptr)
+		if (bone != nullptr)
 		{
 
 			// set the bone transform to the array of matrices 

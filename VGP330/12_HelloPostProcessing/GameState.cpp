@@ -188,7 +188,7 @@ void GameState::DebugUI()
     );
 
     mStandardEffect.DebugUI();
-	mPostProcessingEffect.DebuUI();
+	//mPostProcessingEffect.DebuUI();
     ImGui::End();
 }
 

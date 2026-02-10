@@ -43,6 +43,7 @@ std::optional<Arguments> ParsArgs(int argc, char* argv[])
 		{
 			//if true, only save the animation data
 			args.animOnly = atoi(argv[i + 1]) == 1;
+			++i;
 		}
 	}
 	return args;

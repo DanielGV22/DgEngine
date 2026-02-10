@@ -22,7 +22,6 @@ void GameState::Initialize()
 
 	mAnimator.Initialize(mCharacter.modelId);
 
-    // Add this debug check
     if (mCharacter.skeleton == nullptr)
     {
         LOG("WARNING: Character skeleton is null!");
