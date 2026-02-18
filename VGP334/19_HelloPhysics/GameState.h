@@ -28,6 +28,20 @@ private:
 	DgEngine::Physics::CollisionShape mGroundShape;
 	DgEngine::Physics::RigidBody mGroundRigidBody;
 
+	struct BoxData
+	{
+		DgEngine::Graphics::RenderObject box;
+		DgEngine::Physics::CollisionShape shape;
+		DgEngine::Physics::RigidBody rigidBody;
+	};
+	using Boxes = std::vector<BoxData>;
+	Boxes mBoxes;
+
+	// cloth info
+	DgEngine::Graphics::RenderObject mCloth;
+	DgEngine::Graphics::Mesh mClothMesh;
+	DgEngine::Physics::SoftBody mClothSoftBody;
+
 	DgEngine::Graphics::StandardEffect mStandardEffect;
 
 };

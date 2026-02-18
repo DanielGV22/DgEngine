@@ -1,5 +1,7 @@
 #pragma once
 
+#include "PhysicsDebugDraw.h"
+
 namespace DgEngine::Physics
 {
 	class PhysicsObject;
@@ -10,7 +12,7 @@ namespace DgEngine::Physics
 		struct Settings
 		{
 			Math::Vector3 gravity{ 0.0f, -9.81f, 0.0f };
-			uint32_t simulationSteps = 10;
+			uint32_t simulationSteps = 1;
 			float fixedTimeStep = 1.0f / 60.0f;
 		};
 
@@ -31,6 +33,7 @@ namespace DgEngine::Physics
 
 		void Register(PhysicsObject* ohysicsObject);
 		void Unregister(PhysicsObject* physicsObject);
+	
 	private:
 		Settings mSettings;
 
@@ -40,10 +43,20 @@ namespace DgEngine::Physics
 		btDefaultCollisionConfiguration* mCollisionConfiguration = nullptr;
 		btSequentialImpulseConstraintSolver* mSolver = nullptr;
 		// this is the main physics world that runs the simulations
+#ifdef USE_SOFT_BODY
+		friend class SoftBody;
+		btSoftRigidDynamicsWorld* mDynamicsWorld = nullptr;
+		btSoftRigidDynamicsWorld* GetSoftBodyWorld() { return mDynamicsWorld; }
+#else
 		btDiscreteDynamicsWorld* mDynamicsWorld = nullptr;
+		btSoftRigidDynamicsWorld* GetSoftBodyWorld() { return nullptr; }
+#endif
 
 		using PhysicsObjects = std::vector<PhysicsObject*>;
 		PhysicsObjects mPhysicsObjects;
+
+		PhysicsDebugDraw mPhysicsDebugDraw;
+		bool mDebugDraw = false;
 	};
 	
 }

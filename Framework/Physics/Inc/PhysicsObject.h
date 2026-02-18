@@ -17,5 +17,6 @@ namespace DgEngine::Physics
 		// abstract function
 		virtual void SyncWithGraphics() = 0;
 		virtual btRigidBody* GetRigidBody() { return nullptr; }
+		virtual btSoftBody* GetSoftBody() { return nullptr; }
 	};
 }
