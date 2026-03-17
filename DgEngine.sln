@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.37012.4 d17.14
+VisualStudioVersion = 17.14.37012.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DgEngine", "Engine\DgEngine\DgEngine.vcxproj", "{61C290CE-1D54-4450-92E5-9C19E63B1114}"
 EndProject
@@ -35,6 +35,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shaders", "Shaders", "{BDE8
 		Assets\Shaders\DoColor.fx = Assets\Shaders\DoColor.fx
 		Assets\Shaders\DoSomething.fx = Assets\Shaders\DoSomething.fx
 		Assets\Shaders\DoTexture.fx = Assets\Shaders\DoTexture.fx
+		Assets\Shaders\Particle.fx = Assets\Shaders\Particle.fx
 		Assets\Shaders\PostProcessing.fx = Assets\Shaders\PostProcessing.fx
 		Assets\Shaders\Shadow.fx = Assets\Shaders\Shadow.fx
 		Assets\Shaders\SimpleDraw.fx = Assets\Shaders\SimpleDraw.fx
@@ -93,6 +94,14 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "19_HelloPhysics", "VGP334\19_HelloPhysics\19_HelloPhysics.vcxproj", "{2C4B61B2-18DD-4EE9-938B-A19EA5F0EA36}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "20_HelloProceduralAnimation", "VGP334\20_HelloProceduralAnimation\20_HelloProceduralAnimation.vcxproj", "{63D51334-0477-4A2C-A399-9DFD694927E6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "21_HelloParticleSystem", "VGP334\21_HelloParticleSystem\21_HelloParticleSystem.vcxproj", "{662ACC72-70A8-4077-9092-6607E38184ED}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "19_HelloEventsAndAudio", "VGP334\19_HelloEventsAndAudio\19_HelloEventsAndAudio.vcxproj", "{4A607F3D-CFEE-4852-BCEA-05906D902BD9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTKAudio_Desktop_2022_Win8", "..\..\..\OneDrive\Documents\GitHub\DgEngine\External\DirectXTK\Audio\DirectXTKAudio_Desktop_2022_Win8.vcxproj", "{4F150A30-CECB-49D1-8283-6A3F57438CF5}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Audio", "Framework\Audio\Audio.vcxproj", "{F23889FF-46AF-4E6A-8FD3-714ADD951DCE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -342,6 +351,38 @@ Global
 		{63D51334-0477-4A2C-A399-9DFD694927E6}.Release|x64.Build.0 = Release|x64
 		{63D51334-0477-4A2C-A399-9DFD694927E6}.Release|x86.ActiveCfg = Release|Win32
 		{63D51334-0477-4A2C-A399-9DFD694927E6}.Release|x86.Build.0 = Release|Win32
+		{662ACC72-70A8-4077-9092-6607E38184ED}.Debug|x64.ActiveCfg = Debug|x64
+		{662ACC72-70A8-4077-9092-6607E38184ED}.Debug|x64.Build.0 = Debug|x64
+		{662ACC72-70A8-4077-9092-6607E38184ED}.Debug|x86.ActiveCfg = Debug|Win32
+		{662ACC72-70A8-4077-9092-6607E38184ED}.Debug|x86.Build.0 = Debug|Win32
+		{662ACC72-70A8-4077-9092-6607E38184ED}.Release|x64.ActiveCfg = Release|x64
+		{662ACC72-70A8-4077-9092-6607E38184ED}.Release|x64.Build.0 = Release|x64
+		{662ACC72-70A8-4077-9092-6607E38184ED}.Release|x86.ActiveCfg = Release|Win32
+		{662ACC72-70A8-4077-9092-6607E38184ED}.Release|x86.Build.0 = Release|Win32
+		{4A607F3D-CFEE-4852-BCEA-05906D902BD9}.Debug|x64.ActiveCfg = Debug|x64
+		{4A607F3D-CFEE-4852-BCEA-05906D902BD9}.Debug|x64.Build.0 = Debug|x64
+		{4A607F3D-CFEE-4852-BCEA-05906D902BD9}.Debug|x86.ActiveCfg = Debug|Win32
+		{4A607F3D-CFEE-4852-BCEA-05906D902BD9}.Debug|x86.Build.0 = Debug|Win32
+		{4A607F3D-CFEE-4852-BCEA-05906D902BD9}.Release|x64.ActiveCfg = Release|x64
+		{4A607F3D-CFEE-4852-BCEA-05906D902BD9}.Release|x64.Build.0 = Release|x64
+		{4A607F3D-CFEE-4852-BCEA-05906D902BD9}.Release|x86.ActiveCfg = Release|Win32
+		{4A607F3D-CFEE-4852-BCEA-05906D902BD9}.Release|x86.Build.0 = Release|Win32
+		{4F150A30-CECB-49D1-8283-6A3F57438CF5}.Debug|x64.ActiveCfg = Debug|x64
+		{4F150A30-CECB-49D1-8283-6A3F57438CF5}.Debug|x64.Build.0 = Debug|x64
+		{4F150A30-CECB-49D1-8283-6A3F57438CF5}.Debug|x86.ActiveCfg = Debug|Win32
+		{4F150A30-CECB-49D1-8283-6A3F57438CF5}.Debug|x86.Build.0 = Debug|Win32
+		{4F150A30-CECB-49D1-8283-6A3F57438CF5}.Release|x64.ActiveCfg = Release|x64
+		{4F150A30-CECB-49D1-8283-6A3F57438CF5}.Release|x64.Build.0 = Release|x64
+		{4F150A30-CECB-49D1-8283-6A3F57438CF5}.Release|x86.ActiveCfg = Release|Win32
+		{4F150A30-CECB-49D1-8283-6A3F57438CF5}.Release|x86.Build.0 = Release|Win32
+		{F23889FF-46AF-4E6A-8FD3-714ADD951DCE}.Debug|x64.ActiveCfg = Debug|x64
+		{F23889FF-46AF-4E6A-8FD3-714ADD951DCE}.Debug|x64.Build.0 = Debug|x64
+		{F23889FF-46AF-4E6A-8FD3-714ADD951DCE}.Debug|x86.ActiveCfg = Debug|Win32
+		{F23889FF-46AF-4E6A-8FD3-714ADD951DCE}.Debug|x86.Build.0 = Debug|Win32
+		{F23889FF-46AF-4E6A-8FD3-714ADD951DCE}.Release|x64.ActiveCfg = Release|x64
+		{F23889FF-46AF-4E6A-8FD3-714ADD951DCE}.Release|x64.Build.0 = Release|x64
+		{F23889FF-46AF-4E6A-8FD3-714ADD951DCE}.Release|x86.ActiveCfg = Release|Win32
+		{F23889FF-46AF-4E6A-8FD3-714ADD951DCE}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -378,6 +419,10 @@ Global
 		{C64E89F0-D04C-4D87-887E-2580B15DCB92} = {D730DDC3-972F-490B-B5EE-41540A8170B0}
 		{2C4B61B2-18DD-4EE9-938B-A19EA5F0EA36} = {41176D7B-F41B-46D1-BD76-3263B58B836C}
 		{63D51334-0477-4A2C-A399-9DFD694927E6} = {41176D7B-F41B-46D1-BD76-3263B58B836C}
+		{662ACC72-70A8-4077-9092-6607E38184ED} = {41176D7B-F41B-46D1-BD76-3263B58B836C}
+		{4A607F3D-CFEE-4852-BCEA-05906D902BD9} = {41176D7B-F41B-46D1-BD76-3263B58B836C}
+		{4F150A30-CECB-49D1-8283-6A3F57438CF5} = {7B676DA4-1CB4-4836-8FD7-C1E5B650B8FA}
+		{F23889FF-46AF-4E6A-8FD3-714ADD951DCE} = {D730DDC3-972F-490B-B5EE-41540A8170B0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {65254DFF-05EE-4CC6-84AC-D87D13E6C766}

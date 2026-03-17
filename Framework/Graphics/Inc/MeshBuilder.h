@@ -41,5 +41,8 @@ namespace DgEngine::Graphics
 
 		// Screen quad
 		static MeshPX CreateScreenQuadPX();
+
+		// Sprite Quad
+		static MeshPX CreateSpriteQuadPX(float width, float height);
 	};
 }

@@ -7,6 +7,7 @@ using namespace DgEngine::Core;
 using namespace DgEngine::Graphics;
 using namespace DgEngine::Input;
 using namespace DgEngine::Physics;
+using namespace DgEngine::Audio;
 
 void App::Run(const AppConfig& config)
 {
@@ -27,9 +28,12 @@ void App::Run(const AppConfig& config)
     SimpleDraw::StaticInitialize(config.maxVertexCount);
     TextureManager::StaticInitialize(L"../../Assets/Textures");
     ModelManager::StaticInitialize(L"../../Assets/Models");
+    EventManager::StaticInitialize();
 
 	PhysicsWorld::Settings settings;
 	PhysicsWorld::StaticInitialize(settings);
+    AudioSystem::StaticInitialize();
+    SoundEffectManager::StaticInitialize(L"../../Assets/Audio");
 
     // last step before running
     ASSERT(mCurrentState != nullptr, "App: need an app state to run.");
@@ -58,6 +62,8 @@ void App::Run(const AppConfig& config)
             mNextState = nullptr;
         }
 
+        AudioSystem::Get()->Update();
+
         float deltaTime = TimeUtil::GetDeltaTime();
 #if defined(_DEBUG)
         if (deltaTime < 0.5f) // primarily for handling breakpoints
@@ -80,7 +86,10 @@ void App::Run(const AppConfig& config)
     LOG("App Quit");
     mCurrentState->Terminate();
 
+    SoundEffectManager::StaticTerminate();
+    AudioSystem::StaticTerminate();
 	PhysicsWorld::StaticTerminate();
+	EventManager::StaticTerminate();
     ModelManager::StaticTerminate();
     TextureManager::StaticTerminate();
     SimpleDraw::StaticTerminate();
