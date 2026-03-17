@@ -10,7 +10,7 @@ using namespace DgEngine::Audio;
 void GameState::Initialize()
 {
 	mCamera.SetPosition({ 0.0f, 1.0f, -3.0f });
-	mCamera.SetLookAt({ 0.0f, 0.0f, 0.0f });
+	mCamera.SetLookAt({ 0.0f, 1.0f, 0.0f });
 
 	mParticleSystemEffect.Initialize();
 	mParticleSystemEffect.SetCamera(mCamera);
