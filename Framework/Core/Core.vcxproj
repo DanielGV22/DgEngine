@@ -138,12 +138,15 @@
     <ClInclude Include="Inc\Common.h" />
     <ClInclude Include="Inc\Core.h" />
     <ClInclude Include="Inc\DebugUtil.h" />
+    <ClInclude Include="Inc\Event.h" />
+    <ClInclude Include="Inc\EventManager.h" />
     <ClInclude Include="Inc\TimeUtil.h" />
     <ClInclude Include="Inc\Window.h" />
     <ClInclude Include="Inc\WindowMessageHandler.h" />
     <ClInclude Include="Src\Precompiled.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\EventManager.cpp" />
     <ClCompile Include="Src\Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
