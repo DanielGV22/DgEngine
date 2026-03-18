@@ -11,15 +11,15 @@ void GameState::Initialize()
     // ------------------------------------------------------------
     // Camera
     // ------------------------------------------------------------
-    mCamera.SetPosition({ 0.0f, 2.8f, -11.0f });
+    mCamera.SetPosition({ 0.0f, 2.8f, -6.5f });
     mCamera.SetLookAt({ 0.0f, 1.8f, 0.0f });
 
     // ------------------------------------------------------------
     // Light
     // ------------------------------------------------------------
-    mDirectionalLight.direction = Math::Normalize({ 1.0f, -1.0f, 1.0f });
-    mDirectionalLight.ambient = { 0.35f, 0.35f, 0.35f, 1.0f };
-    mDirectionalLight.diffuse = { 0.85f, 0.85f, 0.85f, 1.0f };
+    mDirectionalLight.direction = Math::Normalize({ 0.2f, -1.0f, 0.2f });
+    mDirectionalLight.ambient = { 0.65f, 0.65f, 0.65f, 1.0f };
+    mDirectionalLight.diffuse = { 1.2f, 1.2f, 1.2f, 1.0f };
     mDirectionalLight.specular = { 1.0f, 1.0f, 1.0f, 1.0f };
 
     std::filesystem::path shaderFile = L"../../Assets/Shaders/Standard.fx";
@@ -34,14 +34,18 @@ void GameState::Initialize()
     {
         L"../../Assets/Models/James/Animations/JamesDancing1.animset",
         L"../../Assets/Models/James/Animations/JamesDancing2.animset",
-        L"../../Assets/Models/James/Animations/JamesDancing3.animset"
+        L"../../Assets/Models/James/Animations/JamesDancing3.animset",
+        L"../../Assets/Models/James/Animations/JamesDancing4.animset",
+        L"../../Assets/Models/James/Animations/JamesFalling.animset"
     };
 
     mCharacterBAnimSets =
     {
         L"../../Assets/Models/Sophia/Animations/SophiaDancing1.animset",
         L"../../Assets/Models/Sophia/Animations/SophiaDancing2.animset",
-        L"../../Assets/Models/Sophia/Animations/SophiaDancing3.animset"
+        L"../../Assets/Models/Sophia/Animations/SophiaDancing3.animset",
+        L"../../Assets/Models/Sophia/Animations/SophiaDancing4.animset",
+        L"../../Assets/Models/Sophia/Animations/SophiaArrow.animset"
     };
 
     // ------------------------------------------------------------
@@ -68,21 +72,15 @@ void GameState::Initialize()
     mAnimatorB.Initialize(mCharacterB.modelId);
 
     // Position characters
-    for (auto& ro : mCharacterA.renderObjects)
-    {
-        ro.transform.position = { -5.0f, 0.0f, 0.0f };
-        ro.transform.rotation = Math::Quaternion::CreateFromAxisAngle(
-            Math::Vector3::YAxis,
-            15.0f * Math::Constants::DegToRad);
-    }
+    mCharacterA.transform.position = { -1.5f, 0.0f, 0.0f };
+    mCharacterA.transform.rotation = Math::Quaternion::CreateFromAxisAngle(
+        Math::Vector3::YAxis,
+        -90.0f * Math::Constants::DegToRad);
 
-    for (auto& ro : mCharacterB.renderObjects)
-    {
-        ro.transform.position = { 5.0f, 0.0f, 0.0f };
-        ro.transform.rotation = Math::Quaternion::CreateFromAxisAngle(
-            Math::Vector3::YAxis,
-            -15.0f * Math::Constants::DegToRad);
-    }
+    mCharacterB.transform.position = { 1.5f, 0.0f, 0.0f };
+    mCharacterB.transform.rotation = Math::Quaternion::CreateFromAxisAngle(
+        Math::Vector3::YAxis,
+        90.0f * Math::Constants::DegToRad);
 
     // ------------------------------------------------------------
     // Particle systems
@@ -204,17 +202,28 @@ void GameState::Update(float deltaTime)
         return;
 
     mSceneTimer += deltaTime;
+    mLightPulse += deltaTime;
+
+    mDiscoBallRotation += deltaTime * 1.5f;
 
     // Update  animators
     mAnimatorA.Update(deltaTime * mAnimationSpeedA);
     mAnimatorB.Update(deltaTime * mAnimationSpeedB);
 
     // Extra sway motion
-    const float bounceA = 0.08f + fabsf(sinf(mSceneTimer * 2.2f)) * 0.22f;
-    const float bounceB = 0.08f + fabsf(sinf(mSceneTimer * 1.9f + 0.7f)) * 0.22f;
+    const float bounceA = 0.08f + fabsf(sinf(mSceneTimer * 2.2f)) * 0.12f;
+    const float bounceB = 0.08f + fabsf(sinf(mSceneTimer * 1.9f + 0.7f)) * 0.12f;
 
+    for (auto& ro : mCharacterA.renderObjects)
+    {
+        ro.transform.position.y = bounceA;
+    }
+
+    for (auto& ro : mCharacterB.renderObjects)
+    {
+        ro.transform.position.y = bounceB;
+    }
   
-
     // Update particle locations
     mCenterParticles.SetPosition({ 0.0f, 2.5f, 0.0f });
     mLeftParticles.SetPosition({ -2.5f, 2.5f, 0.0f });
@@ -231,13 +240,27 @@ void GameState::Update(float deltaTime)
         else
             mPauseScene = true;
     }
+
+    if (mPendingDelayedAnimB)
+    {
+        mDelayedAnimBTimer += deltaTime;
+
+        if (mDelayedAnimBTimer >= mDelayedAnimBStartDelay)
+        {
+            mAnimatorA.PlayAnimation(mPendingAnimIndexB, true);
+            mPendingDelayedAnimB = false;
+            mDelayedAnimBTimer = 0.0f;
+            mPendingAnimIndexB = -1;
+        }
+    }
 }
 
 void GameState::Render()
 {
     // Ground 
-    SimpleDraw::AddGroundPlane(20.0f, Colors::DarkGray);
-    SimpleDraw::AddLine({ -6.0f, 0.0f, 0.0f }, { 6.0f, 0.0f, 0.0f }, Colors::White);
+    DrawDiscoFloor();
+    DrawDiscoBall();
+    DrawClubLights();
     SimpleDraw::Render(mCamera);
 
     // Characters
@@ -394,8 +417,24 @@ void GameState::OnCycleAnimationEvent(const DgEngine::Core::Event& e)
 
 void GameState::ApplyCurrentAnimationSet()
 {
-    mAnimatorA.PlayAnimation(mCurrentAnimIndexA, true);
     mAnimatorB.PlayAnimation(mCurrentAnimIndexB, true);
+
+    // Delay only the last animation for Character B
+    const int lastAnimIndexB = static_cast<int>(mCharacterAAnimSets.size()) - 1;
+
+    if (mCurrentAnimIndexB == lastAnimIndexB)
+    {
+        mPendingDelayedAnimB = true;
+        mDelayedAnimBTimer = 0.0f;
+        mPendingAnimIndexB = mCurrentAnimIndexB;
+    }
+    else
+    {
+        mPendingDelayedAnimB = false;
+        mDelayedAnimBTimer = 0.0f;
+        mPendingAnimIndexB = -1;
+        mAnimatorA.PlayAnimation(mCurrentAnimIndexB, true);
+    }
 }
 
 void GameState::PlayCurrentMusic()
@@ -430,4 +469,212 @@ void GameState::ResetScene()
     mPauseScene = false;
 
     ApplyCurrentAnimationSet();
+}
+
+void GameState::DrawDiscoFloor()
+{
+    const int halfCount = 5;
+    const float tileSize = 1.0f;
+    const float y = 0.01f;
+
+    for (int z = -halfCount; z < halfCount; ++z)
+    {
+        for (int x = -halfCount; x < halfCount; ++x)
+        {
+            const float worldX = x * tileSize;
+            const float worldZ = z * tileSize;
+
+            const float pulse = sinf(mSceneTimer * 4.0f + (x + z) * 0.8f);
+            const float pulse2 = sinf(mSceneTimer * 3.2f + (x - z) * 0.6f);
+
+            Color color;
+            if (((x + z) & 1) == 0)
+            {
+                color = { 0.5f + 0.5f * pulse, 0.2f, 0.8f + 0.2f * pulse2, 1.0f };
+            }
+            else
+            {
+                color = { 0.2f, 0.8f + 0.2f * pulse, 0.5f + 0.5f * pulse2, 1.0f };
+            }
+
+            Math::Vector3 p0{ worldX, y, worldZ };
+            Math::Vector3 p1{ worldX + tileSize, y, worldZ };
+            Math::Vector3 p2{ worldX + tileSize, y, worldZ + tileSize };
+            Math::Vector3 p3{ worldX, y, worldZ + tileSize };
+
+            SimpleDraw::AddLine(p0, p1, color);
+            SimpleDraw::AddLine(p1, p2, color);
+            SimpleDraw::AddLine(p2, p3, color);
+            SimpleDraw::AddLine(p3, p0, color);
+        }
+    }
+}
+
+void GameState::DrawDiscoBall()
+{
+    const Math::Vector3 center = { 0.0f, 5.5f, 0.0f };
+    const float radius = 0.65f;
+
+    // Hanging string
+    SimpleDraw::AddLine(
+        { 0.0f, 6.9f, 0.0f },
+        center,
+        Colors::White);
+
+    const int rings = 10;
+    const int segments = 24;
+    const int meridians = 18;
+
+    const float t = mSceneTimer;
+
+    // Soft glass-like colors
+    Color glassA =
+    {
+        0.45f + 0.25f * sinf(t * 2.2f),
+        0.65f + 0.20f * sinf(t * 1.7f + 1.2f),
+        0.95f,
+        1.0f
+    };
+
+    Color glassB =
+    {
+        0.75f + 0.20f * sinf(t * 1.9f + 2.1f),
+        0.45f + 0.20f * sinf(t * 2.5f),
+        0.95f,
+        1.0f
+    };
+
+    Color highlight =
+    {
+        0.95f,
+        0.95f,
+        1.0f,
+        1.0f
+    };
+
+    // Horizontal rings
+    for (int r = 1; r < rings; ++r)
+    {
+        float v = (float)r / (float)rings;
+        float phi = v * Math::Constants::Pi;
+
+        float y = cosf(phi) * radius;
+        float ringRadius = sinf(phi) * radius;
+
+        Color ringColor = ((r % 2) == 0) ? glassA : glassB;
+
+        // Slightly brighter near the upper half for a glass highlight feel
+        if (y > 0.15f)
+            ringColor = highlight;
+
+        for (int i = 0; i < segments; ++i)
+        {
+            float a0 = (i / (float)segments) * Math::Constants::TwoPi;
+            float a1 = ((i + 1) / (float)segments) * Math::Constants::TwoPi;
+
+            Math::Vector3 p0 =
+            {
+                center.x + cosf(a0 + mDiscoBallRotation) * ringRadius,
+                center.y + y,
+                center.z + sinf(a0 + mDiscoBallRotation) * ringRadius
+            };
+
+            Math::Vector3 p1 =
+            {
+                center.x + cosf(a1 + mDiscoBallRotation) * ringRadius,
+                center.y + y,
+                center.z + sinf(a1 + mDiscoBallRotation) * ringRadius
+            };
+
+            SimpleDraw::AddLine(p0, p1, ringColor);
+        }
+    }
+
+    // Vertical  lines
+    for (int m = 0; m < meridians; ++m)
+    {
+        float theta = (m / (float)meridians) * Math::Constants::TwoPi + mDiscoBallRotation;
+
+        Color meridianColor = ((m % 2) == 0) ? glassB : glassA;
+
+        for (int j = 0; j < segments; ++j)
+        {
+            float phi0 = (j / (float)segments) * Math::Constants::Pi;
+            float phi1 = ((j + 1) / (float)segments) * Math::Constants::Pi;
+
+            Math::Vector3 p0 =
+            {
+                center.x + sinf(phi0) * cosf(theta) * radius,
+                center.y + cosf(phi0) * radius,
+                center.z + sinf(phi0) * sinf(theta) * radius
+            };
+
+            Math::Vector3 p1 =
+            {
+                center.x + sinf(phi1) * cosf(theta) * radius,
+                center.y + cosf(phi1) * radius,
+                center.z + sinf(phi1) * sinf(theta) * radius
+            };
+
+            SimpleDraw::AddLine(p0, p1, meridianColor);
+        }
+    }
+
+    // Small top highlight arc
+    for (int i = 0; i < 8; ++i)
+    {
+        float a0 = (i / 8.0f) * Math::Constants::Pi * 0.8f;
+        float a1 = ((i + 1) / 8.0f) * Math::Constants::Pi * 0.8f;
+
+        Math::Vector3 p0 =
+        {
+            center.x - 0.12f + cosf(a0) * 0.18f,
+            center.y + 0.20f + sinf(a0) * 0.10f,
+            center.z + radius * 0.78f
+        };
+
+        Math::Vector3 p1 =
+        {
+            center.x - 0.12f + cosf(a1) * 0.18f,
+            center.y + 0.20f + sinf(a1) * 0.10f,
+            center.z + radius * 0.78f
+        };
+
+        SimpleDraw::AddLine(p0, p1, highlight);
+    }
+}
+
+void GameState::DrawClubLights()
+{
+    const Math::Vector3 leftRig = { -4.5f, 5.8f, -1.5f };
+    const Math::Vector3 rightRig = { 4.5f, 5.8f, -1.5f };
+    const Math::Vector3 centerRig = { 0.0f, 6.2f, -2.0f };
+
+    const float sweepA = sinf(mLightPulse * 1.7f) * 3.0f;
+    const float sweepB = cosf(mLightPulse * 1.3f) * 3.0f;
+    const float sweepC = sinf(mLightPulse * 2.1f + 1.2f) * 2.5f;
+
+    Math::Vector3 targetA = { -3.5f + sweepA, 0.15f, 0.0f };
+    Math::Vector3 targetB = { 3.5f + sweepB, 0.15f, 0.0f };
+    Math::Vector3 targetC = { 0.0f + sweepC, 0.15f, 1.5f };
+
+    for (int i = 0; i < 4; ++i)
+    {
+        float offset = (float)i * 0.12f;
+
+        SimpleDraw::AddLine(
+            { leftRig.x + offset, leftRig.y, leftRig.z },
+            { targetA.x, targetA.y, targetA.z + offset },
+            mClubColorA);
+
+        SimpleDraw::AddLine(
+            { rightRig.x - offset, rightRig.y, rightRig.z },
+            { targetB.x, targetB.y, targetB.z - offset },
+            mClubColorB);
+
+        SimpleDraw::AddLine(
+            { centerRig.x, centerRig.y + offset, centerRig.z },
+            { targetC.x + offset, targetC.y, targetC.z },
+            mClubColorC);
+    }
 }

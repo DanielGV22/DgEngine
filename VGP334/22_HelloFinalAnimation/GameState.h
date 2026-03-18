@@ -17,6 +17,10 @@ private:
     void UnregisterEvents();
     void OnCycleAnimationEvent(const DgEngine::Core::Event& e);
 
+    void DrawDiscoFloor();
+    void DrawDiscoBall();
+    void DrawClubLights();
+
     void ApplyCurrentAnimationSet();
     void PlayCurrentMusic();
     void TriggerCycleFX();
@@ -51,6 +55,13 @@ private:
     DgEngine::Audio::SoundId mCurrentMusic = 0;
     DgEngine::Audio::SoundId mBurstSoundId = 0;
 
+    float mDiscoBallRotation = 0.0f;
+
+    float mLightPulse = 0.0f;
+    DgEngine::Graphics::Color mClubColorA = DgEngine::Graphics::Colors::Magenta;
+    DgEngine::Graphics::Color mClubColorB = DgEngine::Graphics::Colors::Cyan;
+    DgEngine::Graphics::Color mClubColorC = DgEngine::Graphics::Colors::Yellow;
+
     // Current animation indices
     int mCurrentAnimIndexA = 0;
     int mCurrentAnimIndexB = 0;
@@ -65,6 +76,11 @@ private:
     // Per-character speed differences
     float mAnimationSpeedA = 1.0f;
     float mAnimationSpeedB = 1.0f;
+
+    bool mPendingDelayedAnimB = false;
+    float mDelayedAnimBTimer = 0.0f;
+    float mDelayedAnimBStartDelay = 2.5f;
+    int mPendingAnimIndexB = -1;
 
     // Event listener 
     size_t mCycleListenerId = 0;

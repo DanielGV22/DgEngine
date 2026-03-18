@@ -78,7 +78,7 @@ void AnimationUtil::ApplyBoneOffset(ModelId modelId, BoneTransforms& boneTransfo
 		for (const auto& bone : model->skeleton->bones)
 		{
 			// apply the offset transform to the bone transform
-			boneTransforms[bone->index] = boneTransforms[bone->index] * bone->offsetTransform;
+			boneTransforms[bone->index] = bone->offsetTransform * boneTransforms[bone->index];
 		}
 	}
 }
