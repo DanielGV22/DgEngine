@@ -144,8 +144,12 @@
     <ClInclude Include="Inc\DgEngine.h" />
     <ClInclude Include="Inc\FPSCameraComponent.h" />
     <ClInclude Include="Inc\GameObject.h" />
+    <ClInclude Include="Inc\GameObjectFactory.h" />
     <ClInclude Include="Inc\GameObjectHandle.h" />
     <ClInclude Include="Inc\GameWorld.h" />
+    <ClInclude Include="Inc\RenderObjectComponent.h" />
+    <ClInclude Include="Inc\RenderService.h" />
+    <ClInclude Include="Inc\SaveUtil.h" />
     <ClInclude Include="Inc\Service.h" />
     <ClInclude Include="Inc\TransformComponent.h" />
     <ClInclude Include="Inc\TypeIds.h" />
@@ -154,9 +158,11 @@
   <ItemGroup>
     <ClCompile Include="Src\App.cpp" />
     <ClCompile Include="Src\CameraComponent.cpp" />
+    <ClCompile Include="Src\CameraService.cpp" />
     <ClCompile Include="Src\DgEngine.cpp" />
     <ClCompile Include="Src\FPSCameraComponent.cpp" />
     <ClCompile Include="Src\GameObject.cpp" />
+    <ClCompile Include="Src\GameObjectFactory.cpp" />
     <ClCompile Include="Src\GameWorld.cpp" />
     <ClCompile Include="Src\Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -164,6 +170,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Src\RenderOcjectComponent.cpp" />
+    <ClCompile Include="Src\RenderService.cpp" />
+    <ClCompile Include="Src\SaveUtil.cpp" />
     <ClCompile Include="Src\TransformComponent.cpp" />
   </ItemGroup>
   <ItemGroup>

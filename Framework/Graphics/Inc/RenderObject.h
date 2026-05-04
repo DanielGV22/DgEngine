@@ -28,7 +28,8 @@ namespace DgEngine::Graphics
 	class RenderGroup
 	{
 	public:
-		void Initialize(const std::filesystem::path& modelFilePath);
+		void Initialize(const std::filesystem::path& modelFilePath, const Animator* anim = nullptr);
+		void Initialize(const Model& model, const Animator* anim = nullptr);
 		void Terminate();
 
 		ModelId modelId;
