@@ -116,6 +116,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Objects", "Objects", "{22F09074-8164-4EF7-BCC5-A1B57758369C}"
 	ProjectSection(SolutionItems) = preProject
 		Assets\Templates\Objects\fps_camera_obj.json = Assets\Templates\Objects\fps_camera_obj.json
+		Assets\Templates\Objects\ground.json = Assets\Templates\Objects\ground.json
+		Assets\Templates\Objects\mesh_obj.json = Assets\Templates\Objects\mesh_obj.json
+		Assets\Templates\Objects\model_obj.json = Assets\Templates\Objects\model_obj.json
 		Assets\Templates\Objects\transform_obj.json = Assets\Templates\Objects\transform_obj.json
 	EndProjectSection
 EndProject

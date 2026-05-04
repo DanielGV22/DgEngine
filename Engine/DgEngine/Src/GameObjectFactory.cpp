@@ -6,6 +6,10 @@
 #include "TransformComponent.h"
 #include "CameraComponent.h"
 #include "FPSCameraComponent.h"
+#include "MeshComponent.h"
+#include "ModelComponent.h"
+#include "AnimatorComponent.h"
+#include "RigidBodyComponent.h"
 
 using namespace DgEngine;
 
@@ -26,7 +30,22 @@ namespace
 		{
 			newComponent = gameObject.AddComponent<FPSCameraComponent>();
 		}
-
+		else if (componentName == "MeshComponent")
+		{
+			newComponent = gameObject.AddComponent<MeshComponent>();
+		}
+		else if (componentName == "ModelComponent")
+		{
+			newComponent = gameObject.AddComponent<ModelComponent>();
+		}
+		else if (componentName == "AnimatorComponent")
+		{
+			newComponent = gameObject.AddComponent<AnimatorComponent>();
+		}
+		else if (componentName == "RigidBodyComponent")
+		{
+			newComponent = gameObject.AddComponent<RigidBodyComponent>();
+		}
 		ASSERT(newComponent != nullptr, "GameObjectFactory: component type [%s] not found.", componentName.c_str());
 		return newComponent;
 	}

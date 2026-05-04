@@ -11,6 +11,7 @@ namespace DgEngine
 		Mesh,				// add a mesh shape on the game object to render
 		Model,				// add a model to the game object to render
 		Animator,			// adds an animation controller to the game object
+		RigidBody,			// adds a physics object to the game object
 		Count               // last value, can be used to chain custom components
 	};
 
@@ -19,6 +20,7 @@ namespace DgEngine
 		Invalid,            // default value, not valid Id
 		Camera,				// manages the cameras in the world
 		Render,				// renders renderobjects in the world
+		Physics, 		    // registers and mnitors physics objects in the world
 		Count               // last value, can be used to chain custom services
 	};
 }

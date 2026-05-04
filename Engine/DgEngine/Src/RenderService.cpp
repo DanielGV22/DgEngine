@@ -4,6 +4,7 @@
 #include "CameraService.h"
 #include "RenderObjectComponent.h"
 #include "TransformComponent.h"
+#include "AnimatorComponent.h"
 #include "GameWorld.h"
 
 using namespace DgEngine;
@@ -63,7 +64,7 @@ void RenderService::Render()
 
 void RenderService::DebugUI()
 {
-	if (ImGui::CollapsingHeader("Render Service:"))
+	if (ImGui::CollapsingHeader("RenderService:"))
 	{
 		ImGui::Text("FPS: %.3f", mFPS);
 		if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen))
@@ -92,10 +93,16 @@ void RenderService::Register(const RenderObjectComponent* renderObjectComponent)
 		});
 	if (iter == mRenderEntries.end())
 	{
+		const Graphics::Animator* animator = nullptr;
+		const AnimatorComponent* animatorComponent = renderObjectComponent->GetOwner().GetComponent<AnimatorComponent>();
+		if (animatorComponent != nullptr)
+		{
+			animator = &animatorComponent->GetAnimator();
+		}
 		Entry& entry = mRenderEntries.emplace_back();
 		entry.renderComponent = renderObjectComponent;
 		entry.transformComponent = renderObjectComponent->GetOwner().GetComponent<TransformComponent>();
-		entry.renderGroup.Initialize(renderObjectComponent->GetModel());
+		entry.renderGroup.Initialize(renderObjectComponent->GetModel(), animator);
 		entry.renderGroup.modelId = renderObjectComponent->GetModelId();
 	}
 }
@@ -109,7 +116,7 @@ void RenderService::Unregister(const RenderObjectComponent* renderObjectComponen
 		{
 			return entry.renderComponent == renderObjectComponent;
 		});
-	if (iter == mRenderEntries.end())
+	if (iter != mRenderEntries.end())
 	{
 		iter->renderGroup.Terminate();
 		mRenderEntries.erase(iter);

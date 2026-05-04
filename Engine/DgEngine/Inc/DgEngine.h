@@ -19,11 +19,18 @@
 #include "CameraComponent.h"
 #include "FPSCameraComponent.h"
 #include "RenderObjectComponent.h"
+#include "MeshComponent.h"
+#include "ModelComponent.h"
+#include "AnimatorComponent.h"
+#include "RigidBodyComponent.h"
 
 // services
 #include "Service.h"
 #include "CameraService.h"
 #include "RenderService.h"
+#include "PhysicsService.h"
+
+#define USE_PHYSICS_SERVICE
 
 namespace DgEngine
 {
