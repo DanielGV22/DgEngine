@@ -29,6 +29,11 @@
       "Radius": 0.7,
       "Position": [ 0.0, 1.5, 0.0 ],
       "Color": [ 0.3, 1.0, 0.3, 1.0 ]
+    },
+    "UISpriteComponent": {
+      "Texture": "Images/mario.png",
+      "Position": [ 40.0, 40.0 ],
+      "Pivot": "TopLeft"
     }
   }
 }

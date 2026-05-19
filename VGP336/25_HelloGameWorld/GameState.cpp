@@ -64,6 +64,8 @@ void GameState::Update(float deltaTime)
 void GameState::Render()
 {
 	mGameWorld.Render();
+
+	UIFont::Get()->DrawString(L"Hello Game World!",{300.0f,30.0f}, Colors::White, 64.0f);
 }
 
 void GameState::DebugUI()

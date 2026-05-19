@@ -25,12 +25,16 @@
 #include "RigidBodyComponent.h"
 #include "SoundEventComponent.h"
 #include "SoundBankComponent.h"
+#include "UIComponent.h"
+#include "UITextComponent.h"
+#include "UISpriteComponent.h"
 
 // services
 #include "Service.h"
 #include "CameraService.h"
 #include "RenderService.h"
 #include "PhysicsService.h"
+#include "UIRenderService.h"
 
 #define USE_PHYSICS_SERVICE
 

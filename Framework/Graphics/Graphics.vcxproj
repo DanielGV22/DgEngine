@@ -175,6 +175,9 @@
     <ClInclude Include="Inc\Texture.h" />
     <ClInclude Include="Inc\TextureManager.h" />
     <ClInclude Include="Inc\Transform.h" />
+    <ClInclude Include="Inc\UIFont.h" />
+    <ClInclude Include="Inc\UISprite.h" />
+    <ClInclude Include="Inc\UISpriteRenderer.h" />
     <ClInclude Include="Inc\VertexShader.h" />
     <ClInclude Include="Inc\VertexTypes.h" />
     <ClInclude Include="Inc\VisionEffect.h" />
@@ -215,10 +218,16 @@
     <ClCompile Include="Src\TerrainEffect.cpp" />
     <ClCompile Include="Src\Texture.cpp" />
     <ClCompile Include="Src\TextureManager.cpp" />
+    <ClCompile Include="Src\UIFont.cpp" />
+    <ClCompile Include="Src\UISprite.cpp" />
+    <ClCompile Include="Src\UISpriteRenderer.cpp" />
     <ClCompile Include="Src\VertexShader.cpp" />
     <ClCompile Include="Src\VisionEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\OneDrive\Documents\GitHub\DgEngine\External\FW1FontWrapper\FW1FontWrapper.vcxproj">
+      <Project>{0d034612-14e2-44e7-993a-72344a2ca7bd}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\External\DirectXTK\DirectXTK_Desktop_2022.vcxproj">
       <Project>{e0b52ae7-e160-4d32-bf3f-910b785e5a8e}</Project>
     </ProjectReference>
