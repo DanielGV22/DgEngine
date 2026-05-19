@@ -126,7 +126,7 @@ VS_OUTPUT VS(VS_INPUT input)
     output.dirToView = normalize(viewPosition - worldPosition.xyz);
     if (useShadowMap)
     {
-        output.lightNDCPosition = mul(float4(localPosition, 1.0f), toNDC);
+        output.lightNDCPosition = mul(float4(localPosition, 1.0f), lwvp);
     }
     
     return output;

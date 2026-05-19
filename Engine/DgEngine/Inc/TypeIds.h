@@ -12,6 +12,8 @@ namespace DgEngine
 		Model,				// add a model to the game object to render
 		Animator,			// adds an animation controller to the game object
 		RigidBody,			// adds a physics object to the game object
+		SoundEffect,        // adds a sound effect to an object
+		SoundBank,          // adds a group of sounds to an object
 		Count               // last value, can be used to chain custom components
 	};
 

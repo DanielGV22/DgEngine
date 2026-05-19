@@ -1,6 +1,7 @@
 #include "Precompiled.h"
 #include "PhysicsService.h"
 #include "RigidBodyComponent.h"
+#include "SaveUtil.h"
 
 using namespace DgEngine;
 
@@ -18,6 +19,17 @@ void PhysicsService::DebugUI()
 	{
 		Physics::PhysicsWorld::Get()->DebugUI();
 	}
+}
+
+void PhysicsService::Deserialize(const rapidjson::Value& value)
+{
+	Physics::PhysicsWorld::Settings settings;
+	int simSteps = settings.simulationSteps;
+	SaveUtil::ReadVector3("Gravity", settings.gravity, value);
+	SaveUtil::ReadInt("SimSteps", simSteps, value);
+	SaveUtil::ReadFloat("FixedTimeStep", settings.fixedTimeStep, value);
+	settings.simulationSteps = simSteps;
+	Physics::PhysicsWorld::Get()->UpdateSettings(settings);
 }
 
 void PhysicsService::Register(RigidBodyComponent* rigidBodyComponent)

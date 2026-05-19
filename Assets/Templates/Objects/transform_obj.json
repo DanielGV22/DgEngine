@@ -4,6 +4,22 @@
       "Position": [ 0.0, 0.0, 0.0 ],
       "Rotation": [ 0.0, 0.0, 0.0, 1.0 ],
       "Scale": [ 1.0, 1.0, 1.0 ]
+    },
+    "SoundBankComponent": {
+      "SoundEffects": {
+        "Explosion": {
+          "FileName": "../../Assets/Audio/explosion.wav",
+          "Looping": false
+        },
+        "Shot": {
+          "FileName": "../../Assets/Audio/megamanx_shot.wav",
+          "Looping": false
+        },
+        "Spark": {
+          "FileName": "../../Assets/Audio/megamanx_spark_mandrill.wav",
+          "Looping": false
+        }
+      }
     }
   }
 }

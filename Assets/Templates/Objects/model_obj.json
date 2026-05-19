@@ -22,6 +22,13 @@
         "HalfExtents": [ 0.5, 1.0, 0.5 ],
         "Origin": [ 0.0, 1.0, 0.0 ]
       }
+    },
+    "CustomDebugDrawComponent": {
+      "Slices": 30,
+      "Rings": 30,
+      "Radius": 0.7,
+      "Position": [ 0.0, 1.5, 0.0 ],
+      "Color": [ 0.3, 1.0, 0.3, 1.0 ]
     }
   }
 }
