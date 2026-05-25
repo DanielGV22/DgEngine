@@ -25,6 +25,15 @@ namespace DgEngine
 		GameWorld& GetWorld();
 		const GameWorld& GetWorld() const;
 
+		void AddChild(GameObject* child);
+		uint32_t GetChildCount()  const;
+		GameObject* GetChild(uint32_t index);
+		const GameObject* GetChild(uint32_t index) const;
+
+		void SetParent(GameObject* parent);
+		GameObject* GetParent();
+		const GameObject* GetParent() const;
+
 		template<class ComponentType>
 		ComponentType* AddComponent()
 		{
@@ -86,5 +95,9 @@ namespace DgEngine
 
 		using Components = std::vector<std::unique_ptr<Component>>;
 		Components mComponents;
+
+		using Children = std::vector<GameObject*>;
+		Children mChildren;
+		GameObject* mParent = nullptr;
 	};
 }

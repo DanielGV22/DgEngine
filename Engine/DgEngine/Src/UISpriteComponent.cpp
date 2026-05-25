@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "GameWorld.h"
 #include "UIRenderService.h"
+#include "UIButtonComponent.h"
 #include "SaveUtil.h"
 
 using namespace DgEngine;
@@ -13,7 +14,7 @@ void UISpriteComponent::Initialize()
 {
 	ASSERT(!mTexturePath.empty(), "UISpriteComponent: texture path is empty");
 	mUISprite.Initialize(mTexturePath);
-	if (mRect.left - mRect.left > 0)
+	if (mRect.right - mRect.left > 0)
 	{
 		mUISprite.SetRect(mRect.top, mRect.left, mRect.right, mRect.bottom);
 	}
@@ -29,6 +30,29 @@ void UISpriteComponent::Terminate()
 }
 void UISpriteComponent::Render()
 {
+	Math::Vector2 worldPosition = GetPosition(false);
+	GameObject* parent = GetOwner().GetParent();
+	while (parent != nullptr)
+	{
+		UISpriteComponent* spriteComponent = parent->GetComponent<UISpriteComponent>();
+		if (spriteComponent != nullptr)
+		{
+			worldPosition += spriteComponent->GetPosition();
+		}
+		else
+		{
+			UIButtonComponent* buttonComponent = parent->GetComponent<UIButtonComponent>();
+			if (buttonComponent != nullptr)
+			{
+				worldPosition += buttonComponent->GetPosition();
+			}
+		}
+
+		parent = parent->GetParent();
+	}
+
+	mUISprite.SetPosition({ worldPosition.x, worldPosition.y });
+
 	UISpriteRenderer::Get()->Render(mUISprite);
 }
 void UISpriteComponent::Deserialize(const rapidjson::Value& value)
@@ -93,8 +117,8 @@ void UISpriteComponent::Deserialize(const rapidjson::Value& value)
 }
 Math::Vector2 UISpriteComponent::GetPosition(bool includeOrigin)
 {
-	float x = mPosition.x;
-	float y = mPosition.y;
+	float x = 0.0f;
+	float y = 0.0f;
 	if (includeOrigin)
 	{
 		mUISprite.GetOrigin(x, y);

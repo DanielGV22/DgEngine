@@ -42,7 +42,7 @@ void RenderService::Render()
 	mStandardEffect.SetCamera(camera);
 	for (Entry& entry : mRenderEntries)
 	{
-		entry.renderGroup.transform = *entry.transformComponent;
+		entry.renderGroup.transform = entry.transformComponent->GetWorldTransform();
 	}
 
 	mShadowEffect.Begin();

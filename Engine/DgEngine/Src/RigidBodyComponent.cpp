@@ -88,3 +88,19 @@ void RigidBodyComponent::SetVelocity(const Math::Vector3& velocity)
 {
 	mRigidBody.SetVelocity(velocity);
 }
+
+
+const Math::Vector3 RigidBodyComponent::GetVelocity() const
+{
+	return mRigidBody.GetVelocity();
+}
+
+void RigidBodyComponent::SetAngularVelocity(const Math::Vector3& velocity)
+{
+	mRigidBody.SetAngularVelocity(velocity);
+}
+
+const Math::Vector3 RigidBodyComponent::GetAngularVelocity() const
+{
+	return mRigidBody.GetAngularVelocity();
+}

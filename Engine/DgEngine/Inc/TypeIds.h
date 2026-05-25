@@ -8,10 +8,12 @@ namespace DgEngine
 		Transform,			// transform component for location data
 		Camera,				// contains the camera for viewing
 		FPSCamera,			// move the Camera Component with FPS controls
+		TPCamera,			// camera that hovers over a controller
 		Mesh,				// add a mesh shape on the game object to render
 		Model,				// add a model to the game object to render
 		Animator,			// adds an animation controller to the game object
 		RigidBody,			// adds a physics object to the game object
+		PlayerController,   // adds player controller to a character/mesh/model
 		SoundEffect,        // adds a sound effect to an object
 		SoundBank,          // adds a group of sounds to an object
 		UIText,             // adds a UI text element to an object

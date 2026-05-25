@@ -1,6 +1,7 @@
 #include "Precompiled.h"
 #include "GameObjectFactory.h"
 #include "GameObject.h"
+#include "GameWorld.h"
 
 #include "Component.h"
 #include "TransformComponent.h"
@@ -14,6 +15,8 @@
 #include "SoundBankComponent.h"
 #include "UITextComponent.h"
 #include "UISpriteComponent.h"
+#include "UIButtonComponent.h"
+#include "PlayerControllerComponent.h"
 
 using namespace DgEngine;
 
@@ -68,6 +71,14 @@ namespace
 		else if (componentName == "UISpriteComponent")
 		{
 			newComponent = gameObject.AddComponent<UISpriteComponent>();
+		}
+		else if (componentName == "UIButtonComponent")
+		{
+			newComponent = gameObject.AddComponent<UIButtonComponent>();
+		}
+		else if (componentName == "PlayerControllerComponent")
+		{
+			newComponent = gameObject.AddComponent<PlayerControllerComponent>();
 		}
 		else
 		{
@@ -124,6 +135,14 @@ namespace
 		{
 			component = gameObject.GetComponent<UISpriteComponent>();
 		}
+		else if (componentName == "UIButtonComponent")
+		{
+			component = gameObject.GetComponent<UIButtonComponent>();
+		}
+		else if (componentName == "PlayerControllerComponent")
+		{
+			component = gameObject.GetComponent<PlayerControllerComponent>();
+		}
 		else
 		{
 			component = TryGetComponent(componentName, gameObject);
@@ -165,6 +184,21 @@ void GameObjectFactory::Make(const std::filesystem::path& templatePath, GameObje
 			newComponent->Deserialize(component.value);
 		}
 	}
+	if (doc.HasMember("Children"))
+	{
+		auto children = doc["Children"].GetObj();
+		for (auto& child : children)
+		{
+			std::string name = child.name.GetString();
+			std::filesystem::path childTemplate = child.value["Template"].GetString();
+			GameObject* childGO = gameWorld.CreateGameObject(name, childTemplate);
+
+			OverrideDeserialize(child.value, *childGO);
+			gameObject.AddChild(childGO);
+			childGO->SetParent(&gameObject);
+		}
+	}
+
 }
 
 

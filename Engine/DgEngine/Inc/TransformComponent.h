@@ -13,5 +13,6 @@ namespace DgEngine
 
 		void Deserialize(const rapidjson::Value& value) override;
 
+		Transform GetWorldTransform() const;
 	};
 }
