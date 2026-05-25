@@ -1,0 +1,265 @@
+{
+  "Capacity": 100,
+  "Services": {
+    "CameraService": {},
+    "RenderService": {
+      "Direction": [
+        1.0,
+        -1.0,
+        1.0
+      ],
+      "Ambient": [
+        0.3,
+        0.3,
+        0.35,
+        1.0
+      ],
+      "Diffuse": [
+        0.75,
+        0.75,
+        0.8,
+        1.0
+      ],
+      "Specular": [
+        0.5,
+        0.5,
+        0.5,
+        1.0
+      ],
+      "ShadowSize": 10.0
+    },
+    "PhysicsService": {
+      "Gravity": [
+        0.0,
+        -9.81,
+        0.0
+      ]
+    },
+    "CustomDebugDrawService": {},
+    "UIRenderService": {}
+  },
+  "GameObjects": {
+    "WorldRoot": {
+      "Template": "../../Assets/Templates/Objects/transform_obj.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "Rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    "MainCamera": {
+      "Template": "../../Assets/Templates/Objects/fps_camera_obj.json",
+      "Components": {
+        "CameraComponent": {
+          "Position": [
+            0.0,
+            4.0,
+            -8.0
+          ],
+          "LookAt": [
+            0.0,
+            1.0,
+            0.0
+          ]
+        },
+        "FPSCameraComponent": {
+          "MoveSpeed": 8.0,
+          "ShiftSpeed": 16.0,
+          "TurnSpeed": 0.15
+        }
+      }
+    },
+    "Player": {
+      "Template": "../../Assets/Templates/Objects/player_obj.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [
+            0.0,
+            1.5,
+            -2.0
+          ],
+          "Rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "PlayerControllerComponent": {
+          "mShiftSpeed": 10.0,
+          "mMoveSpeed": 5.0,
+          "mTurnSpeed": 0.1,
+          "mJumpSpeed": 10.0
+        }
+      }
+    },
+    "Ground": {
+      "Template": "../../Assets/Templates/Objects/ground.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "Rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "Scale": [
+            3.0,
+            1.0,
+            3.0
+          ]
+        },
+        "MeshComponent": {
+          "Textures": {
+            "DiffuseMap": "../../Assets/Textures/misc/concrete.jpg"
+          }
+        }
+      }
+    },
+    "SphereObstacle_Left": {
+      "Template": "../../Assets/Templates/Objects/mesh_obj.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [
+            -3.0,
+            1.5,
+            1.0
+          ],
+          "Rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    "SphereObstacle_Right": {
+      "Template": "../../Assets/Templates/Objects/mesh_obj.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [
+            3.0,
+            1.5,
+            1.0
+          ],
+          "Rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    "AnimatedSophia": {
+      "Template": "../../Assets/Templates/Objects/model_obj.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [
+            0.0,
+            1.0,
+            3.0
+          ],
+          "Rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    "CompoundTower": {
+      "Template": "../../Assets/Templates/Objects/compound_mesh.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [
+            -5.0,
+            1.0,
+            4.0
+          ],
+          "Rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    "CustomDebugDrawObj": {
+      "Template": "../../Assets/Templates/Objects/custom_obj.json",
+      "Components": {
+        "CustomDebugDrawComponent": {
+          "Slices": 30,
+          "Rings": 30,
+          "Radius": 2.0,
+          "Position": [
+            0.0,
+            2.0,
+            0.0
+          ],
+          "Color": [
+            0.8,
+            0.8,
+            1.0,
+            1.0
+          ]
+        },
+        "SoundEventComponent": {
+          "FileName": "../../Assets/Audio/photongun1.wav",
+          "Looping": false
+        }
+      }
+    },
+    "HUD": {
+      "Template": "../../Assets/Templates/UI/hud_screen.json"
+    }
+  }
+}
