@@ -12,6 +12,8 @@ public:
 	void DebugUI() override;
 
 private:
+	void SpawnPhysicsBenchmark(int count);
+
 	std::filesystem::path mLevelFile;
 	DgEngine::GameWorld mGameWorld;
 };

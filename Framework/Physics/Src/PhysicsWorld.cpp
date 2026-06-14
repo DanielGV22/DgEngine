@@ -2,6 +2,9 @@
 #include "PhysicsWorld.h"
 #include "PhysicsObject.h"
 
+#include <omp.h>
+#include <chrono>
+
 using namespace DgEngine;
 using namespace DgEngine::Physics;
 
@@ -64,10 +67,56 @@ void PhysicsWorld::Terminate()
 void PhysicsWorld::Update(float deltaTime)
 {
 	mDynamicsWorld->stepSimulation(deltaTime, mSettings.simulationSteps, mSettings.fixedTimeStep);
-	for (PhysicsObject* obj : mPhysicsObjects)
+
+	const auto syncStart = std::chrono::high_resolution_clock::now();
+
+	if (mUseParallelSync && mLastObjectCount > 64)
 	{
-		obj->SyncWithGraphics();
+		mParallelSyncTimeMs = mLastSyncTimeMs;
+
+		if (mSerialSyncTimeMs > 0.0f && mParallelSyncTimeMs > 0.0f)
+		{
+			mSpeedup = mSerialSyncTimeMs / mParallelSyncTimeMs;
+		}
 	}
+	else
+	{
+		mSerialSyncTimeMs = mLastSyncTimeMs;
+
+		if (mSerialSyncTimeMs > 0.0f && mParallelSyncTimeMs > 0.0f)
+		{
+			mSpeedup = mSerialSyncTimeMs / mParallelSyncTimeMs;
+		}
+	}
+
+	mLastObjectCount = static_cast<int>(mPhysicsObjects.size());
+
+	if (mUseParallelSync && mLastObjectCount > 64)
+	{
+		mLastThreadCount = omp_get_max_threads();
+
+		// VGP340 Final Project:
+        // Parallelize the engine-side physics synchronization stage.
+        // Bullet performs the simulation first, then OpenMP distributes
+        // transform synchronization across registered physics objects.
+#pragma omp parallel for
+		for (int i = 0; i < mLastObjectCount; ++i)
+		{
+			mPhysicsObjects[i]->SyncWithGraphics();
+		}
+	}
+	else
+	{
+		mLastThreadCount = 1;
+
+		for (PhysicsObject* obj : mPhysicsObjects)
+		{
+			obj->SyncWithGraphics();
+		}
+	}
+
+	const auto syncEnd = std::chrono::high_resolution_clock::now();
+	mLastSyncTimeMs = std::chrono::duration<float, std::milli>(syncEnd - syncStart).count();
 }
 void PhysicsWorld::DebugUI()
 {
@@ -103,6 +152,24 @@ void PhysicsWorld::DebugUI()
 
 			ImGui::Unindent();
 		}
+		ImGui::Separator();
+		ImGui::Text("VGP340 Parallel Physics Sync");
+		ImGui::Checkbox("Use Parallel Sync", &mUseParallelSync);
+		ImGui::Text("Physics Objects: %d", mLastObjectCount);
+		ImGui::Text("Sync Time: %.4f ms", mLastSyncTimeMs);
+		ImGui::Text("OpenMP Threads: %d", mLastThreadCount);
+
+		if (mUseParallelSync)
+		{
+			ImGui::Text("Mode: Parallel OpenMP");
+		}
+		else
+		{
+			ImGui::Text("Mode: Serial");
+		}
+		ImGui::Text("Last Serial Sync: %.4f ms", mSerialSyncTimeMs);
+		ImGui::Text("Last Parallel Sync: %.4f ms", mParallelSyncTimeMs);
+		ImGui::Text("Estimated Speedup: %.2fx", mSpeedup);     
 	}
 }
 

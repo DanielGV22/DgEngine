@@ -1,5 +1,5 @@
 {
-  "Capacity": 100,
+  "Capacity": 2000,
   "Services": {
     "CameraService": {},
     "RenderService": {

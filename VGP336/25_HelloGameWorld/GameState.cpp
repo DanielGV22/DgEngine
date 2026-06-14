@@ -68,6 +68,36 @@ void GameState::Render()
 	UIFont::Get()->DrawString(L"Hello Game World!",{300.0f,30.0f}, Colors::White, 64.0f);
 }
 
+void GameState::SpawnPhysicsBenchmark(int count)
+{
+	int width = static_cast<int>(sqrt(static_cast<float>(count)));
+
+	for (int i = 0; i < count; ++i)
+	{
+		int x = i % width;
+		int z = i / width;
+
+		GameObject* obj = mGameWorld.CreateGameObject(
+			"BenchmarkSphere_" + std::to_string(i),
+			"../../Assets/Templates/Objects/mesh_obj.json");
+
+		auto transform =
+			obj->GetComponent<TransformComponent>();
+
+		if (transform != nullptr)
+		{
+			transform->position =
+			{
+				static_cast<float>(x * 3),
+				15.0f + static_cast<float>(z / 10),
+				static_cast<float>(z * 3)
+			};
+		}
+
+		obj->Initialize();
+	}
+}
+
 void GameState::DebugUI()
 {
 	ImGui::Begin("Debug", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
@@ -77,6 +107,22 @@ void GameState::DebugUI()
 		mGameWorld.Terminate();
 		mGameWorld.LoadLevel(mLevelFile);
 	}
-	ImGui::End();
+	ImGui::Separator();
+	ImGui::Text("VGP340 Benchmark Spawner");
 
+	if (ImGui::Button("Spawn 100 Physics Spheres"))
+	{
+		SpawnPhysicsBenchmark(100);
+	}
+
+	if (ImGui::Button("Spawn 500 Physics Spheres"))
+	{
+		SpawnPhysicsBenchmark(500);
+	}
+
+	if (ImGui::Button("Spawn 1000 Physics Spheres"))
+	{
+		SpawnPhysicsBenchmark(1000);
+	}
+	ImGui::End();
 }

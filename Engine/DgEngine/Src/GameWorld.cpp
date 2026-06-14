@@ -87,10 +87,15 @@ void GameWorld::Render()
 void GameWorld::DebugUI()
 {
 	for (Slot& slot : mGameObjectSlots)
-	{
+	{   
 		if (slot.gameObject != nullptr)
 		{
-			slot.gameObject->DebugUI();
+			const std::string& name = slot.gameObject->GetName();
+
+			if (name.find("BenchmarkSphere_") == std::string::npos)
+			{
+				slot.gameObject->DebugUI();
+			}
 		}
 	}
 	for (auto& service : mServices)

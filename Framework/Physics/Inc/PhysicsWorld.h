@@ -38,6 +38,15 @@ namespace DgEngine::Physics
 	private:
 		Settings mSettings;
 
+		bool mUseParallelSync = true;
+		float mLastSyncTimeMs = 0.0f;
+		int mLastObjectCount = 0;
+		int mLastThreadCount = 1;
+
+		float mSerialSyncTimeMs = 0.0f;
+		float mParallelSyncTimeMs = 0.0f;
+		float mSpeedup = 1.0f;
+
 		// bullet objects
 		btBroadphaseInterface* mInterface = nullptr;
 		btCollisionDispatcher* mDispatcher = nullptr;
