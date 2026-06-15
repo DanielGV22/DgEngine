@@ -36,7 +36,8 @@
       ]
     },
     "CustomDebugDrawService": {},
-    "UIRenderService": {}
+    "UIRenderService": {},
+    "FishService": {}
   },
   "GameObjects": {
     "AudioBank": {
@@ -86,24 +87,24 @@
         }
       }
     },
-    "Player": {
-      "Template": "../../Assets/Templates/Objects/player_obj.json",
-      "Components": {
-        "TransformComponent": {
-          "Position": [
-            0.0,
-            1.25,
-            -3.0
-          ]
-        },
-        "PlayerControllerComponent": {
-          "mShiftSpeed": 10.0,
-          "mMoveSpeed": 5.0,
-          "mTurnSpeed": 0.1,
-          "mJumpSpeed": 10.0
-        }
-      }
+"Player": {
+  "Template": "../../Assets/Templates/Objects/player_obj.json",
+  "Components": {
+    "TransformComponent": {
+      "Position": [
+        0.0,
+        1.25,
+        -3.0
+      ]
     },
+    "PlayerControllerComponent": {
+      "mShiftSpeed": 10.0,
+      "mMoveSpeed": 5.0,
+      "mTurnSpeed": 0.1,
+      "mJumpSpeed": 10.0
+    }
+  }
+},
     "StaticCube_Left": {
       "Template": "../../Assets/Templates/Objects/simple_mesh.json",
       "Components": {
@@ -118,6 +119,30 @@
             1.0,
             1.0
           ]
+        }
+      }
+    },
+    "Fish_01": {
+      "Template": "../../Assets/Templates/Objects/fish_obj.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [ 0.0, 0.2, 8.0 ]
+        }
+      }
+    },
+    "Fish_02": {
+      "Template": "../../Assets/Templates/Objects/fish_obj.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [ 3.0, 0.2, 10.0 ]
+        }
+      }
+    },
+    "Fish_03": {
+      "Template": "../../Assets/Templates/Objects/fish_obj.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [ -3.0, 0.2, 10.0 ]
         }
       }
     },

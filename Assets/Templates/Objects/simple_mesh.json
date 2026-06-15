@@ -19,7 +19,7 @@
         "Shininess": 10.0
       },
       "Textures": {
-        "DiffuseMap": "../../Assets/Textures/Images/green.jpg"
+        "DiffuseMap": "../../Assets/Textures/Images/flower_2.png"
       }
     }
   }

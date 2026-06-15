@@ -1,79 +1,103 @@
-{
-  "Capacity": 100,
-  "Services": {
-    "CameraService": {
+ {
+    "Capacity": 1000,
+    "Services": {
+      "CameraService": {},
+      "RenderService": {
+        "Direction": [ 1.0, -1.0, 1.0 ],
+        "Ambient": [ 0.35, 0.35, 0.35, 1.0 ],
+        "Diffuse": [ 0.8, 0.8, 0.8, 1.0 ],
+        "Specular": [ 0.5, 0.5, 0.5, 1.0 ],
+        "ShadowSize": 10.0
+      },
+      "PhysicsService": {
+        "Gravity": [ 0.0, -9.81, 0.0 ]
+      },
+      "FishService": {},
+      "UIRenderService": {}
     },
-    "RenderService": {
-      "Direction": [ 1.0, -1.0, 1.0 ],
-      "Ambient": [ 0.3, 0.3, 0.3, 1.0 ],
-      "Diffuse": [ 0.7, 0.7, 0.7, 1.0 ],
-      "Specular": [ 0.5, 0.5, 0.5, 1.0 ],
-      "ShadowSize": 10.0
-    },
-    "PhysicsService": {
-      "Gravity": [ 0.0, -9.81, 0.0 ]
-    },
-    "CustomDebugDrawService": {
-
-    },
-    "UIRenderService": {
-
-    }
-  },
   "GameObjects": {
-    "Transform": {
-      "Template": "../../Assets/Templates/Objects/transform_obj.json"
-    },
     "Camera": {
       "Template": "../../Assets/Templates/Objects/fps_camera_obj.json",
       "Components": {
         "CameraComponent": {
-          "Position": [ 0.0, 3.0, -4.0 ],
-          "LookAt": [ 0.0, 0.0, 0.0 ]
-        }
-      }
-    },
-    "SphereObj": {
-      "Template": "../../Assets/Templates/Objects/mesh_obj.json",
-      "Components": {
-        "TransformComponent": {
-          "Position": [ -2.0, 1.0, 0.0 ],
-          "Rotation": [ 0.0, 1.0, 0.0, 1.0 ],
-          "Scale": [ 1.0, 1.0, 1.0 ]
-        }
-      }
-    },
-    "ModelObj": {
-      "Template": "../../Assets/Templates/Objects/model_obj.json",
-      "Components": {
-        "TransformComponent": {
-          "Position": [ 2.0, 5.0, 0.0 ],
-          "Rotation": [ 0.0, 0.0, 0.0, 1.0 ],
-          "Scale": [ 1.0, 1.0, 1.0 ]
+          "Position": [ 0.0, 8.0, -12.0 ],
+          "LookAt": [ 0.0, 0.0, 4.0 ]
         }
       }
     },
     "Ground": {
       "Template": "../../Assets/Templates/Objects/ground.json",
       "Components": {
+        "TransformComponent": {
+          "Position": [ 0.0, 0.0, 8.0 ],
+          "Scale": [ 2.0, 1.0, 5.0 ]
+        },
         "MeshComponent": {
           "Textures": {
-            "DiffuseMap": "../../Assets/Textures/misc/basketball.jpg"
+            "DiffuseMap": "../../Assets/Textures/Images/water.png"
           }
         }
       }
     },
-    "CustomDebugDrawObj": {
-      "Template": "../../Assets/Templates/Objects/custom_obj.json"
+    "Water": {
+      "Template": "../../Assets/Templates/Objects/simple_mesh.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [ 0.0, 0.05, 0.0 ],
+          "Scale": [ 12.0, 0.05, 18.0 ]
+        }
+      }
     },
-    "CompoundMesh": {
-      "Template": "../../Assets/Templates/Objects/compound_mesh.json"
+    "Player": {
+      "Template": "../../Assets/Templates/Objects/player_obj.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [ 0.0, 1.25, 4.0 ]
+        },
+        "PlayerControllerComponent": {
+          "mShiftSpeed": 10.0,
+          "mMoveSpeed": 5.0,
+          "mTurnSpeed": 0.1,
+          "mJumpSpeed": 10.0
+        }
+      }
+    },
+    "Fish_01": {
+      "Template": "../../Assets/Templates/Objects/fish_obj.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [ 0.0, 0.2, 8.0 ],
+          "Scale": [ 0.3, 0.1, 0.6 ]
+        }
+      }
+    },
+    "Fish_02": {
+      "Template": "../../Assets/Templates/Objects/fish_obj.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [ 3.0, 0.2, 10.0 ],
+          "Scale": [ 0.8, 0.2, 1.2 ]
+        }
+      }
+    },
+    "Fish_03": {
+      "Template": "../../Assets/Templates/Objects/fish_obj.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [ -3.0, 0.2, 10.0 ]
+        }
+      }
+    },
+    "Fish_04": {
+      "Template": "../../Assets/Templates/Objects/fish_obj.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [ 1.5, 0.2, 12.0 ]
+        }
+      }
     },
     "HUD": {
       "Template": "../../Assets/Templates/UI/hud_screen.json"
-    },
-    "Player": {
-      "Template": "../../Assets/Templates/Objects/player_obj.json"
     }
   }
-}
+  }

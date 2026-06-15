@@ -36,6 +36,12 @@
       "mMoveSpeed": 5.0,
       "mTurnSpeed": 0.1,
       "mJumpSpeed": 10.0
+    },
+    "FishingComponent": {
+      "CastRange": 8.0,
+      "CatchRadius": 2.0,
+      "Cooldown": 1.0,
+      "MinWaterZ": 2.0
     }
   }
 }

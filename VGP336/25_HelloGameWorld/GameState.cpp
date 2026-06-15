@@ -1,6 +1,9 @@
 #include "GameState.h"
 #include "CustomDebugDrawComponent.h"
 #include "CustomDebugDrawService.h"
+#include "FishService.h"
+#include "FishComponent.h"
+#include "FishingComponent.h"
 
 using namespace DgEngine;
 using namespace DgEngine::Graphics;
@@ -13,6 +16,11 @@ Service* MakeCustomService(const std::string& serviceName, GameWorld& gameWorld)
 	{
 		return gameWorld.AddService<CustomDebugDrawService>();
 	}
+
+	if (serviceName == "FishService")
+	{
+		return gameWorld.AddService<FishService>();
+	}
 	// add another
 	// add text
 	return nullptr;
@@ -24,6 +32,16 @@ Component* MakeCustomComponent(const std::string& componentName, GameObject& gam
 	{
 		return gameObject.AddComponent<CustomDebugDrawComponent>();
 	}
+
+	if (componentName == "FishComponent")
+	{
+		return gameObject.AddComponent<FishComponent>();
+	}
+
+	if (componentName == "FishingComponent")
+	{
+		return gameObject.AddComponent<FishingComponent>();
+	}
 	return nullptr;
 }
 
@@ -33,12 +51,22 @@ Component* GetCustomComponent(const std::string& componentName, GameObject& game
 	{
 		return gameObject.GetComponent<CustomDebugDrawComponent>();
 	}
+
+	if (componentName == "FishComponent")
+	{
+		return gameObject.GetComponent<FishComponent>();
+	}
+
+	if (componentName == "FishingComponent")
+	{
+		return gameObject.GetComponent<FishingComponent>();
+	}
 	return nullptr;
 }
 
 void GameState::Initialize()
 {
-	mLevelFile = L"../../Assets/Templates/Levels/level_2.json";
+	mLevelFile = L"../../Assets/Templates/Levels/level.json";
 
 	// set a callback to try make a custom service (any service that is NoT part of the engine and unique to the project)
 	GameWorld::SetCustomService(MakeCustomService);
