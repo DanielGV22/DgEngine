@@ -5,7 +5,9 @@
 #include "CameraService.h"
 #include "RenderService.h"
 #include "PhysicsService.h"
+#include "NetworkService.h"
 #include "UIRenderService.h"
+#include "SaveUtil.h"
 
 using namespace DgEngine;
 
@@ -169,6 +171,10 @@ void GameWorld::LoadLevel(const std::filesystem::path& levelFile)
 		else if (serviceName == "UIRenderService")
 		{
 			newService = AddService<UIRenderService>();
+		}
+		else if (serviceName == "NetworkService")
+		{
+			newService = AddService<NetworkService>();
 		}
 		else
 		{

@@ -37,6 +37,7 @@
 #include "RenderService.h"
 #include "PhysicsService.h"
 #include "UIRenderService.h"
+#include "NetworkService.h"
 
 #define USE_PHYSICS_SERVICE
 

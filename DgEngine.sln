@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.7.11903.348 stable
+VisualStudioVersion = 18.7.11903.348
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DgEngine", "Engine\DgEngine\DgEngine.vcxproj", "{61C290CE-1D54-4450-92E5-9C19E63B1114}"
 EndProject
@@ -122,6 +122,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Objects", "Objects", "{22F0
 		Assets\Templates\Objects\ground.json = Assets\Templates\Objects\ground.json
 		Assets\Templates\Objects\mesh_obj.json = Assets\Templates\Objects\mesh_obj.json
 		Assets\Templates\Objects\model_obj.json = Assets\Templates\Objects\model_obj.json
+		Assets\Templates\Objects\player2_obj.json = Assets\Templates\Objects\player2_obj.json
 		Assets\Templates\Objects\player_obj.json = Assets\Templates\Objects\player_obj.json
 		Assets\Templates\Objects\simple_mesh.json = Assets\Templates\Objects\simple_mesh.json
 		Assets\Templates\Objects\transform_obj.json = Assets\Templates\Objects\transform_obj.json
@@ -133,9 +134,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "25_HelloGameWorld", "VGP336
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Levels", "Levels", "{8DAA6751-C83A-4C53-A36E-A514837F1262}"
 	ProjectSection(SolutionItems) = preProject
+		Assets\Templates\Levels\level - mp.json = Assets\Templates\Levels\level - mp.json
 		Assets\Templates\Levels\level.json = Assets\Templates\Levels\level.json
 		Assets\Templates\Levels\level_2.json = Assets\Templates\Levels\level_2.json
 		Assets\Templates\Levels\level_3.json = Assets\Templates\Levels\level_3.json
+		Assets\Templates\Levels\level_mp.json = Assets\Templates\Levels\level_mp.json
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FW1FontWrapper", "..\..\..\OneDrive\Documents\GitHub\DgEngine\External\FW1FontWrapper\FW1FontWrapper.vcxproj", "{0D034612-14E2-44E7-993A-72344A2CA7BD}"
@@ -146,6 +149,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{84F03B81-92D5-
 		Assets\Templates\UI\ui_button.json = Assets\Templates\UI\ui_button.json
 		Assets\Templates\UI\ui_sprite.json = Assets\Templates\UI\ui_sprite.json
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Network", "Framework\Network\Network.vcxproj", "{52DD2B8A-A40B-459A-9154-B0D27990F1FF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VGP331", "VGP331", "{59EDFC2D-AE76-44DD-8DFB-95A0EC852681}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "26_HelloNetwork", "VGP331\26_HelloNetwork\26_HelloNetwork.vcxproj", "{64064889-0399-4300-B52A-73DC79C2AD1E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -475,6 +484,22 @@ Global
 		{0D034612-14E2-44E7-993A-72344A2CA7BD}.Release|x64.Build.0 = Release|x64
 		{0D034612-14E2-44E7-993A-72344A2CA7BD}.Release|x86.ActiveCfg = Release|Win32
 		{0D034612-14E2-44E7-993A-72344A2CA7BD}.Release|x86.Build.0 = Release|Win32
+		{52DD2B8A-A40B-459A-9154-B0D27990F1FF}.Debug|x64.ActiveCfg = Debug|x64
+		{52DD2B8A-A40B-459A-9154-B0D27990F1FF}.Debug|x64.Build.0 = Debug|x64
+		{52DD2B8A-A40B-459A-9154-B0D27990F1FF}.Debug|x86.ActiveCfg = Debug|Win32
+		{52DD2B8A-A40B-459A-9154-B0D27990F1FF}.Debug|x86.Build.0 = Debug|Win32
+		{52DD2B8A-A40B-459A-9154-B0D27990F1FF}.Release|x64.ActiveCfg = Release|x64
+		{52DD2B8A-A40B-459A-9154-B0D27990F1FF}.Release|x64.Build.0 = Release|x64
+		{52DD2B8A-A40B-459A-9154-B0D27990F1FF}.Release|x86.ActiveCfg = Release|Win32
+		{52DD2B8A-A40B-459A-9154-B0D27990F1FF}.Release|x86.Build.0 = Release|Win32
+		{64064889-0399-4300-B52A-73DC79C2AD1E}.Debug|x64.ActiveCfg = Debug|x64
+		{64064889-0399-4300-B52A-73DC79C2AD1E}.Debug|x64.Build.0 = Debug|x64
+		{64064889-0399-4300-B52A-73DC79C2AD1E}.Debug|x86.ActiveCfg = Debug|Win32
+		{64064889-0399-4300-B52A-73DC79C2AD1E}.Debug|x86.Build.0 = Debug|Win32
+		{64064889-0399-4300-B52A-73DC79C2AD1E}.Release|x64.ActiveCfg = Release|x64
+		{64064889-0399-4300-B52A-73DC79C2AD1E}.Release|x64.Build.0 = Release|x64
+		{64064889-0399-4300-B52A-73DC79C2AD1E}.Release|x86.ActiveCfg = Release|Win32
+		{64064889-0399-4300-B52A-73DC79C2AD1E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -525,6 +550,8 @@ Global
 		{8DAA6751-C83A-4C53-A36E-A514837F1262} = {079B73F2-7D4C-4A1F-8B13-02EE0915483B}
 		{0D034612-14E2-44E7-993A-72344A2CA7BD} = {7B676DA4-1CB4-4836-8FD7-C1E5B650B8FA}
 		{84F03B81-92D5-4B1F-8438-C4AEF8124B70} = {079B73F2-7D4C-4A1F-8B13-02EE0915483B}
+		{52DD2B8A-A40B-459A-9154-B0D27990F1FF} = {D730DDC3-972F-490B-B5EE-41540A8170B0}
+		{64064889-0399-4300-B52A-73DC79C2AD1E} = {59EDFC2D-AE76-44DD-8DFB-95A0EC852681}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {65254DFF-05EE-4CC6-84AC-D87D13E6C766}

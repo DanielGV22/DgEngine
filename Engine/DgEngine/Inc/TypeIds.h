@@ -29,6 +29,7 @@ namespace DgEngine
 		Render,				// renders renderobjects in the world
 		Physics, 		    // registers and mnitors physics objects in the world
 		UIRender,           // renders UI components in the world
+		Network,            // manages network capabilities
 		Count               // last value, can be used to chain custom services
 	};
 }

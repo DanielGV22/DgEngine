@@ -8,6 +8,7 @@ using namespace DgEngine::Graphics;
 using namespace DgEngine::Input;
 using namespace DgEngine::Physics;
 using namespace DgEngine::Audio;
+using namespace DgEngine::Network;
 
 void App::Run(const AppConfig& config)
 {
@@ -24,6 +25,7 @@ void App::Run(const AppConfig& config)
     auto handle = myWindow.GetWindowHandle();
     GraphicsSystem::StaticInitialize(handle, false);
     InputSystem::StaticInitialize(handle);
+    NetworkManager::StaticInitialize(handle);
     DebugUI::StaticInitialize(handle, false, true);
     SimpleDraw::StaticInitialize(config.maxVertexCount);
     TextureManager::StaticInitialize(L"../../Assets/Textures");
@@ -100,6 +102,7 @@ void App::Run(const AppConfig& config)
     TextureManager::StaticTerminate();
     SimpleDraw::StaticTerminate();
     DebugUI::StaticTerminate();
+    NetworkManager::StaticTerminate();
     InputSystem::StaticTerminate();
     GraphicsSystem::StaticTerminate();
     myWindow.Terminate();
