@@ -31,6 +31,7 @@ namespace DgEngine::Physics
 
 		void UpdateSettings(const Settings& settings);
 		void SetGravity(const Math::Vector3& gravity);
+		const Settings& GetSettings() const;
 
 		void Register(PhysicsObject* physicsObject);
 		void Unregister(PhysicsObject* physicsObject);

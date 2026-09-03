@@ -20,6 +20,12 @@ void UIRenderService::Render()
 	UISpriteRenderer::Get()->EndRender();
 }
 
+void UIRenderService::Serialize(rapidjson::Document& doc, rapidjson::Value& value)
+{
+	rapidjson::Value serviceValue(rapidjson::kObjectType);
+	value.AddMember("UIRenderService", serviceValue, doc.GetAllocator());
+}
+
 void UIRenderService::Register(UIComponent* uiComponent)
 {
 	auto iter = std::find(mUIComponents.begin(), mUIComponents.end(), uiComponent);

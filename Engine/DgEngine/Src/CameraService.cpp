@@ -9,6 +9,12 @@ void CameraService::DebugUI()
 	Graphics::SimpleDraw::Render(GetMain());
 }
 
+void CameraService::Serialize(rapidjson::Document& doc, rapidjson::Value& value)
+{
+	rapidjson::Value serviceValue(rapidjson::kObjectType);
+	value.AddMember("CameraService", serviceValue, doc.GetAllocator());
+}
+
 const Graphics::Camera& CameraService::GetMain() const
 {
 	ASSERT(mMainCamera != nullptr, "CameraService: has no main camera.");

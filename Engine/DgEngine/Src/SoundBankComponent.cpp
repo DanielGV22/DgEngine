@@ -63,6 +63,13 @@ void SoundBankComponent::Deserialize(const rapidjson::Value& value)
 	}
 }
 
+void SoundBankComponent::Serialize(rapidjson::Document& doc, rapidjson::Value& value, const rapidjson::Value& originalValue)
+{
+	rapidjson::Value componentValue(rapidjson::kObjectType);
+	// compare with original, if different, save current value
+	value.AddMember("SoundBankComponent", componentValue, doc.GetAllocator());
+}
+
 void SoundBankComponent::Play(const std::string& key)
 {
 	auto iter = mSoundEffects.find(key);

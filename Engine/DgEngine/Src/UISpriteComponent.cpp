@@ -115,6 +115,14 @@ void UISpriteComponent::Deserialize(const rapidjson::Value& value)
 	float rotation = 0.0f;
 	SaveUtil::ReadFloat("Rotation", rotation, value);
 }
+
+void UISpriteComponent::Serialize(rapidjson::Document& doc, rapidjson::Value& value, const rapidjson::Value& originalValue)
+{
+	rapidjson::Value componentValue(rapidjson::kObjectType);
+	// compare with original, if different, save current value
+	value.AddMember("UISpriteComponent", componentValue, doc.GetAllocator());
+}
+
 Math::Vector2 UISpriteComponent::GetPosition(bool includeOrigin)
 {
 	float x = 0.0f;

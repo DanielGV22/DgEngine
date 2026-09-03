@@ -12,6 +12,7 @@ namespace DgEngine
 		void DebugUI() override;
 
 		void Deserialize(const rapidjson::Value& value) override;
+		void Serialize(rapidjson::Document& doc, rapidjson::Value& value, const rapidjson::Value& originalValue) override;
 
 		Transform GetWorldTransform() const;
 	};

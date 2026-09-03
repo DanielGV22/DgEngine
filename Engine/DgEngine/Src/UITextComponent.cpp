@@ -42,3 +42,10 @@ void UITextComponent::Deserialize(const rapidjson::Value& value)
 	SaveUtil::ReadColor("Color", mColor, value);
 	SaveUtil::ReadFloat("Size", mSize, value);
 }
+
+void UITextComponent::Serialize(rapidjson::Document& doc, rapidjson::Value& value, const rapidjson::Value& originalValue)
+{
+	rapidjson::Value componentValue(rapidjson::kObjectType);
+	// compare with original, if different, save current value
+	value.AddMember("UITextComponent", componentValue, doc.GetAllocator());
+}

@@ -93,7 +93,7 @@ void Client::ReceiveMsg()
 
 	int dataReceived = recvfrom(mMsgConnection,
 		mDataBuffer.data(),
-		static_cast<int>(mDataLength),
+		static_cast<int>(mDataBuffer.size()),
 		0,
 		reinterpret_cast<sockaddr*>(&senderAddress),
 		&senderAddressLength);

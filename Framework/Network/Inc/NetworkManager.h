@@ -4,7 +4,8 @@
 
 namespace DgEngine::Network
 {
-	class NetworkManager;
+	class NetworkElement;
+	class NetworkController;
 
 	class NetworkManager final
 	{
@@ -25,6 +26,12 @@ namespace DgEngine::Network
 		void ReceiveMsg();
 		void SendMsg(const char* msg, int length);
 
+		const std::string& GetLocalId() const;
+		const std::vector<std::string>& GetPlayerIds() const;
+
+		void SetNetworkController(const std::string& id, NetworkController* networkController);
+		void RemoveNetworkController(const std::string& id);
+
 	private:
 		static LRESULT CALLBACK NetworkManagerMessageHandler(HWND window, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -36,5 +43,8 @@ namespace DgEngine::Network
 		NetworkElement* mNetwork = nullptr;
 		HWND mWindow = nullptr;
 		std::string mWriteMessage;
+		std::vector<std::string> mPlayerIds;
+		std::unordered_map<std::string, float> mNextSetIdAttemp;
+		std::unordered_map<std::string, NetworkController*> mNetworkControllers;
 	};
 }

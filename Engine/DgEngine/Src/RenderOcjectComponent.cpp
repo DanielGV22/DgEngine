@@ -30,6 +30,13 @@ void RenderObjectComponent::Deserialize(const rapidjson::Value& value)
 	SaveUtil::ReadBool("CastShadow", mCastShadow, value);
 }
 
+void RenderObjectComponent::Serialize(rapidjson::Document& doc, rapidjson::Value& value, const rapidjson::Value& originalValue)
+{
+	rapidjson::Value componentValue(rapidjson::kObjectType);
+	// compare with original, if different, save current value
+	value.AddMember("RenderObjectComponent", componentValue, doc.GetAllocator());
+}
+
 bool RenderObjectComponent::CanCastShadow() const
 {
 	return mCastShadow;

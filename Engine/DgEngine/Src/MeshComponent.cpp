@@ -68,6 +68,14 @@ void MeshComponent::Deserialize(const rapidjson::Value& value)
 	}
 }
 
+void MeshComponent::Serialize(rapidjson::Document& doc, rapidjson::Value& value, const rapidjson::Value& originalValue)
+{
+	rapidjson::Value componentValue(rapidjson::kObjectType);
+	RenderObjectComponent::Serialize(doc, componentValue, originalValue);
+	// compare with original, if different, save current value
+	value.AddMember("MeshComponent", componentValue, doc.GetAllocator());
+}
+
 const Graphics::Model& MeshComponent::GetModel() const
 {
 	return mMeshModel;

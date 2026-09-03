@@ -97,6 +97,17 @@ void RenderService::Deserialize(const rapidjson::Value& value)
 	}
 }
 
+void RenderService::Serialize(rapidjson::Document& doc, rapidjson::Value& value)
+{
+	rapidjson::Value serviceValue(rapidjson::kObjectType);
+	SaveUtil::WriteVector3("Direction", mDirectionalLight.direction, doc, serviceValue);
+	SaveUtil::WriteColor("Ambient", mDirectionalLight.ambient, doc, serviceValue);
+	SaveUtil::WriteColor("Diffuse", mDirectionalLight.diffuse, doc, serviceValue);
+	SaveUtil::WriteColor("Specular", mDirectionalLight.specular, doc, serviceValue);
+	value.AddMember("RenderService", serviceValue, doc.GetAllocator());
+
+}
+
 void RenderService::Register(const RenderObjectComponent* renderObjectComponent)
 {
 	auto iter = std::find_if(

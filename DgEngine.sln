@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.7.11903.348
+VisualStudioVersion = 18.5.11716.220 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DgEngine", "Engine\DgEngine\DgEngine.vcxproj", "{61C290CE-1D54-4450-92E5-9C19E63B1114}"
 EndProject
@@ -120,11 +120,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Objects", "Objects", "{22F0
 		Assets\Templates\Objects\fish_obj.json = Assets\Templates\Objects\fish_obj.json
 		Assets\Templates\Objects\fps_camera_obj.json = Assets\Templates\Objects\fps_camera_obj.json
 		Assets\Templates\Objects\ground.json = Assets\Templates\Objects\ground.json
+		Assets\Templates\Objects\maze_wall.json = Assets\Templates\Objects\maze_wall.json
 		Assets\Templates\Objects\mesh_obj.json = Assets\Templates\Objects\mesh_obj.json
 		Assets\Templates\Objects\model_obj.json = Assets\Templates\Objects\model_obj.json
 		Assets\Templates\Objects\player2_obj.json = Assets\Templates\Objects\player2_obj.json
+		Assets\Templates\Objects\player2_obj_mp_local.json = Assets\Templates\Objects\player2_obj_mp_local.json
+		Assets\Templates\Objects\player2_obj_mp_remote.json = Assets\Templates\Objects\player2_obj_mp_remote.json
 		Assets\Templates\Objects\player_obj.json = Assets\Templates\Objects\player_obj.json
 		Assets\Templates\Objects\simple_mesh.json = Assets\Templates\Objects\simple_mesh.json
+		Assets\Templates\Objects\static_camera.json = Assets\Templates\Objects\static_camera.json
 		Assets\Templates\Objects\transform_obj.json = Assets\Templates\Objects\transform_obj.json
 	EndProjectSection
 EndProject
@@ -139,6 +143,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Levels", "Levels", "{8DAA67
 		Assets\Templates\Levels\level_2.json = Assets\Templates\Levels\level_2.json
 		Assets\Templates\Levels\level_3.json = Assets\Templates\Levels\level_3.json
 		Assets\Templates\Levels\level_mp.json = Assets\Templates\Levels\level_mp.json
+		Assets\Templates\Levels\level_mp_maze.json = Assets\Templates\Levels\level_mp_maze.json
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FW1FontWrapper", "..\..\..\OneDrive\Documents\GitHub\DgEngine\External\FW1FontWrapper\FW1FontWrapper.vcxproj", "{0D034612-14E2-44E7-993A-72344A2CA7BD}"

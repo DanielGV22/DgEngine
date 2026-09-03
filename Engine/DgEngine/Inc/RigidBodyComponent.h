@@ -13,6 +13,7 @@ namespace DgEngine
 		void Initialize() override;
 		void Terminate() override;
 		void Deserialize(const rapidjson::Value& value) override;
+		void Serialize(rapidjson::Document& doc, rapidjson::Value& value, const rapidjson::Value& originalValue) override;
 
 		void SetPosition(const Math::Vector3& position);
 		void SetVelocity(const Math::Vector3& velocity);

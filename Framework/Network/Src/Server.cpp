@@ -121,10 +121,7 @@ void Server::ReceiveMsg()
 
 void Server::SendMsg(const char* msg, int length)
 {
-	if (!mInitialized || mMsgConnection == INVALID_SOCKET || !mConnected || msg == nullptr || length <= 0)
-	{
-		return;
-	}
+	if (!mInitialized || mMsgConnection == INVALID_SOCKET || !mConnected)
 
 	if (static_cast<std::size_t>(length) > RECEIVE_BUFFER_SIZE)
 	{

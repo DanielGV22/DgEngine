@@ -64,6 +64,7 @@ void GameWorld::Terminate()
 
 void GameWorld::Update(float deltaTime)
 {
+	// game objects update
 	for (Slot& slot : mGameObjectSlots)
 	{
 		if (slot.gameObject != nullptr)
@@ -71,9 +72,18 @@ void GameWorld::Update(float deltaTime)
 			slot.gameObject->Update(deltaTime);
 		}
 	}
+	// services update (eg: physics)
 	for (auto& service : mServices)
 	{
 		service->Update(deltaTime);
+	}
+	// game objects late update (react to physics results, etc)
+	for (Slot& slot : mGameObjectSlots)
+	{
+		if (slot.gameObject != nullptr)
+		{
+			slot.gameObject->LateUpdate(deltaTime);
+		}
 	}
 	ProcessDestroyList();
 }
@@ -121,6 +131,7 @@ GameObject* GameWorld::CreateGameObject(std::string name, const std::filesystem:
 	slot.gameObject->mWorld = this;
 	if (!templatePath.empty())
 	{
+		slot.gameObject->mTemplateFileName = templatePath;
 		GameObjectFactory::Make(templatePath, *slot.gameObject, *this);
 	}
 	return slot.gameObject.get();
@@ -140,6 +151,8 @@ void GameWorld::DestroyGameObject(const GameObjectHandle& handle)
 
 void GameWorld::LoadLevel(const std::filesystem::path& levelFile)
 {
+	mLevelFileName = levelFile;
+
 	FILE* file = nullptr;
 	auto err = fopen_s(&file, levelFile.u8string().c_str(), "r");
 	ASSERT(err == 0 && file != nullptr, "GameWorld: failed to open %s.", levelFile.u8string().c_str());
@@ -182,6 +195,7 @@ void GameWorld::LoadLevel(const std::filesystem::path& levelFile)
 		}
 
 		ASSERT(newService != nullptr, "GameWorld: failed to add service %s.", serviceName.c_str());
+		newService->Deserialize(service.value);
 	}
 
 	uint32_t capacity = static_cast<uint32_t>(doc["Capacity"].GetInt());
@@ -197,6 +211,69 @@ void GameWorld::LoadLevel(const std::filesystem::path& levelFile)
 		go->Initialize();
 	}
 }
+
+void GameWorld::SaveLevel(const std::filesystem::path& levelFile)
+{
+	// create document
+	rapidjson::Document writeDoc(rapidjson::kObjectType);
+
+	// save capacity
+	int capacity = mGameObjectSlots.size();
+	SaveUtil::WriteInt("Capacity", capacity, writeDoc, writeDoc);
+
+	// save services
+	rapidjson::Value serviceValue(rapidjson::kObjectType);
+	for (auto& service : mServices)
+	{
+		service->Serialize(writeDoc, serviceValue);
+	}
+	writeDoc.AddMember("Services", serviceValue, writeDoc.GetAllocator());
+
+	char buffer[65536];
+	// save game objects
+	rapidjson::Value gameObjectsValue(rapidjson::kObjectType);
+	for (Slot& slot : mGameObjectSlots)
+	{
+		if (slot.gameObject != nullptr)
+		{
+			rapidjson::Document originalDoc(rapidjson::kObjectType);
+			if (!slot.gameObject->mTemplateFileName.empty())
+			{
+				FILE* file = nullptr;
+				auto err = fopen_s(&file, slot.gameObject->mTemplateFileName.u8string().c_str(), "r");
+				ASSERT(err == 0 && file != nullptr, "GameWorld: failed to open template file %s.", slot.gameObject->mTemplateFileName.u8string().c_str());
+				rapidjson::FileReadStream readStream(file, buffer, sizeof(buffer));
+				fclose(file);
+
+				originalDoc.ParseStream(readStream);
+			}
+			// create document for game object
+			rapidjson::Document gameObjectDoc(rapidjson::kObjectType);
+
+			// save template
+			rapidjson::GenericStringRef<char> goTemplate(slot.gameObject->mTemplateFileName.u8string().c_str());
+			gameObjectDoc.AddMember("Template", goTemplate, gameObjectDoc.GetAllocator());
+
+			// save component overrides 
+			GameObjectFactory::SerializeGameObject(gameObjectDoc, originalDoc, *slot.gameObject);
+			rapidjson::GenericStringRef<char> goNameKey(slot.gameObject->GetName().c_str());
+
+			// save objects to the level
+			gameObjectsValue.AddMember(goNameKey, gameObjectDoc, writeDoc.GetAllocator());
+		}
+	}
+	writeDoc.AddMember("GameObjects", gameObjectsValue, writeDoc.GetAllocator());
+
+	FILE* file = nullptr;
+	auto err = fopen_s(&file, mLevelFileName.u8string().c_str(), "w");
+	ASSERT(err == 0 && file != nullptr, "GameWorld: failed to open file to save %s", mLevelFileName.u8string().c_str());
+	rapidjson::FileWriteStream writeStream(file, buffer, sizeof(buffer));
+	rapidjson::PrettyWriter<rapidjson::FileWriteStream> writer(writeStream);
+	writeDoc.Accept(writer);
+	fclose(file);
+
+}
+
 
 bool GameWorld::IsValid(const GameObjectHandle& handle)
 {

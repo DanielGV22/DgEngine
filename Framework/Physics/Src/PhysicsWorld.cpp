@@ -117,6 +117,12 @@ void PhysicsWorld::SetGravity(const Math::Vector3& gravity)
 	mSettings.gravity = gravity;
 	mDynamicsWorld->setGravity(TobtVector3(gravity));
 }
+
+const PhysicsWorld::Settings& PhysicsWorld::GetSettings() const
+{
+	return mSettings;
+}
+
 void PhysicsWorld::Register(PhysicsObject* physicsObject)
 {
 	auto iter = std::find(mPhysicsObjects.begin(), mPhysicsObjects.end(), physicsObject);

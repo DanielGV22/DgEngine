@@ -18,6 +18,7 @@ namespace DgEngine
 
 		void Register(const CameraComponent* cameraComponent);
 		void Unregister(const CameraComponent* cameraComponent);
+		void Serialize(rapidjson::Document& doc, rapidjson::Value& value) override;
 
 	private:
 		using CameraEntries = std::vector<const CameraComponent*>;

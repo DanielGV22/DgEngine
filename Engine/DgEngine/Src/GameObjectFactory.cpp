@@ -17,6 +17,8 @@
 #include "UISpriteComponent.h"
 #include "UIButtonComponent.h"
 #include "PlayerControllerComponent.h"
+#include "TPSCameraComponent.h"
+#include "NetworkControllerComponent.h"
 
 using namespace DgEngine;
 
@@ -79,6 +81,14 @@ namespace
 		else if (componentName == "PlayerControllerComponent")
 		{
 			newComponent = gameObject.AddComponent<PlayerControllerComponent>();
+		}
+		else if (componentName == "TPSCameraComponent")
+		{
+			newComponent = gameObject.AddComponent<TPSCameraComponent>();
+		}
+		else if (componentName == "NetworkControllerComponent")
+		{
+			newComponent = gameObject.AddComponent<NetworkControllerComponent>();
 		}
 		else
 		{
@@ -143,6 +153,14 @@ namespace
 		{
 			component = gameObject.GetComponent<PlayerControllerComponent>();
 		}
+		else if (componentName == "TPSCameraComponent")
+		{
+			component = gameObject.GetComponent<TPSCameraComponent>();
+		}
+		else if (componentName == "NetworkControllerComponent")
+		{
+			component = gameObject.GetComponent<NetworkControllerComponent>();
+		}
 		else
 		{
 			component = TryGetComponent(componentName, gameObject);
@@ -201,7 +219,6 @@ void GameObjectFactory::Make(const std::filesystem::path& templatePath, GameObje
 
 }
 
-
 void GameObjectFactory::OverrideDeserialize(const rapidjson::Value& value, GameObject& gameObject)
 {
 	if (value.HasMember("Components"))
@@ -215,6 +232,27 @@ void GameObjectFactory::OverrideDeserialize(const rapidjson::Value& value, GameO
 				ownedComponent->Deserialize(component.value);
 			}
 
+		}
+	}
+}
+
+void GameObjectFactory::SerializeGameObject(rapidjson::Document& doc, const rapidjson::Document& original, GameObject& gameObject)
+{
+	if (original.HasMember("Components"))
+	{
+		auto components = original["Components"].GetObj();
+		rapidjson::Value componentsValue(rapidjson::kObjectType);
+		for (auto& component : components)
+		{
+			Component* ownedComponent = GetComponent(component.name.GetString(), gameObject);
+			if (ownedComponent != nullptr)
+			{
+				ownedComponent->Serialize(doc, componentsValue, component.value);
+			}
+		}
+		if (componentsValue.MemberCount() > 0)
+		{
+			doc.AddMember("Components", componentsValue, doc.GetAllocator());
 		}
 	}
 }

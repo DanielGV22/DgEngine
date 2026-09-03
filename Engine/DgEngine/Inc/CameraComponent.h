@@ -13,6 +13,7 @@ namespace DgEngine
 		void Terminate() override;
 		void DebugUI() override;
 		void Deserialize(const rapidjson::Value& value) override;
+		void Serialize(rapidjson::Document& doc, rapidjson::Value& value, const rapidjson::Value& originalValue) override;
 
 		Graphics::Camera& GetCamera();
 		const Graphics::Camera& GetCamera() const;

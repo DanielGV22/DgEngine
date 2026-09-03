@@ -80,6 +80,14 @@ void RigidBodyComponent::Deserialize(const rapidjson::Value& value)
 		}
 	}
 }
+
+void RigidBodyComponent::Serialize(rapidjson::Document& doc, rapidjson::Value& value, const rapidjson::Value& originalValue)
+{
+	rapidjson::Value componentValue(rapidjson::kObjectType);
+	// compare with original, if different, save current value
+	value.AddMember("RigidBodyComponent", componentValue, doc.GetAllocator());
+}
+
 void RigidBodyComponent::SetPosition(const Math::Vector3& position)
 {
 	mRigidBody.SetPosition(position);

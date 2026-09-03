@@ -19,6 +19,7 @@ namespace DgEngine
 		void Render() override;
 		void DebugUI() override;
 		void Deserialize(const rapidjson::Value& value) override;
+		void Serialize(rapidjson::Document& doc, rapidjson::Value& value) override;
 
 		void Register(const RenderObjectComponent* renderObjectComponent);
 		void Unregister(const RenderObjectComponent* renderObjectComponent);

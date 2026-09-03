@@ -40,6 +40,18 @@ Graphics::ModelId ModelComponent::GetModelId() const
 	return mModelId;
 }
 
+void ModelComponent::Serialize(rapidjson::Document& doc, rapidjson::Value& value, const rapidjson::Value& originalValue)
+{
+	rapidjson::Value componentValue(rapidjson::kObjectType);
+	RenderObjectComponent::Serialize(doc, componentValue, originalValue);
+	// compare with original, if different, save current value
+	if (originalValue.HasMember("FileName") && mFileName != originalValue["FileName"].GetString());
+	{
+		SaveUtil::WriteString("FileName", mFileName.c_str(), doc, componentValue);
+	}
+	value.AddMember("ModelComponent", componentValue, doc.GetAllocator());
+}
+
 const Graphics::Model& ModelComponent::GetModel() const
 {
 	return *Graphics::ModelManager::Get()->GetModel(mModelId);

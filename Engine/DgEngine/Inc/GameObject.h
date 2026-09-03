@@ -15,6 +15,7 @@ namespace DgEngine
 		void Initialize();
 		void Terminate();
 		void Update(float deltaTime);
+		void LateUpdate(float deltaTime);
 		void DebugUI();
 
 		void SetName(std::string& name);
@@ -92,6 +93,7 @@ namespace DgEngine
 		uint32_t mId = 0;
 		GameObjectHandle mHandle;
 		GameWorld* mWorld = nullptr;
+		std::filesystem::path mTemplateFileName = L"";
 
 		using Components = std::vector<std::unique_ptr<Component>>;
 		Components mComponents;

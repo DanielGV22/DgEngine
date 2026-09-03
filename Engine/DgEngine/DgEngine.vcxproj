@@ -150,6 +150,7 @@
     <ClInclude Include="Inc\GameWorld.h" />
     <ClInclude Include="Inc\MeshComponent.h" />
     <ClInclude Include="Inc\ModelComponent.h" />
+    <ClInclude Include="Inc\NetworkControllerComponent.h" />
     <ClInclude Include="Inc\NetworkService.h" />
     <ClInclude Include="Inc\PhysicsService.h" />
     <ClInclude Include="Inc\PlayerControllerComponent.h" />
@@ -160,6 +161,7 @@
     <ClInclude Include="Inc\Service.h" />
     <ClInclude Include="Inc\SoundBankComponent.h" />
     <ClInclude Include="Inc\SoundEventComponent.h" />
+    <ClInclude Include="Inc\TPSCameraComponent.h" />
     <ClInclude Include="Inc\TransformComponent.h" />
     <ClInclude Include="Inc\TypeIds.h" />
     <ClInclude Include="Inc\UIButtonComponent.h" />
@@ -181,6 +183,7 @@
     <ClCompile Include="Src\GameWorld.cpp" />
     <ClCompile Include="Src\MeshComponent.cpp" />
     <ClCompile Include="Src\ModelComponent.cpp" />
+    <ClCompile Include="Src\NetworkControllerComponent.cpp" />
     <ClCompile Include="Src\NetworkService.cpp" />
     <ClCompile Include="Src\PhysicsService.cpp" />
     <ClCompile Include="Src\PlayerControllerComponent.cpp" />
@@ -196,6 +199,7 @@
     <ClCompile Include="Src\SaveUtil.cpp" />
     <ClCompile Include="Src\SoundBankComponent.cpp" />
     <ClCompile Include="Src\SoundEventComponent.cpp" />
+    <ClCompile Include="Src\TPSCameraComponent.cpp" />
     <ClCompile Include="Src\TransformComponent.cpp" />
     <ClCompile Include="Src\UIButtonComponent.cpp" />
     <ClCompile Include="Src\UIRenderService.cpp" />

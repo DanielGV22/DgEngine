@@ -11,6 +11,7 @@ namespace DgEngine
 
 			void Deserialize(const rapidjson::Value& value) override;
 		const Graphics::Model& GetModel() const override;
+		void Serialize(rapidjson::Document& doc, rapidjson::Value& value, const rapidjson::Value& originalValue) override;
 
 	private:
 		Graphics::Model mMeshModel;

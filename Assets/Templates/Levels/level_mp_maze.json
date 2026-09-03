@@ -1,0 +1,476 @@
+{
+  "Capacity": 100,
+  "Services": {
+    "CameraService": {},
+    "RenderService": {
+      "Direction": [
+        1.0,
+        -1.0,
+        1.0
+      ],
+      "Ambient": [
+        0.3,
+        0.3,
+        0.3,
+        1.0
+      ],
+      "Diffuse": [
+        0.7,
+        0.7,
+        0.7,
+        1.0
+      ],
+      "Specular": [
+        0.5,
+        0.5,
+        0.5,
+        1.0
+      ],
+      "ShadowSize": 10.0
+    },
+    "PhysicsService": {
+      "Gravity": [
+        0.0,
+        -9.81,
+        0.0
+      ]
+    },
+    "NetworkService": {
+      "PlayerTemplate": "../../Assets/Templates/Objects/player2_obj_mp_remote.json"
+    },
+    "UIRenderService": {}
+  },
+  "GameObjects": {
+    "Ground": {
+      "Template": "../../Assets/Templates/Objects/ground.json",
+      "Components": {
+        "MeshComponent": {
+          "Shape": {
+            "Type": "Plane",
+            "Rows": 20,
+            "Columns": 20,
+            "Spacing": 1.0
+          },
+          "Textures": {
+            "DiffuseMap": "../../Assets/Textures/misc/concrete.jpg"
+          }
+        },
+        "RigidBodyComponent": {
+          "ColliderData": {
+            "Shape": "Hull",
+            "HalfExtents": [
+              10.0,
+              1.0,
+              10.0
+            ],
+            "Origin": [
+              0.0,
+              -1.0,
+              0.0
+            ]
+          }
+        }
+      }
+    },
+    "Player": {
+      "Template": "../../Assets/Templates/Objects/player2_obj_mp_local.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [
+            0.0,
+            1.25,
+            -8.0
+          ],
+          "Rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    "Camera": {
+      "Template": "../../Assets/Templates/Objects/static_camera.json"
+    },
+    "Maze_Left": {
+      "Template": "../../Assets/Templates/Objects/maze_wall.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [
+            -9.0,
+            1.0,
+            0.0
+          ],
+          "Rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "Scale": [
+            0.5,
+            2.0,
+            18.0
+          ]
+        },
+        "RigidBodyComponent": {
+          "Mass": 0.0,
+          "ColliderData": {
+            "Shape": "Box",
+            "HalfExtents": [
+              0.25,
+              1.0,
+              9.0
+            ]
+          }
+        }
+      }
+    },
+    "Maze_Right": {
+      "Template": "../../Assets/Templates/Objects/maze_wall.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [
+            9.0,
+            1.0,
+            0.0
+          ],
+          "Rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "Scale": [
+            0.5,
+            2.0,
+            18.0
+          ]
+        },
+        "RigidBodyComponent": {
+          "Mass": 0.0,
+          "ColliderData": {
+            "Shape": "Box",
+            "HalfExtents": [
+              0.25,
+              1.0,
+              9.0
+            ]
+          }
+        }
+      }
+    },
+    "Maze_StartLeft": {
+      "Template": "../../Assets/Templates/Objects/maze_wall.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [
+            -5.5,
+            1.0,
+            -9.0
+          ],
+          "Rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "Scale": [
+            7.0,
+            2.0,
+            0.5
+          ]
+        },
+        "RigidBodyComponent": {
+          "Mass": 0.0,
+          "ColliderData": {
+            "Shape": "Box",
+            "HalfExtents": [
+              3.5,
+              1.0,
+              0.25
+            ]
+          }
+        }
+      }
+    },
+    "Maze_StartRight": {
+      "Template": "../../Assets/Templates/Objects/maze_wall.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [
+            5.5,
+            1.0,
+            -9.0
+          ],
+          "Rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "Scale": [
+            7.0,
+            2.0,
+            0.5
+          ]
+        },
+        "RigidBodyComponent": {
+          "Mass": 0.0,
+          "ColliderData": {
+            "Shape": "Box",
+            "HalfExtents": [
+              3.5,
+              1.0,
+              0.25
+            ]
+          }
+        }
+      }
+    },
+    "Maze_EndLeft": {
+      "Template": "../../Assets/Templates/Objects/maze_wall.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [
+            -5.5,
+            1.0,
+            9.0
+          ],
+          "Rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "Scale": [
+            7.0,
+            2.0,
+            0.5
+          ]
+        },
+        "RigidBodyComponent": {
+          "Mass": 0.0,
+          "ColliderData": {
+            "Shape": "Box",
+            "HalfExtents": [
+              3.5,
+              1.0,
+              0.25
+            ]
+          }
+        }
+      }
+    },
+    "Maze_EndRight": {
+      "Template": "../../Assets/Templates/Objects/maze_wall.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [
+            5.5,
+            1.0,
+            9.0
+          ],
+          "Rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "Scale": [
+            7.0,
+            2.0,
+            0.5
+          ]
+        },
+        "RigidBodyComponent": {
+          "Mass": 0.0,
+          "ColliderData": {
+            "Shape": "Box",
+            "HalfExtents": [
+              3.5,
+              1.0,
+              0.25
+            ]
+          }
+        }
+      }
+    },
+    "Maze_Wall1": {
+      "Template": "../../Assets/Templates/Objects/maze_wall.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [
+            -3.0,
+            1.0,
+            -6.0
+          ],
+          "Rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "Scale": [
+            11.0,
+            2.0,
+            0.5
+          ]
+        },
+        "RigidBodyComponent": {
+          "Mass": 0.0,
+          "ColliderData": {
+            "Shape": "Box",
+            "HalfExtents": [
+              5.5,
+              1.0,
+              0.25
+            ]
+          }
+        }
+      }
+    },
+    "Maze_Wall2": {
+      "Template": "../../Assets/Templates/Objects/maze_wall.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [
+            3.0,
+            1.0,
+            -3.0
+          ],
+          "Rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "Scale": [
+            11.0,
+            2.0,
+            0.5
+          ]
+        },
+        "RigidBodyComponent": {
+          "Mass": 0.0,
+          "ColliderData": {
+            "Shape": "Box",
+            "HalfExtents": [
+              5.5,
+              1.0,
+              0.25
+            ]
+          }
+        }
+      }
+    },
+    "Maze_Wall3": {
+      "Template": "../../Assets/Templates/Objects/maze_wall.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [
+            -3.0,
+            1.0,
+            0.0
+          ],
+          "Rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "Scale": [
+            11.0,
+            2.0,
+            0.5
+          ]
+        },
+        "RigidBodyComponent": {
+          "Mass": 0.0,
+          "ColliderData": {
+            "Shape": "Box",
+            "HalfExtents": [
+              5.5,
+              1.0,
+              0.25
+            ]
+          }
+        }
+      }
+    },
+    "Maze_Wall4": {
+      "Template": "../../Assets/Templates/Objects/maze_wall.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [
+            3.0,
+            1.0,
+            3.0
+          ],
+          "Rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "Scale": [
+            11.0,
+            2.0,
+            0.5
+          ]
+        },
+        "RigidBodyComponent": {
+          "Mass": 0.0,
+          "ColliderData": {
+            "Shape": "Box",
+            "HalfExtents": [
+              5.5,
+              1.0,
+              0.25
+            ]
+          }
+        }
+      }
+    },
+    "Maze_Wall5": {
+      "Template": "../../Assets/Templates/Objects/maze_wall.json",
+      "Components": {
+        "TransformComponent": {
+          "Position": [
+            -3.0,
+            1.0,
+            6.0
+          ],
+          "Rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "Scale": [
+            11.0,
+            2.0,
+            0.5
+          ]
+        },
+        "RigidBodyComponent": {
+          "Mass": 0.0,
+          "ColliderData": {
+            "Shape": "Box",
+            "HalfExtents": [
+              5.5,
+              1.0,
+              0.25
+            ]
+          }
+        }
+      }
+    }
+  }
+}
