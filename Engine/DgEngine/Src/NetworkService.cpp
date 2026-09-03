@@ -35,15 +35,6 @@ void NetworkService::Update(float deltaTime)
 				GameObject* go = GetWorld().CreateGameObject(id, mPlayerTemplate);
 				// will register automatically and add player to the list
 				go->Initialize();
-
-				// let the new player know where I am at (then they will do the same)
-				TransformComponent* transform = mPlayers[0].networkComponent->GetOwner().GetComponent<TransformComponent>();
-				Math::Vector3 position = transform->position;
-
-				// send initial position update
-				char msgData[100];
-				sprintf_s(msgData, "%d %s %.4f %.4f %.4f", (int)Network::EventType::SetPosition, mPlayers[0].id.c_str(), position.x, position.y, position.z);
-				NetworkManager::Get()->SendMsg(msgData, 100);
 			}
 		}
 	}

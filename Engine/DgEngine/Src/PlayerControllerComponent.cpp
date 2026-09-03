@@ -16,6 +16,7 @@ void PlayerControllerComponent::Initialize()
 	ASSERT(mRigidBodyComponent != nullptr || mTransformComponent != nullptr, 
 		"PlayerControllerComponent: must have a component to move.");
 
+	InputSystem::Get()->ShowSystemCursor(false);
 	// InputSystem::Get()->ShowCursor(false);
 }
 void PlayerControllerComponent::Terminate()

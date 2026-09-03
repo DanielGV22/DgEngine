@@ -14,9 +14,11 @@
 #include <Core/Inc/Core.h>
 #include <Math/Inc/DWMath.h>
 #include <Graphics/Inc/Graphics.h>
+#include <Physics/Inc/Physics.h>
 
 #define LATENCY_CHECK 5
 #define LATENCY_DEV 150
 #define WM_SOCKET (WM_USER + 1)
 #define DEFAULT_PORT 8000
 #define RECEIVE_BUFFER_SIZE 65535 // max 16 value
+#define POSITION_UPDATE_RATE 1.0f/30.0f; // 30 fps

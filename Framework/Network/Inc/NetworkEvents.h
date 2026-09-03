@@ -8,8 +8,12 @@ namespace DgEngine::Network
 		Connected,
 		SetId,
 		IdRecieved,
-		SetPosition,
-		Input
+		Input,
+		Sync,
+		Ping,
+		Pong,
+		LatencyDone,
+		Update
 	};
 
 	struct EventSetPosition

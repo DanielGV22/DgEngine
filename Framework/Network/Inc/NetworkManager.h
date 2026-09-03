@@ -28,6 +28,7 @@ namespace DgEngine::Network
 
 		const std::string& GetLocalId() const;
 		const std::vector<std::string>& GetPlayerIds() const;
+		float GetLatencyAverage() const;
 
 		void SetNetworkController(const std::string& id, NetworkController* networkController);
 		void RemoveNetworkController(const std::string& id);
@@ -38,6 +39,17 @@ namespace DgEngine::Network
 		bool mStarted = false;
 		bool mConnected = false;
 		bool mServer = false;
+		bool mObtainLatency = false;
+		bool mServerDoneLatencyCheck = false;
+		int mLatencyCount = 0;
+		float mLatencyTime = 0.0f;
+		float mLatencyAverage = 0.0f;
+		float mClientServerDelta = 0.0f;
+		float mClockDelta = 0.0f;
+		float mSentLatencyTime = 0.0f;
+		float mGameTime = 0.0f;
+		float mNextUpdateTime = 0.0f;
+		std::vector<float> mLatencyCalcTime;
 		unsigned short mPort = DEFAULT_PORT;
 		std::string mServerAddress;
 		NetworkElement* mNetwork = nullptr;

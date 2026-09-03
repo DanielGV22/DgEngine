@@ -16,6 +16,8 @@ void NetworkControllerComponent::Initialize()
 	ASSERT(mRigidBodyComponent != nullptr || mTransformComponent != nullptr, "NetworkControllerComponent: needs either a RigidBodyComponent or a TransformComponent to work");
 
 	mNetworkController = std::make_unique<Network::NetworkController>();
+	mNetworkController->SetLocalTransform(mTransformComponent);
+	mNetworkController->SetRigidBody(mRigidBodyComponent->GetRigidBody());
 
 	NetworkService* networkService = GetOwner().GetWorld().GetService<NetworkService>();
 	networkService->RegisterPlayer(this);
@@ -38,6 +40,7 @@ void NetworkControllerComponent::Update(float deltaTime)
 
 	if (mRemote)
 	{
+		mNetworkController->Update(deltaTime);
 		Math::Vector3 newPosition = Math::Vector3::Zero;
 		if (mNetworkController->TryGetNewPosition(newPosition))
 		{

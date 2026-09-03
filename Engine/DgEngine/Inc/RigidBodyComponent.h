@@ -21,6 +21,7 @@ namespace DgEngine
 
 		void SetAngularVelocity(const Math::Vector3& velocity);
 		const Math::Vector3 GetAngularVelocity() const;
+		const Physics::RigidBody* GetRigidBody() const;
 
 	private:
 		friend class PhysicsService;
